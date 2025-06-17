@@ -7,7 +7,7 @@ import passport, { PassportStatic } from 'passport';
 import { UnauthorizedException } from '../utils/catch-errors';
 import { ErrorCode } from '../enums/error-code.enum';
 import { config } from '../../config/app.config';
-import { userService } from '../../modules/user/user.module';
+import { db } from '../../database/database';
 
 interface JwtPayload {
   userId: string;
@@ -38,7 +38,11 @@ export const setupJwtStrategy = (passport: PassportStatic) => {
   passport.use(
     new JwtStrategy(options, async (req, payload: JwtPayload, done) => {
       try {
-        const user = await userService.findUserById(payload.userId);
+        const user = await db.user.findFirst({
+          where: {
+            id: payload.userId,
+          },
+        });
         if (!user) {
           return done(null, false);
         }

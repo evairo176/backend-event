@@ -1,12 +1,14 @@
 import { z } from 'zod';
 
 export const emailSchema = z.string().trim().email().min(1).max(255);
+export const userNameSchema = z.string().trim().min(1).max(50);
 export const passwordSchema = z.string().trim().min(6).max(255);
 export const verificationCodeSchema = z.string().trim().min(1).max(25);
 
 export const registerSchema = z
   .object({
-    name: z.string().trim().min(1).max(255),
+    fullname: z.string().trim().min(1).max(255),
+    username: userNameSchema,
     email: emailSchema,
     password: passwordSchema,
     confirmPassword: passwordSchema,
@@ -17,8 +19,9 @@ export const registerSchema = z
   });
 
 export const loginSchema = z.object({
-  email: emailSchema,
+  identifier: z.string().trim().min(1).max(50).or(emailSchema),
   password: passwordSchema,
+  userAgent: z.string().trim().optional(),
 });
 
 export const verificationEmailSchema = z.object({

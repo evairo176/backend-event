@@ -1,11 +1,18 @@
-import bcrypt from 'bcryptjs';
+import { pbkdf2Sync } from 'crypto';
+import { config } from '../../config/app.config';
 
-export const hashValue = async (value: string, salt: number = 10) => {
-  const hashPassword = await bcrypt.hash(value, salt);
-  return hashPassword;
+export const encryptValue = async (value: string) => {
+  const encrypted = await pbkdf2Sync(
+    value,
+    config.CRYPTO.SECRET,
+    1000,
+    64,
+    'sha512',
+  ).toString('hex');
+  return encrypted;
 };
 
-export const compareValue = async (value: string, hashedValue: string) => {
-  const compare = await bcrypt.compare(value, hashedValue);
-  return compare;
-};
+// export const compareValue = async (value: string, hashedValue: string) => {
+//   const compare = await bcrypt.compare(value, hashedValue);
+//   return compare;
+// };

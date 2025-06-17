@@ -11,10 +11,7 @@ import { errorHandler, morganMiddleware, notFound } from './middlewares';
 import { config } from './config/app.config';
 import authRoutes from './modules/auth/auth.routes';
 import passport from './middlewares/passport';
-import sessionRoutes from './modules/session/session.routes';
 import { authenticateJWT } from './cummon/strategies/jwt.strategy';
-import mfaRoutes from './modules/mfa/mfa.routes';
-// import { seedRoles } from './libs/seed';
 
 const app = express();
 const BASE_PATH = config.BASE_PATH;
@@ -45,8 +42,6 @@ app.get('/', (req, res) => {
 });
 
 app.use(`${BASE_PATH}/auth`, authRoutes);
-app.use(`${BASE_PATH}/mfa`, mfaRoutes);
-app.use(`${BASE_PATH}/session`, authenticateJWT, sessionRoutes);
 
 // app.use('/api/auth', authRouter);
 

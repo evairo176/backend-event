@@ -20,14 +20,18 @@ enum VerificationType {
 
 model User {
   id               String            @id @map("_id") @default(auto()) @db.ObjectId
-  name             String
+  fullname         String
+  username         String            @unique
   email            String            @unique
   password         String
+  role         String?
+  profilePicture         String @default("user.jpg")
+  activationCode         String?
   isEmailVerified  Boolean           @default(false)
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
 
-  // relation
+    // relation
   userPreferences  UserPreferences?
   sessions         Session[]
   verificationCodes VerificationCode[] // Relasi 1:N
