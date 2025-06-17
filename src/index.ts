@@ -4,14 +4,11 @@ dotenv.config();
 import helmet from 'helmet';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-// Import routes
-import swaggerJSDoc from 'swagger-jsdoc';
-import swaggerUi from 'swagger-ui-express';
 import { errorHandler, morganMiddleware, notFound } from './middlewares';
 import { config } from './config/app.config';
 import authRoutes from './modules/auth/auth.routes';
 import passport from './middlewares/passport';
-import { authenticateJWT } from './cummon/strategies/jwt.strategy';
+import docs from './docs/route';
 
 const app = express();
 const BASE_PATH = config.BASE_PATH;
@@ -43,38 +40,7 @@ app.get('/', (req, res) => {
 
 app.use(`${BASE_PATH}/auth`, authRoutes);
 
-// app.use('/api/auth', authRouter);
-
-// Swagger configuration options
-const swaggerOptions = {
-  swaggerDefinition: {
-    openapi: '3.0.0',
-    info: {
-      title: 'Authentication API',
-      version: '1.0.0',
-      description: 'API documentation',
-    },
-    servers: [
-      {
-        url: process.env.BASE_URL,
-        description: 'Local server',
-      },
-    ],
-  },
-  apis: ['./src/routes/*.ts'], // Path to the API docs
-};
-
-const swaggerDocs = swaggerJSDoc(swaggerOptions);
-
-// seed
-
-// seedRoles();
-// seedBusinessLines();
-
-// seedBusinessTypes();
-// seedCompanyWithUser();
-
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+docs(app);
 app.use(errorHandler);
 app.use(notFound);
 

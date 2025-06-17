@@ -12,7 +12,8 @@
     "format": "prettier --write 'src/**/*.{ts,tsx,js,jsx,json,css,md,mjs}'",
     "prepare": "husky",
     "add-build": "git add dist",
-    "postinstall": "npx prisma generate"
+    "postinstall": "npx prisma generate",
+    "docs": "ts-node src/docs/swagger.ts"
   },
   "pre-commit": [
     "build",
@@ -31,6 +32,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@anatine/zod-openapi": "^2.2.8",
+    "@asteasolutions/zod-to-openapi": "^7.3.4",
     "@prisma/client": "^6.9.0",
     "@types/morgan": "^1.9.9",
     "axios": "^1.7.9",
@@ -46,6 +49,7 @@
     "module-alias": "^2.2.3",
     "morgan": "^1.10.0",
     "nodemon": "^3.1.9",
+    "openapi3-ts": "^4.4.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "prisma": "^6.3.0",
@@ -54,11 +58,12 @@
     "sharp": "^0.33.5",
     "slugify": "^1.6.6",
     "speakeasy": "^2.0.0",
-    "swagger-jsdoc": "^6.2.8",
+    "swagger-autogen": "^2.23.7",
     "swagger-ui-express": "^5.0.1",
     "uuid": "^11.1.0",
     "winston": "^3.14.2",
-    "zod": "^3.24.1"
+    "zod": "^3.25.67",
+    "zod-openapi": "^4.2.4"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.1.0",
