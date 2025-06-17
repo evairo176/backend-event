@@ -10,13 +10,11 @@ dotenv_1.default.config();
 const helmet_1 = __importDefault(require("helmet"));
 const cors_1 = __importDefault(require("cors"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
-// Import routes
-const swagger_jsdoc_1 = __importDefault(require("swagger-jsdoc"));
-const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
 const middlewares_1 = require("./middlewares");
 const app_config_1 = require("./config/app.config");
 const auth_routes_1 = __importDefault(require("./modules/auth/auth.routes"));
 const passport_1 = __importDefault(require("./middlewares/passport"));
+const route_1 = __importDefault(require("./docs/route"));
 const app = (0, express_1.default)();
 const BASE_PATH = app_config_1.config.BASE_PATH;
 // Add JSON middleware to parse incoming requests
@@ -40,32 +38,7 @@ app.get('/', (req, res) => {
     res.status(200).send(`Hello, TypeScript with Express!`);
 });
 app.use(`${BASE_PATH}/auth`, auth_routes_1.default);
-// app.use('/api/auth', authRouter);
-// Swagger configuration options
-const swaggerOptions = {
-    swaggerDefinition: {
-        openapi: '3.0.0',
-        info: {
-            title: 'Authentication API',
-            version: '1.0.0',
-            description: 'API documentation',
-        },
-        servers: [
-            {
-                url: process.env.BASE_URL,
-                description: 'Local server',
-            },
-        ],
-    },
-    apis: ['./src/routes/*.ts'], // Path to the API docs
-};
-const swaggerDocs = (0, swagger_jsdoc_1.default)(swaggerOptions);
-// seed
-// seedRoles();
-// seedBusinessLines();
-// seedBusinessTypes();
-// seedCompanyWithUser();
-app.use('/api-docs', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swaggerDocs));
+(0, route_1.default)(app);
 app.use(middlewares_1.errorHandler);
 app.use(middlewares_1.notFound);
 // Start the server and export the server instance
