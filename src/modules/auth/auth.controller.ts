@@ -40,7 +40,7 @@ export class AuthController {
       });
     },
   );
-
+  // test
   public login = asyncHandler(
     async (req: Request, res: Response): Promise<any> => {
       const userAgent = req?.headers['user-agent'];
