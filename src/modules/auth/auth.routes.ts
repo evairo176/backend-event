@@ -46,4 +46,23 @@ authRoutes.get(
   */
 );
 
+authRoutes.post(
+  '/auth/verify/email',
+  authController.verifyEmail,
+  /* 
+    #swagger.tags = ['Auth']
+    #swagger.requestBody = {
+        required: true,
+        schema: {
+        $ref: "#/components/schemas/VerifyEmailRequest"
+        }
+    }
+    */
+);
+authRoutes.post('/auth/password/forgot', authController.forgotPassword);
+authRoutes.post('/auth/password/reset', authController.resetPassword);
+authRoutes.post('/auth/logout', authenticateJWT, authController.logout);
+
+authRoutes.get('/auth/refresh', authController.refreshToken);
+
 export default authRoutes;

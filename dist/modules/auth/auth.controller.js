@@ -14,6 +14,7 @@ const middlewares_1 = require("../../middlewares");
 const http_config_1 = require("../../config/http.config");
 const auth_validator_1 = require("../../cummon/validators/auth.validator");
 const cookies_1 = require("../../cummon/utils/cookies");
+const catch_errors_1 = require("../../cummon/utils/catch-errors");
 class AuthController {
     constructor(authService) {
         this.register = (0, middlewares_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
@@ -54,6 +55,53 @@ class AuthController {
             return res.status(http_config_1.HTTPSTATUS.OK).json({
                 message: 'get user successfully',
                 user: user,
+            });
+        }));
+        this.refreshToken = (0, middlewares_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const refreshToken = req.cookies.refreshToken;
+            if (!refreshToken) {
+                throw new catch_errors_1.UnauthorizedException('Missing refresh token');
+            }
+            const { accessToken, newRefreshToken } = yield this.authService.refreshToken(refreshToken);
+            if (newRefreshToken) {
+                res.cookie('refreshToken', newRefreshToken, (0, cookies_1.getRefreshTokenCookieOptions)());
+            }
+            return res
+                .status(http_config_1.HTTPSTATUS.OK)
+                .cookie('accessToken', accessToken, (0, cookies_1.getAccessTokenCookieOptions)())
+                .json({
+                message: 'Refresh access token successfully',
+            });
+        }));
+        this.verifyEmail = (0, middlewares_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const { code } = auth_validator_1.verificationEmailSchema.parse(Object.assign({}, req === null || req === void 0 ? void 0 : req.body));
+            yield this.authService.verifyEmail(code);
+            return res.status(http_config_1.HTTPSTATUS.OK).json({
+                message: 'Email verified successfully',
+            });
+        }));
+        this.forgotPassword = (0, middlewares_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const email = auth_validator_1.emailSchema.parse(req === null || req === void 0 ? void 0 : req.body.email);
+            yield this.authService.forgotPassword(email);
+            return res.status(http_config_1.HTTPSTATUS.OK).json({
+                message: 'Password reset email sent',
+            });
+        }));
+        this.resetPassword = (0, middlewares_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const body = auth_validator_1.resetPasswordSchema.parse(req === null || req === void 0 ? void 0 : req.body);
+            yield this.authService.resetPassword(body);
+            return (0, cookies_1.clearAuthenticationCookies)(res).status(http_config_1.HTTPSTATUS.OK).json({
+                message: 'Reset password successfully',
+            });
+        }));
+        this.logout = (0, middlewares_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const sessionId = req.sessionId;
+            if (!sessionId) {
+                throw new catch_errors_1.NotFoundException('Session is invalid');
+            }
+            yield this.authService.logout(sessionId);
+            return (0, cookies_1.clearAuthenticationCookies)(res).status(http_config_1.HTTPSTATUS.OK).json({
+                message: 'User logout successfully',
             });
         }));
         this.authService = authService;

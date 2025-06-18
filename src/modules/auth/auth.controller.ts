@@ -83,4 +83,80 @@ export class AuthController {
       });
     },
   );
+
+  public refreshToken = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+      const refreshToken = req.cookies.refreshToken as string | undefined;
+
+      if (!refreshToken) {
+        throw new UnauthorizedException('Missing refresh token');
+      }
+
+      const { accessToken, newRefreshToken } =
+        await this.authService.refreshToken(refreshToken);
+
+      if (newRefreshToken) {
+        res.cookie(
+          'refreshToken',
+          newRefreshToken,
+          getRefreshTokenCookieOptions(),
+        );
+      }
+
+      return res
+        .status(HTTPSTATUS.OK)
+        .cookie('accessToken', accessToken, getAccessTokenCookieOptions())
+        .json({
+          message: 'Refresh access token successfully',
+        });
+    },
+  );
+
+  public verifyEmail = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+      const { code } = verificationEmailSchema.parse({
+        ...req?.body,
+      });
+
+      await this.authService.verifyEmail(code);
+      return res.status(HTTPSTATUS.OK).json({
+        message: 'Email verified successfully',
+      });
+    },
+  );
+  public forgotPassword = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+      const email = emailSchema.parse(req?.body.email);
+
+      await this.authService.forgotPassword(email);
+      return res.status(HTTPSTATUS.OK).json({
+        message: 'Password reset email sent',
+      });
+    },
+  );
+  public resetPassword = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+      const body = resetPasswordSchema.parse(req?.body);
+
+      await this.authService.resetPassword(body);
+      return clearAuthenticationCookies(res).status(HTTPSTATUS.OK).json({
+        message: 'Reset password successfully',
+      });
+    },
+  );
+
+  public logout = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+      const sessionId = req.sessionId;
+
+      if (!sessionId) {
+        throw new NotFoundException('Session is invalid');
+      }
+
+      await this.authService.logout(sessionId);
+      return clearAuthenticationCookies(res).status(HTTPSTATUS.OK).json({
+        message: 'User logout successfully',
+      });
+    },
+  );
 }

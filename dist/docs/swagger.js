@@ -36,12 +36,15 @@ exports.swaggerDocJson = {
             RegisterRequest: {
                 fullName: 'Dicki Prasetya',
                 username: 'evairo176',
-                email: 'tuyul1668@gmail.com',
-                password: '123456',
-                confirmPassword: '123456',
+                email: 'semenjakpetang176@gmail.com',
+                password: 'Juara123',
+                confirmPassword: 'Juara123',
             },
             ActivationRequest: {
                 code: 'abcdef',
+            },
+            VerifyEmailRequest: {
+                code: '58c4e36ef77049a0a69abc0dc',
             },
             UpdateProfileRequest: {
                 fullName: '',

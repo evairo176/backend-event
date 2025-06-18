@@ -93,8 +93,54 @@
         ]
       }
     },
-    "/mfa/setup": {
-      "get": {
+    "/auth/verify/email": {
+      "post": {
+        "tags": ["Auth"],
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyEmailRequest"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyEmailRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/password/forgot": {
+      "post": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/auth/password/reset": {
+      "post": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
         "description": "",
         "parameters": [
           {
@@ -110,10 +156,46 @@
             "description": ""
           }
         }
+      }
+    },
+    "/auth/refresh": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/mfa/setup": {
+      "get": {
+        "tags": ["MFA"],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": {}
+          }
+        ]
       }
     },
     "/mfa/verify": {
       "post": {
+        "tags": ["MFA"],
         "description": "",
         "parameters": [
           {
@@ -128,11 +210,17 @@
           "default": {
             "description": ""
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": {}
+          }
+        ]
       }
     },
     "/mfa/revoke": {
       "put": {
+        "tags": ["MFA"],
         "description": "",
         "parameters": [
           {
@@ -147,11 +235,17 @@
           "default": {
             "description": ""
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": {}
+          }
+        ]
       }
     },
     "/mfa/verify-login": {
       "post": {
+        "tags": ["MFA"],
         "description": "",
         "responses": {
           "default": {
@@ -164,6 +258,15 @@
       "get": {
         "tags": ["Session"],
         "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "default": {
             "description": ""
@@ -180,6 +283,15 @@
       "get": {
         "tags": ["Session"],
         "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "default": {
             "description": ""
@@ -201,6 +313,13 @@
             "name": "id",
             "in": "path",
             "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
             "schema": {
               "type": "string"
             }
@@ -256,15 +375,15 @@
           },
           "email": {
             "type": "string",
-            "example": "tuyul1668@gmail.com"
+            "example": "semenjakpetang176@gmail.com"
           },
           "password": {
             "type": "string",
-            "example": "123456"
+            "example": "Juara123"
           },
           "confirmPassword": {
             "type": "string",
-            "example": "123456"
+            "example": "Juara123"
           }
         },
         "xml": {
@@ -281,6 +400,18 @@
         },
         "xml": {
           "name": "ActivationRequest"
+        }
+      },
+      "VerifyEmailRequest": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "58c4e36ef77049a0a69abc0dc"
+          }
+        },
+        "xml": {
+          "name": "VerifyEmailRequest"
         }
       },
       "UpdateProfileRequest": {

@@ -4,7 +4,15 @@ exports.resetPasswordSchema = exports.verificationEmailSchema = exports.loginSch
 const zod_1 = require("zod");
 exports.emailSchema = zod_1.z.string().trim().email().min(1).max(255);
 exports.userNameSchema = zod_1.z.string().trim().min(1).max(50);
-exports.passwordSchema = zod_1.z.string().trim().min(6).max(255);
+exports.passwordSchema = zod_1.z
+    .string()
+    .trim()
+    .min(6)
+    .max(255)
+    .regex(/[A-Z]/, {
+    message: 'Password harus mengandung minimal 1 huruf kapital',
+})
+    .regex(/[0-9]/, { message: 'Password harus mengandung minimal 1 angka' });
 exports.verificationCodeSchema = zod_1.z.string().trim().min(1).max(25);
 exports.registerSchema = zod_1.z
     .object({

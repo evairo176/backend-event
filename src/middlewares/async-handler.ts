@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
+import { db } from '../database/database';
 
 type AsyncControllerType = (
   req: Request,
@@ -11,7 +12,18 @@ export const asyncHandler =
   async (req, res, next) => {
     try {
       await controller(req, res, next);
-    } catch (error) {
-      next(error);
+    } catch (error: any) {
+      // Simpan error ke database
+      await db.errorLog.create({
+        data: {
+          message: error.message || 'Unknown error',
+          stack: error.stack,
+          method: req.method,
+          path: req.originalUrl,
+          statusCode: res.statusCode || 500,
+        },
+      });
+
+      next(error); // teruskan ke middleware error handling Express
     }
   };

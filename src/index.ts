@@ -11,6 +11,7 @@ import passport from './middlewares/passport';
 import docs from './docs/route';
 import sessionRoutes from './modules/session/session.routes';
 import mfaRoutes from './modules/mfa/mfa.routes';
+import { setupTTLIndex } from './libs/setupTTL';
 
 const app = express();
 const BASE_PATH = config.BASE_PATH;

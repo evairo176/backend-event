@@ -68,3 +68,13 @@ model VerificationCode {
 
   @@map("verification_codes") // agar sesuai dengan collection MongoDB lama
 }
+
+model ErrorLog {
+  id         String            @id @map("_id") @default(auto()) @db.ObjectId
+  message    String
+  stack      String?
+  method     String
+  path       String
+  statusCode Int?
+  createdAt  DateTime @default(now())
+}

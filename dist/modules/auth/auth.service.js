@@ -20,6 +20,7 @@ const mailer_1 = require("../../mailers/mailer");
 const template_1 = require("../../mailers/templates/template");
 const date_time_1 = require("../../cummon/utils/date-time");
 const jwt_1 = require("../../cummon/utils/jwt");
+const http_config_1 = require("../../config/http.config");
 class AuthService {
     register(registerData) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -164,6 +165,195 @@ class AuthService {
                 refreshToken,
                 mfaRequired: false,
             };
+        });
+    }
+    refreshToken(refreshTokenData) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { payload } = (0, jwt_1.verifyJwtToken)(refreshTokenData, {
+                secret: jwt_1.refreshTokenSignOptions.secret,
+            });
+            if (!payload) {
+                throw new catch_errors_1.UnauthorizedException('Invalid refresh token');
+            }
+            const session = yield database_1.db.session.findFirst({
+                where: {
+                    id: payload.sessionId,
+                },
+            });
+            const now = Date.now();
+            if (!session) {
+                throw new catch_errors_1.UnauthorizedException('Session does not exist');
+            }
+            if (session.expiredAt.getTime() <= now) {
+                throw new catch_errors_1.UnauthorizedException('Session expired');
+            }
+            const sessionRequireRefresh = session.expiredAt.getTime() - now <= date_time_1.ONE_DAY_IN_MS;
+            if (sessionRequireRefresh) {
+                yield database_1.db.session.update({
+                    where: {
+                        id: session.id,
+                    },
+                    data: {
+                        expiredAt: (0, date_time_1.calculateExpirationDate)(app_config_1.config.JWT.REFRESH_EXPIRES_IN),
+                    },
+                });
+            }
+            const newRefreshToken = sessionRequireRefresh
+                ? (0, jwt_1.signJwtToken)({ sessionId: session.id }, jwt_1.refreshTokenSignOptions)
+                : undefined;
+            const accessToken = (0, jwt_1.signJwtToken)({
+                userId: session.userId,
+                sessionId: session.id,
+            });
+            return {
+                accessToken,
+                newRefreshToken,
+            };
+        });
+    }
+    verifyEmail(code) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const validCode = yield database_1.db.verificationCode.findFirst({
+                where: {
+                    code,
+                    type: "EMAIL_VERIFICATION" /* VerificationEnum.EMAIL_VERIFICATION */,
+                    expiresAt: {
+                        gt: new Date(),
+                    },
+                },
+            });
+            if (!validCode) {
+                throw new catch_errors_1.BadRequestException('Invalid or expired verification code');
+            }
+            const updateUser = yield database_1.db.user.update({
+                where: {
+                    id: validCode.userId,
+                },
+                data: {
+                    isEmailVerified: true,
+                },
+            });
+            if (!updateUser) {
+                throw new catch_errors_1.BadRequestException('Unable to verify email address', "VERIFICATION_ERROR" /* ErrorCode.VERIFICATION_ERROR */);
+            }
+            yield database_1.db.verificationCode.delete({
+                where: {
+                    id: validCode.id,
+                },
+            });
+            return {
+                user: updateUser,
+            };
+        });
+    }
+    forgotPassword(email) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield database_1.db.user.findFirst({
+                where: {
+                    email,
+                },
+            });
+            if (!user) {
+                throw new catch_errors_1.NotFoundException('User not found');
+            }
+            // check mail rate limit is 2 emails per 3 or 10 min
+            const timeAgo = (0, date_time_1.threeMinutesAgo)();
+            const maxAttempts = 2;
+            const count = yield database_1.db.verificationCode.count({
+                where: {
+                    userId: user.id,
+                    type: "PASSWORD_RESET" /* VerificationEnum.PASSWORD_RESET */,
+                    createdAt: {
+                        gt: timeAgo,
+                    },
+                },
+            });
+            if (count >= maxAttempts) {
+                throw new catch_errors_1.HttpException('To many request, try again later', http_config_1.HTTPSTATUS.TOO_MANY_REQUESTS, "AUTH_TOO_MANY_ATTEMPTS" /* ErrorCode.AUTH_TOO_MANY_ATTEMPTS */);
+            }
+            const expiresAt = (0, date_time_1.anHourFromNow)();
+            const validCode = yield database_1.db.verificationCode.create({
+                data: {
+                    userId: user.id,
+                    type: "PASSWORD_RESET" /* VerificationEnum.PASSWORD_RESET */,
+                    expiresAt,
+                    code: (0, uuid_1.generateUniqueCode)(),
+                },
+            });
+            const resetLink = `${app_config_1.config.APP_ORIGIN}/reset-password?code=${validCode.code}&exp=${expiresAt.getTime()}`;
+            const { data, error } = yield (0, mailer_1.sendEmail)(Object.assign({ to: user.email }, (0, template_1.passwordResetTemplate)(resetLink)));
+            if (!(data === null || data === void 0 ? void 0 : data.id)) {
+                throw new catch_errors_1.InternalServerException(`${error === null || error === void 0 ? void 0 : error.name} ${error === null || error === void 0 ? void 0 : error.message}`);
+            }
+            return {
+                url: resetLink,
+                emailId: data.id,
+            };
+        });
+    }
+    resetPassword(_a) {
+        return __awaiter(this, arguments, void 0, function* ({ password, verificationCode }) {
+            const validCode = yield database_1.db.verificationCode.findFirst({
+                where: {
+                    code: verificationCode,
+                    type: "PASSWORD_RESET" /* VerificationEnum.PASSWORD_RESET */,
+                    expiresAt: {
+                        gt: new Date(),
+                    },
+                },
+            });
+            if (!validCode) {
+                throw new catch_errors_1.NotFoundException('Invalid or expred verification code');
+            }
+            const hashPassword = yield (0, bcrypt_1.encryptValue)(password);
+            const updateUser = yield database_1.db.user.update({
+                where: {
+                    id: validCode.userId,
+                },
+                data: {
+                    password: hashPassword,
+                },
+            });
+            if (!updateUser) {
+                throw new catch_errors_1.BadRequestException('Failed to reset password');
+            }
+            yield database_1.db.verificationCode.delete({
+                where: {
+                    id: validCode.id,
+                },
+            });
+            yield database_1.db.session.deleteMany({
+                where: {
+                    userId: updateUser.id,
+                },
+            });
+            const showUser = yield database_1.db.user.findFirst({
+                where: {
+                    id: updateUser.id,
+                },
+                select: {
+                    id: true,
+                    fullname: true,
+                    email: true,
+                    isEmailVerified: true,
+                    createdAt: true,
+                    updatedAt: true,
+                    userPreferences: true,
+                    sessions: true,
+                },
+            });
+            return {
+                user: showUser,
+            };
+        });
+    }
+    logout(sessionId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield database_1.db.session.deleteMany({
+                where: {
+                    id: sessionId,
+                },
+            });
         });
     }
 }
