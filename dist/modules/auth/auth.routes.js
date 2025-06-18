@@ -2,7 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const auth_module_1 = require("./auth.module");
+const jwt_strategy_1 = require("../../cummon/strategies/jwt.strategy");
 const authRoutes = (0, express_1.Router)();
-authRoutes.post('/register', auth_module_1.authController.register);
-authRoutes.post('/login', auth_module_1.authController.login);
+authRoutes.post('/auth/register', auth_module_1.authController.register);
+authRoutes.post('/auth/login', auth_module_1.authController.login);
+authRoutes.get('/auth/me', jwt_strategy_1.authenticateJWT, auth_module_1.authController.me);
 exports.default = authRoutes;

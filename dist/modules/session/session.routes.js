@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const session_module_1 = require("./session.module");
+const jwt_strategy_1 = require("../../cummon/strategies/jwt.strategy");
+const sessionRoutes = (0, express_1.Router)();
+sessionRoutes.get('/session/all', jwt_strategy_1.authenticateJWT, session_module_1.sessionController.getAllSession);
+sessionRoutes.get('/session/', jwt_strategy_1.authenticateJWT, session_module_1.sessionController.getSession);
+sessionRoutes.delete('/session/:id', jwt_strategy_1.authenticateJWT, session_module_1.sessionController.deleteSession);
+exports.default = sessionRoutes;

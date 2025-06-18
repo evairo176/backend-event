@@ -15,6 +15,8 @@ const app_config_1 = require("./config/app.config");
 const auth_routes_1 = __importDefault(require("./modules/auth/auth.routes"));
 const passport_1 = __importDefault(require("./middlewares/passport"));
 const route_1 = __importDefault(require("./docs/route"));
+const session_routes_1 = __importDefault(require("./modules/session/session.routes"));
+const mfa_routes_1 = __importDefault(require("./modules/mfa/mfa.routes"));
 const app = (0, express_1.default)();
 const BASE_PATH = app_config_1.config.BASE_PATH;
 // Add JSON middleware to parse incoming requests
@@ -27,7 +29,8 @@ app.use((0, cookie_parser_1.default)());
 app.use(passport_1.default.initialize());
 // Enable CORS with various options
 app.use((0, cors_1.default)({
-    origin: app_config_1.config.APP_ORIGIN,
+    // origin: '*',
+    // origin: config.APP_ORIGIN,
     credentials: true,
 }));
 // Use Morgan middleware for logging requests UPDATE
@@ -37,7 +40,9 @@ app.use('/public/uploads', express_1.default.static('public/uploads'));
 app.get('/', (req, res) => {
     res.status(200).send(`Hello, TypeScript with Express!`);
 });
-app.use(`${BASE_PATH}/auth`, auth_routes_1.default);
+app.use(`${BASE_PATH}`, auth_routes_1.default);
+app.use(`${BASE_PATH}`, session_routes_1.default);
+app.use(`${BASE_PATH}`, mfa_routes_1.default);
 (0, route_1.default)(app);
 app.use(middlewares_1.errorHandler);
 app.use(middlewares_1.notFound);

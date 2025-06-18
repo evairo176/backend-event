@@ -16,7 +16,7 @@
         }
     ],
     "paths": {
-        "/register": {
+        "/auth/register": {
             "post": {
                 "tags": ["Auth"],
                 "description": "",
@@ -42,7 +42,7 @@
                 }
             }
         },
-        "/login": {
+        "/auth/login": {
             "post": {
                 "tags": ["Auth"],
                 "description": "",
@@ -66,6 +66,156 @@
                         }
                     }
                 }
+            }
+        },
+        "/auth/me": {
+            "get": {
+                "tags": ["Auth"],
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "authorization",
+                        "in": "header",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": {}
+                    }
+                ]
+            }
+        },
+        "/mfa/setup": {
+            "get": {
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "authorization",
+                        "in": "header",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/mfa/verify": {
+            "post": {
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "authorization",
+                        "in": "header",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/mfa/revoke": {
+            "put": {
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "authorization",
+                        "in": "header",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/mfa/verify-login": {
+            "post": {
+                "description": "",
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/session/all": {
+            "get": {
+                "tags": ["Session"],
+                "description": "",
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": {}
+                    }
+                ]
+            }
+        },
+        "/session/": {
+            "get": {
+                "tags": ["Session"],
+                "description": "",
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": {}
+                    }
+                ]
+            }
+        },
+        "/session/{id}": {
+            "delete": {
+                "tags": ["Session"],
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": {}
+                    }
+                ]
             }
         }
     },
@@ -82,11 +232,11 @@
                 "properties": {
                     "identifier": {
                         "type": "string",
-                        "example": "agung2025"
+                        "example": "evairo176"
                     },
                     "password": {
                         "type": "string",
-                        "example": "Agung2025!"
+                        "example": "123456"
                     }
                 },
                 "xml": {
@@ -98,23 +248,23 @@
                 "properties": {
                     "fullName": {
                         "type": "string",
-                        "example": "member2025"
+                        "example": "Dicki Prasetya"
                     },
                     "username": {
                         "type": "string",
-                        "example": "member2025"
+                        "example": "evairo176"
                     },
                     "email": {
                         "type": "string",
-                        "example": "member2025@yopmail.com"
+                        "example": "tuyul1668@gmail.com"
                     },
                     "password": {
                         "type": "string",
-                        "example": "Member2025!"
+                        "example": "123456"
                     },
                     "confirmPassword": {
                         "type": "string",
-                        "example": "Member2025!"
+                        "example": "123456"
                     }
                 },
                 "xml": {

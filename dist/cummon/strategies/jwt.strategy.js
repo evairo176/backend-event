@@ -15,20 +15,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.authenticateJWT = exports.setupJwtStrategy = void 0;
 const passport_jwt_1 = require("passport-jwt");
 const passport_1 = __importDefault(require("passport"));
-const catch_errors_1 = require("../utils/catch-errors");
 const app_config_1 = require("../../config/app.config");
 const database_1 = require("../../database/database");
+const catch_errors_1 = require("../utils/catch-errors");
 const options = {
-    jwtFromRequest: passport_jwt_1.ExtractJwt.fromExtractors([
-        (req) => {
-            var _a;
-            const accessToken = (_a = req === null || req === void 0 ? void 0 : req.cookies) === null || _a === void 0 ? void 0 : _a.accessToken;
-            if (!accessToken) {
-                throw new catch_errors_1.UnauthorizedException('Unauthorized access token', "AUTH_TOKEN_NOT_FOUND" /* ErrorCode.AUTH_TOKEN_NOT_FOUND */);
-            }
-            return accessToken;
-        },
-    ]),
+    // jwtFromRequest: ExtractJwt.fromExtractors([
+    //   (req) => {
+    //     const accessToken = req?.cookies?.accessToken;
+    //     if (!accessToken) {
+    //       throw new UnauthorizedException(
+    //         'Unauthorized access token',
+    //         ErrorCode.AUTH_TOKEN_NOT_FOUND,
+    //       );
+    //     }
+    //     return accessToken;
+    //   },
+    // ]),
+    jwtFromRequest: passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken(),
     secretOrKey: app_config_1.config.JWT.SECRET,
     audience: ['user'],
     algorithms: ['HS256'],
@@ -54,4 +57,30 @@ const setupJwtStrategy = (passport) => {
     })));
 };
 exports.setupJwtStrategy = setupJwtStrategy;
-exports.authenticateJWT = passport_1.default.authenticate('jwt', { session: false });
+const authenticateJWT = (req, res, next) => {
+    // 🔒 Validasi manual Authorization header
+    const authHeader = req.headers.authorization;
+    if (!authHeader || typeof authHeader !== 'string') {
+        throw new catch_errors_1.UnauthorizedException('Authorization header is missing', "AUTH_TOKEN_NOT_FOUND" /* ErrorCode.AUTH_TOKEN_NOT_FOUND */);
+    }
+    const [prefix, token] = authHeader.split(' ');
+    if (prefix !== 'Bearer' || !token) {
+        throw new catch_errors_1.UnauthorizedException('Authorization header is malformed', "AUTH_INVALID_TOKEN" /* ErrorCode.AUTH_INVALID_TOKEN */);
+    }
+    passport_1.default.authenticate('jwt', { session: false }, (err, user, info) => {
+        if (err || !user) {
+            if ((info === null || info === void 0 ? void 0 : info.name) === 'TokenExpiredError') {
+                throw new catch_errors_1.UnauthorizedException('Access token expired', "AUTH_TOKEN_EXPIRED" /* ErrorCode.AUTH_TOKEN_EXPIRED */);
+            }
+            if ((info === null || info === void 0 ? void 0 : info.name) === 'JsonWebTokenError') {
+                throw new catch_errors_1.UnauthorizedException('Access token is invalid', "AUTH_INVALID_TOKEN" /* ErrorCode.AUTH_INVALID_TOKEN */);
+            }
+            if ((info === null || info === void 0 ? void 0 : info.message) === 'No auth token') {
+                throw new catch_errors_1.UnauthorizedException('Access token not found', "AUTH_TOKEN_NOT_FOUND" /* ErrorCode.AUTH_TOKEN_NOT_FOUND */);
+            }
+        }
+        req.user = user;
+        next();
+    })(req, res, next);
+};
+exports.authenticateJWT = authenticateJWT;

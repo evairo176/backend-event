@@ -44,7 +44,16 @@ class AuthController {
                 .json({
                 message: 'User login successfully',
                 user: result.user,
+                accessToken: result.accessToken,
+                refreshToken: result.refreshToken,
                 mfaRequired: result.mfaRequired,
+            });
+        }));
+        this.me = (0, middlewares_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const user = req.user;
+            return res.status(http_config_1.HTTPSTATUS.OK).json({
+                message: 'get user successfully',
+                user: user,
             });
         }));
         this.authService = authService;
