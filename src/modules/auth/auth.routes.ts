@@ -1,10 +1,11 @@
 import { Router } from 'express';
 import { authController } from './auth.module';
+import { authenticateJWT } from '../../cummon/strategies/jwt.strategy';
 
 const authRoutes = Router();
 
 authRoutes.post(
-  '/register',
+  '/auth/register',
   authController.register,
 
   /*
@@ -19,7 +20,8 @@ authRoutes.post(
 );
 
 authRoutes.post(
-  '/login',
+  '/auth/login',
+
   authController.login,
   /* 
     #swagger.tags = ['Auth']
@@ -30,6 +32,18 @@ authRoutes.post(
         }
     }
     */
+);
+
+authRoutes.get(
+  '/auth/me',
+  authenticateJWT,
+  authController.me,
+  /*
+  #swagger.tags = ['Auth']
+  #swagger.security = [{
+    "bearerAuth": {}
+  }]
+  */
 );
 
 export default authRoutes;

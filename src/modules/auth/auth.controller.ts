@@ -68,8 +68,19 @@ export class AuthController {
         .json({
           message: 'User login successfully',
           user: result.user,
+          accessToken: result.accessToken,
+          refreshToken: result.refreshToken,
           mfaRequired: result.mfaRequired,
         });
+    },
+  );
+  public me = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+      const user = req.user;
+      return res.status(HTTPSTATUS.OK).json({
+        message: 'get user successfully',
+        user: user,
+      });
     },
   );
 }

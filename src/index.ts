@@ -9,6 +9,8 @@ import { config } from './config/app.config';
 import authRoutes from './modules/auth/auth.routes';
 import passport from './middlewares/passport';
 import docs from './docs/route';
+import sessionRoutes from './modules/session/session.routes';
+import mfaRoutes from './modules/mfa/mfa.routes';
 
 const app = express();
 const BASE_PATH = config.BASE_PATH;
@@ -24,7 +26,8 @@ app.use(passport.initialize());
 // Enable CORS with various options
 app.use(
   cors({
-    origin: config.APP_ORIGIN,
+    // origin: '*',
+    // origin: config.APP_ORIGIN,
     credentials: true,
   }),
 );
@@ -38,7 +41,9 @@ app.get('/', (req, res) => {
   res.status(200).send(`Hello, TypeScript with Express!`);
 });
 
-app.use(`${BASE_PATH}/auth`, authRoutes);
+app.use(`${BASE_PATH}`, authRoutes);
+app.use(`${BASE_PATH}`, sessionRoutes);
+app.use(`${BASE_PATH}`, mfaRoutes);
 
 docs(app);
 app.use(errorHandler);

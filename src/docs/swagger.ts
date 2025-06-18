@@ -25,15 +25,15 @@ export const swaggerDocJson = {
     },
     schemas: {
       LoginRequest: {
-        identifier: 'agung2025',
-        password: 'Agung2025!',
+        identifier: 'evairo176',
+        password: '123456',
       },
       RegisterRequest: {
-        fullName: 'member2025',
-        username: 'member2025',
-        email: 'member2025@yopmail.com',
-        password: 'Member2025!',
-        confirmPassword: 'Member2025!',
+        fullName: 'Dicki Prasetya',
+        username: 'evairo176',
+        email: 'tuyul1668@gmail.com',
+        password: '123456',
+        confirmPassword: '123456',
       },
       ActivationRequest: {
         code: 'abcdef',
@@ -94,7 +94,7 @@ export const swaggerDocJson = {
 };
 
 const outputFile = './swagger-output.json';
-const endPointsFiles = ['../modules/auth/auth.routes.ts'];
+const endPointsFiles = ['../modules/**/*.routes.ts'];
 
 swaggerAutogen({
   openapi: '3.0.0',
