@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -26,7 +17,7 @@ const passport_1 = __importDefault(require("./middlewares/passport"));
 const route_1 = __importDefault(require("./docs/route"));
 const session_routes_1 = __importDefault(require("./modules/session/session.routes"));
 const mfa_routes_1 = __importDefault(require("./modules/mfa/mfa.routes"));
-const setupTTL_1 = require("./libs/setupTTL");
+const scheduler_1 = require("./libs/scheduler");
 const app = (0, express_1.default)();
 const BASE_PATH = app_config_1.config.BASE_PATH;
 // Add JSON middleware to parse incoming requests
@@ -54,12 +45,13 @@ app.use(`${BASE_PATH}`, auth_routes_1.default);
 app.use(`${BASE_PATH}`, session_routes_1.default);
 app.use(`${BASE_PATH}`, mfa_routes_1.default);
 (0, route_1.default)(app);
+// scheduler
+(0, scheduler_1.scheduleErrorLogCleanup)();
 app.use(middlewares_1.errorHandler);
 app.use(middlewares_1.notFound);
 // Start the server and export the server instance
-const server = app.listen(app_config_1.config.PORT, () => __awaiter(void 0, void 0, void 0, function* () {
-    yield (0, setupTTL_1.setupTTLIndex)();
+const server = app.listen(app_config_1.config.PORT, () => {
     console.log(`Server is running on http://localhost:${app_config_1.config.PORT}${BASE_PATH} in ${app_config_1.config.NODE_ENV}`);
-}));
+});
 exports.server = server;
 exports.default = app; // Tambahkan ini agar Vercel bisa menangkap aplikasi

@@ -12,6 +12,7 @@ import docs from './docs/route';
 import sessionRoutes from './modules/session/session.routes';
 import mfaRoutes from './modules/mfa/mfa.routes';
 import { setupTTLIndex } from './libs/setupTTL';
+import { scheduleErrorLogCleanup } from './libs/scheduler';
 
 const app = express();
 const BASE_PATH = config.BASE_PATH;
@@ -47,6 +48,12 @@ app.use(`${BASE_PATH}`, sessionRoutes);
 app.use(`${BASE_PATH}`, mfaRoutes);
 
 docs(app);
+
+// scheduler
+if (process.env.NODE_ENV !== 'test') {
+  scheduleErrorLogCleanup();
+}
+
 app.use(errorHandler);
 app.use(notFound);
 
