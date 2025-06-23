@@ -8,11 +8,11 @@ import { errorHandler, morganMiddleware, notFound } from './middlewares';
 import { config } from './config/app.config';
 import authRoutes from './modules/auth/auth.routes';
 import passport from './middlewares/passport';
-import docs from './docs/route';
 import sessionRoutes from './modules/session/session.routes';
 import mfaRoutes from './modules/mfa/mfa.routes';
 import path from 'path';
 import { scheduleErrorLogCleanup } from './libs/scheduler';
+import { setupSwagger } from './docs/swagger';
 
 const app = express();
 const BASE_PATH = config.BASE_PATH;
@@ -47,7 +47,17 @@ app.use(`${BASE_PATH}`, authRoutes);
 app.use(`${BASE_PATH}`, sessionRoutes);
 app.use(`${BASE_PATH}`, mfaRoutes);
 
-docs(app);
+// Serve static files from the public directory
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Serve Swagger UI files
+app.use(
+  '/swagger-ui',
+  express.static(path.join(__dirname, '../public/swagger-ui')),
+);
+
+// Setup Swagger
+setupSwagger(app);
 
 // scheduler
 if (process.env.NODE_ENV !== 'test') {
@@ -61,6 +71,9 @@ app.use(notFound);
 const server = app.listen(config.PORT, () => {
   console.log(
     `Server is running on http://localhost:${config.PORT}${BASE_PATH} in ${config.NODE_ENV}`,
+  );
+  console.log(
+    `Swagger documentation available at http://localhost:${config.PORT}/api-docs`,
   );
 });
 

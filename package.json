@@ -13,7 +13,7 @@
     "prepare": "husky",
     "add-build": "git add dist",
     "postinstall": "npx prisma generate",
-    "docs": "ts-node src/docs/swagger.ts"
+    "docs": "ts-node src/docs/swagger-autogen.ts"
   },
   "pre-commit": [
     "build",
@@ -61,6 +61,7 @@
     "slugify": "^1.6.6",
     "speakeasy": "^2.0.0",
     "swagger-autogen": "^2.23.7",
+    "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "uuid": "^11.1.0",
     "winston": "^3.14.2",

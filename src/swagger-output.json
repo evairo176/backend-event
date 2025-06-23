@@ -1,0 +1,261 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Dokumentasi API acara",
+    "description": "Dokumentasi API untuk acara"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000/api/v1",
+      "description": "Local server"
+    },
+    {
+      "url": "https://backend-event-two.vercel.app/api/v1",
+      "description": "Production server"
+    }
+  ],
+  "paths": {},
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "schemas": {
+      "LoginRequest": {
+        "type": "object",
+        "properties": {
+          "identifier": {
+            "type": "string",
+            "example": "evairo176"
+          },
+          "password": {
+            "type": "string",
+            "example": "123456"
+          }
+        }
+      },
+      "RegisterRequest": {
+        "type": "object",
+        "properties": {
+          "fullName": {
+            "type": "string",
+            "example": "Dicki Prasetya"
+          },
+          "username": {
+            "type": "string",
+            "example": "evairo176"
+          },
+          "email": {
+            "type": "string",
+            "example": "semenjakpetang176@gmail.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "Juara123"
+          },
+          "confirmPassword": {
+            "type": "string",
+            "example": "Juara123"
+          }
+        }
+      },
+      "ActivationRequest": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "abcdef"
+          }
+        }
+      },
+      "VerifyEmailRequest": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "58c4e36ef77049a0a69abc0dc"
+          }
+        }
+      },
+      "UpdateProfileRequest": {
+        "type": "object",
+        "properties": {
+          "fullName": {
+            "type": "string",
+            "example": ""
+          },
+          "profilePicture": {
+            "type": "string",
+            "example": ""
+          }
+        }
+      },
+      "UpdatePasswordRequest": {
+        "type": "object",
+        "properties": {
+          "oldPassword": {
+            "type": "string",
+            "example": ""
+          },
+          "password": {
+            "type": "string",
+            "example": ""
+          },
+          "confirmPassword": {
+            "type": "string",
+            "example": ""
+          }
+        }
+      },
+      "CreateCategoryRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": ""
+          },
+          "description": {
+            "type": "string",
+            "example": ""
+          },
+          "icon": {
+            "type": "string",
+            "example": ""
+          }
+        }
+      },
+      "CreateEventRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": ""
+          },
+          "banner": {
+            "type": "string",
+            "example": "fileUrl"
+          },
+          "category": {
+            "type": "string",
+            "example": "category ObjectID"
+          },
+          "description": {
+            "type": "string",
+            "example": ""
+          },
+          "startDate": {
+            "type": "string",
+            "example": "yyyy-mm-dd hh:mm:ss"
+          },
+          "endDate": {
+            "type": "string",
+            "example": "yyyy-mm-dd hh:mm:ss"
+          },
+          "location": {
+            "type": "object",
+            "properties": {
+              "region": {
+                "type": "number",
+                "example": 3273
+              },
+              "coordinates": {
+                "type": "array",
+                "example": [0, 0],
+                "items": {
+                  "type": "number"
+                }
+              },
+              "address": {
+                "type": "string",
+                "example": ""
+              }
+            }
+          },
+          "isOnline": {
+            "type": "boolean",
+            "example": false
+          },
+          "isFeatured": {
+            "type": "boolean",
+            "example": false
+          },
+          "isPublish": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      },
+      "RemoveMediaRequest": {
+        "type": "object",
+        "properties": {
+          "fileUrl": {
+            "type": "string",
+            "example": ""
+          }
+        }
+      },
+      "CreateBannerRequest": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Banner 3 - Title"
+          },
+          "image": {
+            "type": "string",
+            "example": "https://res.cloudinary.com/five-code/image/upload/v1734918925/f70vpihmblj8lvdmdcrs.png"
+          },
+          "isShow": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      },
+      "CreateTicketRequest": {
+        "type": "object",
+        "properties": {
+          "price": {
+            "type": "number",
+            "example": 1500
+          },
+          "name": {
+            "type": "string",
+            "example": "Ticket Reguler"
+          },
+          "events": {
+            "type": "string",
+            "example": "6762aa5dacb76a9b3e2cb1da"
+          },
+          "description": {
+            "type": "string",
+            "example": "Ticket Reguler - Description"
+          },
+          "quantity": {
+            "type": "number",
+            "example": 100
+          }
+        }
+      },
+      "CreateOrderRequest": {
+        "type": "object",
+        "properties": {
+          "events": {
+            "type": "string",
+            "example": "event object id"
+          },
+          "ticket": {
+            "type": "string",
+            "example": "ticket object id"
+          },
+          "quantity": {
+            "type": "number",
+            "example": 1
+          }
+        }
+      }
+    }
+  }
+}
