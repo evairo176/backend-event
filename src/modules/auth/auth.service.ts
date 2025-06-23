@@ -273,20 +273,17 @@ export class AuthService {
   }
 
   public async verifyEmail(code: string) {
-    console.log('Received code:', code);
+    // console.log('Received code:', code);
 
     // Cari berdasarkan code saja dulu
     const validCode = await db.verificationCode.findFirst({
       where: {
-        code: {
-          equals: code,
-          mode: 'insensitive', // <- ini penting
-        },
+        code,
       },
     });
 
-    const verificationCodes = await db.verificationCode.findMany({});
-    console.log('All verification codes:', verificationCodes);
+    // const verificationCodes = await db.verificationCode.findMany({});
+    // console.log('All verification codes:', verificationCodes);
 
     if (!validCode) {
       throw new BadRequestException('Kode verifikasi tidak ditemukan');

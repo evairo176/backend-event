@@ -213,18 +213,15 @@ class AuthService {
     }
     verifyEmail(code) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('Received code:', code);
+            // console.log('Received code:', code);
             // Cari berdasarkan code saja dulu
             const validCode = yield database_1.db.verificationCode.findFirst({
                 where: {
-                    code: {
-                        equals: code,
-                        mode: 'insensitive', // <- ini penting
-                    },
+                    code,
                 },
             });
-            const verificationCodes = yield database_1.db.verificationCode.findMany({});
-            console.log('All verification codes:', verificationCodes);
+            // const verificationCodes = await db.verificationCode.findMany({});
+            // console.log('All verification codes:', verificationCodes);
             if (!validCode) {
                 throw new catch_errors_1.BadRequestException('Kode verifikasi tidak ditemukan');
             }
