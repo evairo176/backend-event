@@ -47,15 +47,6 @@ app.use(`${BASE_PATH}`, authRoutes);
 app.use(`${BASE_PATH}`, sessionRoutes);
 app.use(`${BASE_PATH}`, mfaRoutes);
 
-// ✅ Serve static files (favicon, etc.)
-app.use('/public', express.static(path.join(__dirname, '../public')));
-
-// ✅ Serve Swagger UI
-app.use(
-  '/swagger-ui',
-  express.static(path.join(__dirname, '../public/swagger-ui')),
-);
-
 // Setup Swagger
 setupSwagger(app);
 
@@ -73,7 +64,7 @@ const server = app.listen(config.PORT, () => {
     `Server is running on http://localhost:${config.PORT}${BASE_PATH} in ${config.NODE_ENV}`,
   );
   console.log(
-    `Swagger documentation available at http://localhost:${config.PORT}/api-docs`,
+    `Swagger documentation available at http://localhost:${config.PORT}/v1/api-docs`,
   );
 });
 
