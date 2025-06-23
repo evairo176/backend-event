@@ -47,10 +47,10 @@ app.use(`${BASE_PATH}`, authRoutes);
 app.use(`${BASE_PATH}`, sessionRoutes);
 app.use(`${BASE_PATH}`, mfaRoutes);
 
-// Serve static files from the public directory
-app.use(express.static(path.join(__dirname, 'public')));
+// ✅ Serve static files (favicon, etc.)
+app.use('/public', express.static(path.join(__dirname, '../public')));
 
-// Serve Swagger UI files
+// ✅ Serve Swagger UI
 app.use(
   '/swagger-ui',
   express.static(path.join(__dirname, '../public/swagger-ui')),

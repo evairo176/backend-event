@@ -45,9 +45,9 @@ app.get('/', (req, res) => {
 app.use(`${BASE_PATH}`, auth_routes_1.default);
 app.use(`${BASE_PATH}`, session_routes_1.default);
 app.use(`${BASE_PATH}`, mfa_routes_1.default);
-// Serve static files from the public directory
-app.use(express_1.default.static(path_1.default.join(__dirname, 'public')));
-// Serve Swagger UI files
+// ✅ Serve static files (favicon, etc.)
+app.use('/public', express_1.default.static(path_1.default.join(__dirname, '../public')));
+// ✅ Serve Swagger UI
 app.use('/swagger-ui', express_1.default.static(path_1.default.join(__dirname, '../public/swagger-ui')));
 // Setup Swagger
 (0, swagger_1.setupSwagger)(app);

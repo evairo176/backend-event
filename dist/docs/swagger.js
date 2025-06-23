@@ -12,6 +12,7 @@ const setupSwagger = (app) => {
         res.setHeader('Content-Type', 'application/json');
         res.send(swagger_output_json_1.default);
     });
+    // Redirect /api-docs to the Swagger UI
     app.get('/api-docs', (_, res) => {
         res.redirect('/swagger-ui/');
     });
