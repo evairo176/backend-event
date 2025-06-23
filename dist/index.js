@@ -46,7 +46,9 @@ app.use(`${BASE_PATH}`, session_routes_1.default);
 app.use(`${BASE_PATH}`, mfa_routes_1.default);
 (0, route_1.default)(app);
 // scheduler
-(0, scheduler_1.scheduleErrorLogCleanup)();
+if (process.env.NODE_ENV !== 'test') {
+    (0, scheduler_1.scheduleErrorLogCleanup)();
+}
 app.use(middlewares_1.errorHandler);
 app.use(middlewares_1.notFound);
 // Start the server and export the server instance
