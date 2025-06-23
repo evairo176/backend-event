@@ -231,9 +231,9 @@ class AuthService {
             if (validCode.type !== "EMAIL_VERIFICATION" /* VerificationEnum.EMAIL_VERIFICATION */) {
                 throw new catch_errors_1.BadRequestException('Tipe kode verifikasi tidak valid');
             }
-            if (validCode.expiresAt <= new Date()) {
-                throw new catch_errors_1.BadRequestException('Kode verifikasi telah kedaluwarsa');
-            }
+            // if (validCode.expiresAt <= new Date()) {
+            //   throw new BadRequestException('Kode verifikasi telah kedaluwarsa');
+            // }
             const updateUser = yield database_1.db.user.update({
                 where: {
                     id: validCode.userId,

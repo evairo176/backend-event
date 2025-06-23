@@ -296,9 +296,9 @@ export class AuthService {
       throw new BadRequestException('Tipe kode verifikasi tidak valid');
     }
 
-    if (validCode.expiresAt <= new Date()) {
-      throw new BadRequestException('Kode verifikasi telah kedaluwarsa');
-    }
+    // if (validCode.expiresAt <= new Date()) {
+    //   throw new BadRequestException('Kode verifikasi telah kedaluwarsa');
+    // }
 
     const updateUser = await db.user.update({
       where: {
