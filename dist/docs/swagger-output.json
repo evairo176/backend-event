@@ -18,9 +18,7 @@
     "paths": {
         "/auth/register": {
             "post": {
-                "tags": [
-                    "Auth"
-                ],
+                "tags": ["Auth"],
                 "description": "",
                 "responses": {
                     "default": {
@@ -46,9 +44,7 @@
         },
         "/auth/login": {
             "post": {
-                "tags": [
-                    "Auth"
-                ],
+                "tags": ["Auth"],
                 "description": "",
                 "responses": {
                     "default": {
@@ -74,9 +70,7 @@
         },
         "/auth/me": {
             "get": {
-                "tags": [
-                    "Auth"
-                ],
+                "tags": ["Auth"],
                 "description": "",
                 "parameters": [
                     {
@@ -101,9 +95,7 @@
         },
         "/auth/verify/email": {
             "post": {
-                "tags": [
-                    "Auth"
-                ],
+                "tags": ["Auth"],
                 "description": "",
                 "responses": {
                     "default": {
@@ -178,9 +170,7 @@
         },
         "/mfa/setup": {
             "get": {
-                "tags": [
-                    "MFA"
-                ],
+                "tags": ["MFA"],
                 "description": "",
                 "parameters": [
                     {
@@ -205,9 +195,7 @@
         },
         "/mfa/verify": {
             "post": {
-                "tags": [
-                    "MFA"
-                ],
+                "tags": ["MFA"],
                 "description": "",
                 "parameters": [
                     {
@@ -232,9 +220,7 @@
         },
         "/mfa/revoke": {
             "put": {
-                "tags": [
-                    "MFA"
-                ],
+                "tags": ["MFA"],
                 "description": "",
                 "parameters": [
                     {
@@ -259,9 +245,7 @@
         },
         "/mfa/verify-login": {
             "post": {
-                "tags": [
-                    "MFA"
-                ],
+                "tags": ["MFA"],
                 "description": "",
                 "responses": {
                     "default": {
@@ -272,9 +256,7 @@
         },
         "/session/all": {
             "get": {
-                "tags": [
-                    "Session"
-                ],
+                "tags": ["Session"],
                 "description": "",
                 "parameters": [
                     {
@@ -299,9 +281,7 @@
         },
         "/session/": {
             "get": {
-                "tags": [
-                    "Session"
-                ],
+                "tags": ["Session"],
                 "description": "",
                 "parameters": [
                     {
@@ -326,9 +306,7 @@
         },
         "/session/{id}": {
             "delete": {
-                "tags": [
-                    "Session"
-                ],
+                "tags": ["Session"],
                 "description": "",
                 "parameters": [
                     {
@@ -528,10 +506,7 @@
                             },
                             "coordinates": {
                                 "type": "array",
-                                "example": [
-                                    0,
-                                    0
-                                ],
+                                "example": [0, 0],
                                 "items": {
                                     "type": "number"
                                 }

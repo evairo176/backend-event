@@ -11,6 +11,6 @@ export const setupSwagger = (app: Express) => {
   });
 
   app.get('/api-docs', (_, res) => {
-    res.redirect('/v1/api-docs');
+    res.redirect('/swagger-ui/');
   });
 };

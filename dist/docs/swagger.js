@@ -13,7 +13,7 @@ const setupSwagger = (app) => {
         res.send(swagger_output_json_1.default);
     });
     app.get('/api-docs', (_, res) => {
-        res.redirect('/v1/api-docs');
+        res.redirect('/swagger-ui/');
     });
 };
 exports.setupSwagger = setupSwagger;
