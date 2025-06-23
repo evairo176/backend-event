@@ -58,7 +58,8 @@ class AuthController {
             });
         }));
         this.refreshToken = (0, middlewares_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const refreshToken = req.cookies.refreshToken;
+            const refreshToken = req.headers['refresh-token'];
+            // console.log(refreshToken);
             if (!refreshToken) {
                 throw new catch_errors_1.UnauthorizedException('Missing refresh token');
             }
@@ -71,6 +72,7 @@ class AuthController {
                 .cookie('accessToken', accessToken, (0, cookies_1.getAccessTokenCookieOptions)())
                 .json({
                 message: 'Refresh access token successfully',
+                accessToken,
             });
         }));
         this.verifyEmail = (0, middlewares_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {

@@ -9,7 +9,7 @@ const appConfig = () => ({
     BASE_PATH: (0, get_env_1.getEnv)('BASE_PATH', '/api/v1'),
     JWT: {
         SECRET: (0, get_env_1.getEnv)('JWT_SECRET'),
-        EXPIRES_IN: (0, get_env_1.getEnv)('JWT_EXPIRES_IN', '15m'),
+        EXPIRES_IN: (0, get_env_1.getEnv)('JWT_EXPIRES_IN', '1m'),
         REFRESH_SECRET: (0, get_env_1.getEnv)('JWT_REFRESH_SECRET'),
         REFRESH_EXPIRES_IN: (0, get_env_1.getEnv)('JWT_REFRESH_EXPIRES_IN', '30d'),
     },
