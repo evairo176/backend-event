@@ -11,7 +11,7 @@ import passport from './middlewares/passport';
 import docs from './docs/route';
 import sessionRoutes from './modules/session/session.routes';
 import mfaRoutes from './modules/mfa/mfa.routes';
-import { setupTTLIndex } from './libs/setupTTL';
+import path from 'path';
 import { scheduleErrorLogCleanup } from './libs/scheduler';
 
 const app = express();
