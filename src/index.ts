@@ -10,7 +10,6 @@ import authRoutes from './modules/auth/auth.routes';
 import passport from './middlewares/passport';
 import sessionRoutes from './modules/session/session.routes';
 import mfaRoutes from './modules/mfa/mfa.routes';
-import path from 'path';
 import { scheduleErrorLogCleanup } from './libs/scheduler';
 import { setupSwagger } from './docs/swagger';
 

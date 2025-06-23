@@ -89,7 +89,7 @@ export class AuthService {
     });
 
     // send email
-    const verificationUrl = `${config.APP_ORIGIN}/confirm-account?code=${verification.code}`;
+    const verificationUrl = `${config.APP_ORIGIN}/auth/confirm-account?code=${verification.code}`;
     await sendEmail({
       to: newUser.email,
       ...verifyEmailTemplate(verificationUrl),
@@ -273,18 +273,31 @@ export class AuthService {
   }
 
   public async verifyEmail(code: string) {
+    console.log('Received code:', code);
+
+    // Cari berdasarkan code saja dulu
     const validCode = await db.verificationCode.findFirst({
       where: {
-        code,
-        type: VerificationEnum.EMAIL_VERIFICATION,
-        expiresAt: {
-          gt: new Date(),
+        code: {
+          equals: code,
+          mode: 'insensitive', // <- ini penting
         },
       },
     });
 
+    const verificationCodes = await db.verificationCode.findMany({});
+    console.log('All verification codes:', verificationCodes);
+
     if (!validCode) {
-      throw new BadRequestException('Invalid or expired verification code');
+      throw new BadRequestException('Kode verifikasi tidak ditemukan');
+    }
+
+    if (validCode.type !== VerificationEnum.EMAIL_VERIFICATION) {
+      throw new BadRequestException('Tipe kode verifikasi tidak valid');
+    }
+
+    if (validCode.expiresAt <= new Date()) {
+      throw new BadRequestException('Kode verifikasi telah kedaluwarsa');
     }
 
     const updateUser = await db.user.update({

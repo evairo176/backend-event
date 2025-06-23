@@ -61,7 +61,7 @@ class AuthService {
                 },
             });
             // send email
-            const verificationUrl = `${app_config_1.config.APP_ORIGIN}/confirm-account?code=${verification.code}`;
+            const verificationUrl = `${app_config_1.config.APP_ORIGIN}/auth/confirm-account?code=${verification.code}`;
             yield (0, mailer_1.sendEmail)(Object.assign({ to: newUser.email }, (0, template_1.verifyEmailTemplate)(verificationUrl)));
             yield database_1.db.userPreferences.create({
                 data: {
@@ -213,17 +213,26 @@ class AuthService {
     }
     verifyEmail(code) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log('Received code:', code);
+            // Cari berdasarkan code saja dulu
             const validCode = yield database_1.db.verificationCode.findFirst({
                 where: {
-                    code,
-                    type: "EMAIL_VERIFICATION" /* VerificationEnum.EMAIL_VERIFICATION */,
-                    expiresAt: {
-                        gt: new Date(),
+                    code: {
+                        equals: code,
+                        mode: 'insensitive', // <- ini penting
                     },
                 },
             });
+            const verificationCodes = yield database_1.db.verificationCode.findMany({});
+            console.log('All verification codes:', verificationCodes);
             if (!validCode) {
-                throw new catch_errors_1.BadRequestException('Invalid or expired verification code');
+                throw new catch_errors_1.BadRequestException('Kode verifikasi tidak ditemukan');
+            }
+            if (validCode.type !== "EMAIL_VERIFICATION" /* VerificationEnum.EMAIL_VERIFICATION */) {
+                throw new catch_errors_1.BadRequestException('Tipe kode verifikasi tidak valid');
+            }
+            if (validCode.expiresAt <= new Date()) {
+                throw new catch_errors_1.BadRequestException('Kode verifikasi telah kedaluwarsa');
             }
             const updateUser = yield database_1.db.user.update({
                 where: {
