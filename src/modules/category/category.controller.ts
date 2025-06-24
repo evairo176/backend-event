@@ -38,10 +38,12 @@ export class CategoryController {
       return res.status(HTTPSTATUS.OK).json({
         message: 'Success find all category',
         data: categories,
-        limit,
-        page,
-        total,
-        totalPages,
+        pagination: {
+          limit,
+          page,
+          total,
+          totalPages,
+        },
       });
     },
   );

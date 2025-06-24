@@ -29,10 +29,12 @@ class CategoryController {
             return res.status(http_config_1.HTTPSTATUS.OK).json({
                 message: 'Success find all category',
                 data: categories,
-                limit,
-                page,
-                total,
-                totalPages,
+                pagination: {
+                    limit,
+                    page,
+                    total,
+                    totalPages,
+                },
             });
         }));
         this.findOne = (0, middlewares_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
