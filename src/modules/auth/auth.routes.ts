@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import { authController } from './auth.module';
 import { authenticateJWT } from '../../cummon/strategies/jwt.strategy';
+import aclMiddleware from '../../middlewares/acl.middleware';
+import { ROLES } from '../../cummon/enums/role.enum';
 
 const authRoutes = Router();
 
@@ -64,5 +66,16 @@ authRoutes.post('/auth/password/reset', authController.resetPassword);
 authRoutes.post('/auth/logout', authenticateJWT, authController.logout);
 
 authRoutes.get('/auth/refresh', authController.refreshToken);
+
+authRoutes.get(
+  '/test-acl',
+  authenticateJWT,
+  aclMiddleware([ROLES.ADMIN, ROLES.MEMBER]),
+  (req, res) => {
+    return res.status(200).json({
+      message: 'success',
+    });
+  },
+);
 
 export default authRoutes;

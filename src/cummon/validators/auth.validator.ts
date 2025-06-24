@@ -40,3 +40,7 @@ export const resetPasswordSchema = z.object({
   password: passwordSchema,
   verificationCode: verificationCodeSchema,
 });
+
+export const removeFileSchema = z.object({
+  fileUrl: z.string(),
+});

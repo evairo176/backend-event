@@ -13,11 +13,12 @@ const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const middlewares_1 = require("./middlewares");
 const app_config_1 = require("./config/app.config");
 const auth_routes_1 = __importDefault(require("./modules/auth/auth.routes"));
-const passport_1 = __importDefault(require("./middlewares/passport"));
+const passport_middleware_1 = __importDefault(require("./middlewares/passport.middleware"));
 const session_routes_1 = __importDefault(require("./modules/session/session.routes"));
 const mfa_routes_1 = __importDefault(require("./modules/mfa/mfa.routes"));
 const scheduler_1 = require("./libs/scheduler");
 const swagger_1 = require("./docs/swagger");
+const media_routes_1 = __importDefault(require("./modules/media/media.routes"));
 const app = (0, express_1.default)();
 const BASE_PATH = app_config_1.config.BASE_PATH;
 // Add JSON middleware to parse incoming requests
@@ -27,7 +28,7 @@ app.use(express_1.default.urlencoded({ extended: true })); // Ubah limit menjadi
 app.use((0, helmet_1.default)());
 //set coookie
 app.use((0, cookie_parser_1.default)());
-app.use(passport_1.default.initialize());
+app.use(passport_middleware_1.default.initialize());
 // Enable CORS with various options
 app.use((0, cors_1.default)({
     // origin: '*',
@@ -44,6 +45,7 @@ app.get('/', (req, res) => {
 app.use(`${BASE_PATH}`, auth_routes_1.default);
 app.use(`${BASE_PATH}`, session_routes_1.default);
 app.use(`${BASE_PATH}`, mfa_routes_1.default);
+app.use(`${BASE_PATH}`, media_routes_1.default);
 // Setup Swagger
 (0, swagger_1.setupSwagger)(app);
 // scheduler

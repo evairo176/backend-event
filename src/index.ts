@@ -7,11 +7,12 @@ import cookieParser from 'cookie-parser';
 import { errorHandler, morganMiddleware, notFound } from './middlewares';
 import { config } from './config/app.config';
 import authRoutes from './modules/auth/auth.routes';
-import passport from './middlewares/passport';
+import passport from './middlewares/passport.middleware';
 import sessionRoutes from './modules/session/session.routes';
 import mfaRoutes from './modules/mfa/mfa.routes';
 import { scheduleErrorLogCleanup } from './libs/scheduler';
 import { setupSwagger } from './docs/swagger';
+import mediaRoutes from './modules/media/media.routes';
 
 const app = express();
 const BASE_PATH = config.BASE_PATH;
@@ -45,6 +46,7 @@ app.get('/', (req, res) => {
 app.use(`${BASE_PATH}`, authRoutes);
 app.use(`${BASE_PATH}`, sessionRoutes);
 app.use(`${BASE_PATH}`, mfaRoutes);
+app.use(`${BASE_PATH}`, mediaRoutes);
 
 // Setup Swagger
 setupSwagger(app);

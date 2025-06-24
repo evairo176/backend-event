@@ -1,6 +1,6 @@
-import { asyncHandler } from './async-handler';
-import { errorHandler } from './error-handler';
-import morganMiddleware from './morgan';
-import { notFound } from './not-found';
+import { asyncHandler } from './async-handler.middleware';
+import { errorHandler } from './error-handler.middleware';
+import morganMiddleware from './morgan.middleware';
+import { notFound } from './not-found.middleware';
 
 export { morganMiddleware, notFound, errorHandler, asyncHandler };

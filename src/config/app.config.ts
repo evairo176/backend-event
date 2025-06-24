@@ -17,6 +17,11 @@ const appConfig = () => ({
   MAILER_SENDER: getEnv('MAILER_SENDER'),
   RESEND_API_KEY: getEnv('RESEND_API_KEY'),
   DATABASE_URL: getEnv('DATABASE_URL'),
+  CLOUDINARY_CLOUD: {
+    NAME: getEnv('CLOUDINARY_CLOUD_NAME'),
+    API_KEY: getEnv('CLOUDINARY_CLOUD_API_KEY'),
+    API_SECRET: getEnv('CLOUDINARY_CLOUD_API_SECRET'),
+  },
 });
 
 export const config = appConfig();
