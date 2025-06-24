@@ -44,6 +44,7 @@ app.get('/', (req, res) => {
   res.status(200).send(`Hello, TypeScript with Express!`);
 });
 
+// all routes
 app.use(`${BASE_PATH}`, authRoutes);
 app.use(`${BASE_PATH}`, sessionRoutes);
 app.use(`${BASE_PATH}`, mfaRoutes);

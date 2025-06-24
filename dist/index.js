@@ -43,6 +43,7 @@ app.use('/public/uploads', express_1.default.static('public/uploads'));
 app.get('/', (req, res) => {
     res.status(200).send(`Hello, TypeScript with Express!`);
 });
+// all routes
 app.use(`${BASE_PATH}`, auth_routes_1.default);
 app.use(`${BASE_PATH}`, session_routes_1.default);
 app.use(`${BASE_PATH}`, mfa_routes_1.default);
