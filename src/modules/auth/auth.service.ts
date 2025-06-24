@@ -207,6 +207,7 @@ export class AuthService {
         createdAt: true,
         updatedAt: true,
         userPreferences: true,
+        role: true,
       },
     });
 

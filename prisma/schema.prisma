@@ -24,7 +24,7 @@ model User {
   username         String            @unique
   email            String            @unique
   password         String
-  role         String?
+  role         String? @default("user")
   profilePicture         String @default("user.jpg")
   activationCode         String?
   isEmailVerified  Boolean           @default(false)
