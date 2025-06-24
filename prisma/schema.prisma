@@ -85,3 +85,13 @@ model ErrorLog {
   statusCode Int?
   createdAt  DateTime @default(now())
 }
+
+model Category {
+  id         String            @id @map("_id") @default(auto()) @db.ObjectId
+  name   String @unique
+  description String?
+  icon  String
+
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+}

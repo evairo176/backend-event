@@ -13,7 +13,7 @@ exports.MediaController = void 0;
 const middlewares_1 = require("../../middlewares");
 const catch_errors_1 = require("../../cummon/utils/catch-errors");
 const http_config_1 = require("../../config/http.config");
-const auth_validator_1 = require("../../cummon/validators/auth.validator");
+const media_validator_1 = require("../../cummon/validators/media.validator");
 class MediaController {
     constructor(mediaService) {
         this.single = (0, middlewares_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
@@ -37,7 +37,7 @@ class MediaController {
             });
         }));
         this.remove = (0, middlewares_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const { fileUrl } = auth_validator_1.removeFileSchema.parse(Object.assign({}, req === null || req === void 0 ? void 0 : req.body));
+            const { fileUrl } = media_validator_1.removeFileSchema.parse(Object.assign({}, req === null || req === void 0 ? void 0 : req.body));
             const result = yield this.mediaService.remove(fileUrl);
             return res.status(http_config_1.HTTPSTATUS.OK).json({
                 message: 'Success remove file',

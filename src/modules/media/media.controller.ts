@@ -3,7 +3,7 @@ import { MediaService } from './media.service';
 import { asyncHandler } from '../../middlewares';
 import { BadRequestException } from '../../cummon/utils/catch-errors';
 import { HTTPSTATUS } from '../../config/http.config';
-import { removeFileSchema } from '../../cummon/validators/auth.validator';
+import { removeFileSchema } from '../../cummon/validators/media.validator';
 
 export class MediaController {
   private mediaService: MediaService;

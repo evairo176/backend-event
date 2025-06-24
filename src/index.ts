@@ -13,6 +13,7 @@ import mfaRoutes from './modules/mfa/mfa.routes';
 import { scheduleErrorLogCleanup } from './libs/scheduler';
 import { setupSwagger } from './docs/swagger';
 import mediaRoutes from './modules/media/media.routes';
+import categoryRoutes from './modules/category/category.routes';
 
 const app = express();
 const BASE_PATH = config.BASE_PATH;
@@ -47,6 +48,7 @@ app.use(`${BASE_PATH}`, authRoutes);
 app.use(`${BASE_PATH}`, sessionRoutes);
 app.use(`${BASE_PATH}`, mfaRoutes);
 app.use(`${BASE_PATH}`, mediaRoutes);
+app.use(`${BASE_PATH}`, categoryRoutes);
 
 // Setup Swagger
 setupSwagger(app);
