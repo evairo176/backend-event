@@ -4,17 +4,22 @@ dotenv.config();
 import helmet from 'helmet';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import { errorHandler, morganMiddleware, notFound } from './middlewares';
 import { config } from './config/app.config';
-import authRoutes from './modules/auth/auth.routes';
-import passport from './middlewares/passport.middleware';
-import sessionRoutes from './modules/session/session.routes';
-import mfaRoutes from './modules/mfa/mfa.routes';
 import { scheduleErrorLogCleanup } from './libs/scheduler';
 import { setupSwagger } from './docs/swagger';
-import mediaRoutes from './modules/media/media.routes';
+
+import morganMiddleware from './middlewares/morgan.middleware';
+import { errorHandler } from './middlewares/error-handler.middleware';
+import { notFound } from './middlewares/not-found.middleware';
+import passport from './middlewares/passport.middleware';
+
+import eventRoutes from './modules/event/event.routes';
 import categoryRoutes from './modules/category/category.routes';
 import regionRoutes from './modules/region/region.routes';
+import sessionRoutes from './modules/session/session.routes';
+import authRoutes from './modules/auth/auth.routes';
+import mediaRoutes from './modules/media/media.routes';
+import mfaRoutes from './modules/mfa/mfa.routes';
 
 const app = express();
 const BASE_PATH = config.BASE_PATH;
@@ -52,6 +57,7 @@ app.use(`${BASE_PATH}`, mfaRoutes);
 app.use(`${BASE_PATH}`, mediaRoutes);
 app.use(`${BASE_PATH}`, categoryRoutes);
 app.use(`${BASE_PATH}`, regionRoutes);
+app.use(`${BASE_PATH}`, eventRoutes);
 
 // Setup Swagger
 setupSwagger(app);

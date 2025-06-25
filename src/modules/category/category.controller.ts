@@ -1,10 +1,9 @@
 import { Request, Response } from 'express';
-import { asyncHandler } from '../../middlewares';
-import { BadRequestException } from '../../cummon/utils/catch-errors';
 import { HTTPSTATUS } from '../../config/http.config';
 import { CategoryService } from './category.service';
 import { createCategorySchema } from '../../cummon/validators/category.validator';
 import { IPaginationQuery } from '../../cummon/interface/category.interface';
+import { asyncHandler } from '../../middlewares/async-handler.middleware';
 
 export class CategoryController {
   private categoryService: CategoryService;

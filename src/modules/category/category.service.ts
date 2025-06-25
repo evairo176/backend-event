@@ -60,7 +60,7 @@ export class CategoryService {
         where: query,
         skip,
         take,
-        orderBy: { createdAt: 'desc' },
+        orderBy: { updatedAt: 'desc' },
       }),
       db.category.count({
         where: query,

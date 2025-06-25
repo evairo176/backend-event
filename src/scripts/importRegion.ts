@@ -77,6 +77,7 @@ async function main() {
 
   await db.district.createMany({
     data: districtsData,
+    // skipDuplicates: true, // This skips records with unique constraint conflicts
   });
 
   // === Import Villages (Bulk) ===
@@ -88,19 +89,17 @@ async function main() {
     select: { id: true, code: true },
   });
   const districtMap = new Map(districtsInDb.map((d) => [d.code, d.id]));
-  const villagesData: any = villagesRaw
-    .map((row) => {
-      const [code, districtCode, name] = Object.values(row);
-      return {
-        code,
-        name,
-        districtId: districtMap.get(districtCode),
-      };
-    })
-    .filter((v) => v.districtId);
+  const villagesData = new Map<string, any>();
+  villagesRaw.forEach((row) => {
+    const [code, districtCode, name] = Object.values(row);
+    const districtId = districtMap.get(districtCode);
+    if (districtId && !villagesData.has(code)) {
+      villagesData.set(code, { code, name, districtId });
+    }
+  });
 
   await db.village.createMany({
-    data: villagesData,
+    data: Array.from(villagesData.values()),
   });
 
   console.log('✅ Import selesai dengan createMany!');

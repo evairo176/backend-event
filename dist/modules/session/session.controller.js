@@ -10,13 +10,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SessionController = void 0;
-const middlewares_1 = require("../../middlewares");
 const http_config_1 = require("../../config/http.config");
 const catch_errors_1 = require("../../cummon/utils/catch-errors");
 const zod_1 = require("zod");
+const async_handler_middleware_1 = require("../../middlewares/async-handler.middleware");
 class SessionController {
     constructor(sessionService) {
-        this.getAllSession = (0, middlewares_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.getAllSession = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             var _a;
             const userId = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.id;
             const sessionId = req.sessionId;
@@ -29,7 +29,7 @@ class SessionController {
                 sessions: modifySession,
             });
         }));
-        this.getSession = (0, middlewares_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.getSession = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             const sessionId = req.sessionId;
             if (!sessionId) {
                 throw new catch_errors_1.NotFoundException('Session ID not found. please login again');
@@ -40,7 +40,7 @@ class SessionController {
                 user,
             });
         }));
-        this.deleteSession = (0, middlewares_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.deleteSession = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             var _a, _b;
             const sessionId = zod_1.z.string().parse((_a = req === null || req === void 0 ? void 0 : req.params) === null || _a === void 0 ? void 0 : _a.id);
             const userId = (_b = req === null || req === void 0 ? void 0 : req.user) === null || _b === void 0 ? void 0 : _b.id;

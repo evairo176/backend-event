@@ -9,11 +9,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const middlewares_1 = require("../../middlewares");
 const http_config_1 = require("../../config/http.config");
+const async_handler_middleware_1 = require("../../middlewares/async-handler.middleware");
 class RegionController {
     constructor(regionService) {
-        this.findByCity = (0, middlewares_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.findByCity = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             const query = req.query;
             const result = yield this.regionService.findByCity(query === null || query === void 0 ? void 0 : query.name);
             return res.status(http_config_1.HTTPSTATUS.OK).json({
@@ -21,14 +21,14 @@ class RegionController {
                 data: result,
             });
         }));
-        this.getAllProvinces = (0, middlewares_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.getAllProvinces = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             const result = yield this.regionService.getAllProvinces();
             return res.status(http_config_1.HTTPSTATUS.OK).json({
                 message: 'Success get all provinces',
                 data: result,
             });
         }));
-        this.getProvince = (0, middlewares_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.getProvince = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             const params = req.params;
             const result = yield this.regionService.getProvince(params === null || params === void 0 ? void 0 : params.code);
             return res.status(http_config_1.HTTPSTATUS.OK).json({
@@ -36,7 +36,7 @@ class RegionController {
                 data: result,
             });
         }));
-        this.getRegency = (0, middlewares_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.getRegency = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             const query = req.query;
             const result = yield this.regionService.getRegency(query === null || query === void 0 ? void 0 : query.code);
             return res.status(http_config_1.HTTPSTATUS.OK).json({
@@ -44,7 +44,7 @@ class RegionController {
                 data: result,
             });
         }));
-        this.getDistrict = (0, middlewares_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.getDistrict = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             const query = req.query;
             const result = yield this.regionService.getDistrict(query === null || query === void 0 ? void 0 : query.code);
             return res.status(http_config_1.HTTPSTATUS.OK).json({
@@ -52,7 +52,7 @@ class RegionController {
                 data: result,
             });
         }));
-        this.getVillage = (0, middlewares_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.getVillage = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             const query = req.query;
             const result = yield this.regionService.getVillage(query === null || query === void 0 ? void 0 : query.code);
             return res.status(http_config_1.HTTPSTATUS.OK).json({

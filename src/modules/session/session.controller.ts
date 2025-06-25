@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import { asyncHandler } from '../../middlewares';
 import { SessionService } from './session.service';
 import { HTTPSTATUS } from '../../config/http.config';
 import { NotFoundException } from '../../cummon/utils/catch-errors';
 import { z } from 'zod';
+import { asyncHandler } from '../../middlewares/async-handler.middleware';
 
 export class SessionController {
   private sessionService: SessionService;

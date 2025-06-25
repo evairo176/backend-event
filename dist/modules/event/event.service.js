@@ -8,29 +8,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CategoryService = void 0;
 const catch_errors_1 = require("../../cummon/utils/catch-errors");
+const slug_1 = __importDefault(require("../../cummon/utils/slug"));
 const database_1 = require("../../database/database");
-class CategoryService {
-    create(_a) {
-        return __awaiter(this, arguments, void 0, function* ({ name, description, icon }) {
-            const findCategory = yield database_1.db.category.findFirst({
-                where: {
-                    name: name,
-                },
+class EventService {
+    create(body) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const nameSlug = slug_1.default.generate(body.name);
+            const result = yield database_1.db.event.create({
+                data: Object.assign(Object.assign({}, body), { slug: nameSlug }),
             });
-            if (findCategory) {
-                throw new catch_errors_1.BadRequestException('Category already exists with this name', "CATEGORY_NAME_ALREADY_EXISTS" /* ErrorCode.CATEGORY_NAME_ALREADY_EXISTS */);
-            }
-            const category = yield database_1.db.category.create({
-                data: {
-                    name,
-                    description,
-                    icon,
-                },
-            });
-            return category;
+            return result;
         });
     }
     findAll(_a) {
@@ -54,19 +46,19 @@ class CategoryService {
                     },
                 ];
             }
-            const [categories, total] = yield Promise.all([
-                database_1.db.category.findMany({
+            const [events, total] = yield Promise.all([
+                database_1.db.event.findMany({
                     where: query,
                     skip,
                     take,
                     orderBy: { updatedAt: 'desc' },
                 }),
-                database_1.db.category.count({
+                database_1.db.event.count({
                     where: query,
                 }),
             ]);
             return {
-                categories,
+                events,
                 page: Number(page),
                 limit: Number(limit),
                 total,
@@ -76,60 +68,65 @@ class CategoryService {
     }
     findOne(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const category = yield database_1.db.category.findFirst({
+            const result = yield database_1.db.event.findFirst({
                 where: {
                     id,
                 },
             });
-            return {
-                category,
-            };
+            return result;
         });
     }
-    update(id_1, _a) {
-        return __awaiter(this, arguments, void 0, function* (id, { name, description, icon }) {
-            // Cari kategori dengan nama yang sama, tapi berbeda ID
-            const findCategory = yield database_1.db.category.findFirst({
+    update(id, body) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const nameSlug = slug_1.default.generate(body === null || body === void 0 ? void 0 : body.name);
+            const findEvent = yield database_1.db.event.findFirst({
                 where: {
-                    name: name,
+                    name: nameSlug,
                     NOT: {
                         id: id,
                     },
                 },
             });
-            if (findCategory) {
-                throw new catch_errors_1.BadRequestException('Category already exists with this name', "CATEGORY_NAME_ALREADY_EXISTS" /* ErrorCode.CATEGORY_NAME_ALREADY_EXISTS */);
+            if (findEvent) {
+                throw new catch_errors_1.BadRequestException('Event already exists with this name', "EVENT_NAME_ALREADY_EXISTS" /* ErrorCode.EVENT_NAME_ALREADY_EXISTS */);
             }
-            // Lakukan update
-            const category = yield database_1.db.category.update({
-                where: { id },
-                data: {
-                    name,
-                    description,
-                    icon,
+            const updatedEvent = yield database_1.db.event.update({
+                where: {
+                    id,
                 },
+                data: Object.assign(Object.assign({}, body), { slug: nameSlug }),
             });
-            return category;
+            return updatedEvent;
         });
     }
     remove(id) {
         return __awaiter(this, void 0, void 0, function* () {
             // Cari kategori dengan nama yang sama, tapi berbeda ID
-            const findCategory = yield database_1.db.category.findFirst({
+            const findEvent = yield database_1.db.event.findFirst({
                 where: {
                     id,
                 },
             });
-            if (!findCategory) {
-                throw new catch_errors_1.BadRequestException('Category not exists', "RESOURCE_NOT_FOUND" /* ErrorCode.RESOURCE_NOT_FOUND */);
+            if (!findEvent) {
+                throw new catch_errors_1.BadRequestException('Event not exists', "RESOURCE_NOT_FOUND" /* ErrorCode.RESOURCE_NOT_FOUND */);
             }
-            yield database_1.db.category.delete({
+            yield database_1.db.event.delete({
                 where: {
-                    id: findCategory.id,
+                    id: findEvent.id,
                 },
             });
-            return findCategory;
+            return findEvent;
+        });
+    }
+    findOneBySlug(slug) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield database_1.db.event.findFirst({
+                where: {
+                    slug,
+                },
+            });
+            return result;
         });
     }
 }
-exports.CategoryService = CategoryService;
+exports.default = EventService;

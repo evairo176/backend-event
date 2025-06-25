@@ -10,17 +10,20 @@ dotenv_1.default.config();
 const helmet_1 = __importDefault(require("helmet"));
 const cors_1 = __importDefault(require("cors"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
-const middlewares_1 = require("./middlewares");
 const app_config_1 = require("./config/app.config");
-const auth_routes_1 = __importDefault(require("./modules/auth/auth.routes"));
-const passport_middleware_1 = __importDefault(require("./middlewares/passport.middleware"));
-const session_routes_1 = __importDefault(require("./modules/session/session.routes"));
-const mfa_routes_1 = __importDefault(require("./modules/mfa/mfa.routes"));
 const scheduler_1 = require("./libs/scheduler");
 const swagger_1 = require("./docs/swagger");
-const media_routes_1 = __importDefault(require("./modules/media/media.routes"));
+const morgan_middleware_1 = __importDefault(require("./middlewares/morgan.middleware"));
+const error_handler_middleware_1 = require("./middlewares/error-handler.middleware");
+const not_found_middleware_1 = require("./middlewares/not-found.middleware");
+const passport_middleware_1 = __importDefault(require("./middlewares/passport.middleware"));
+const event_routes_1 = __importDefault(require("./modules/event/event.routes"));
 const category_routes_1 = __importDefault(require("./modules/category/category.routes"));
 const region_routes_1 = __importDefault(require("./modules/region/region.routes"));
+const session_routes_1 = __importDefault(require("./modules/session/session.routes"));
+const auth_routes_1 = __importDefault(require("./modules/auth/auth.routes"));
+const media_routes_1 = __importDefault(require("./modules/media/media.routes"));
+const mfa_routes_1 = __importDefault(require("./modules/mfa/mfa.routes"));
 const app = (0, express_1.default)();
 const BASE_PATH = app_config_1.config.BASE_PATH;
 // Add JSON middleware to parse incoming requests
@@ -38,7 +41,7 @@ app.use((0, cors_1.default)({
     credentials: true,
 }));
 // Use Morgan middleware for logging requests UPDATE
-app.use(middlewares_1.morganMiddleware);
+app.use(morgan_middleware_1.default);
 // app.use(express.static('public'));
 app.use('/public/uploads', express_1.default.static('public/uploads'));
 app.get('/', (req, res) => {
@@ -51,14 +54,15 @@ app.use(`${BASE_PATH}`, mfa_routes_1.default);
 app.use(`${BASE_PATH}`, media_routes_1.default);
 app.use(`${BASE_PATH}`, category_routes_1.default);
 app.use(`${BASE_PATH}`, region_routes_1.default);
+app.use(`${BASE_PATH}`, event_routes_1.default);
 // Setup Swagger
 (0, swagger_1.setupSwagger)(app);
 // scheduler
 if (process.env.NODE_ENV !== 'test') {
     (0, scheduler_1.scheduleErrorLogCleanup)();
 }
-app.use(middlewares_1.errorHandler);
-app.use(middlewares_1.notFound);
+app.use(error_handler_middleware_1.errorHandler);
+app.use(not_found_middleware_1.notFound);
 // Start the server and export the server instance
 const server = app.listen(app_config_1.config.PORT, () => {
     console.log(`Server is running on http://localhost:${app_config_1.config.PORT}${BASE_PATH} in ${app_config_1.config.NODE_ENV}`);

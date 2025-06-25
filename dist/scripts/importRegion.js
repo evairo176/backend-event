@@ -78,6 +78,7 @@ function main() {
             .filter((d) => d.regencyId);
         yield database_1.db.district.createMany({
             data: districtsData,
+            // skipDuplicates: true, // This skips records with unique constraint conflicts
         });
         // === Import Villages (Bulk) ===
         const villagesRaw = yield importCSV(path_1.default.join(__dirname, '../data/villages.csv'));
@@ -85,18 +86,16 @@ function main() {
             select: { id: true, code: true },
         });
         const districtMap = new Map(districtsInDb.map((d) => [d.code, d.id]));
-        const villagesData = villagesRaw
-            .map((row) => {
+        const villagesData = new Map();
+        villagesRaw.forEach((row) => {
             const [code, districtCode, name] = Object.values(row);
-            return {
-                code,
-                name,
-                districtId: districtMap.get(districtCode),
-            };
-        })
-            .filter((v) => v.districtId);
+            const districtId = districtMap.get(districtCode);
+            if (districtId && !villagesData.has(code)) {
+                villagesData.set(code, { code, name, districtId });
+            }
+        });
         yield database_1.db.village.createMany({
-            data: villagesData,
+            data: Array.from(villagesData.values()),
         });
         console.log('✅ Import selesai dengan createMany!');
     });

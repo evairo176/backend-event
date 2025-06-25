@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
 import { HTTPSTATUS } from '../../config/http.config';
-import { asyncHandler } from '../../middlewares';
 import { MfaService } from './mfa.service';
 import {
   verifyMFAForLoginSchema,
   verifyMfaSchema,
 } from '../../cummon/validators/mfa.validator';
 import { setAuthenticationCookies } from '../../cummon/utils/cookies';
+import { asyncHandler } from '../../middlewares/async-handler.middleware';
 
 export class MfaController {
   private mfaService: MfaService;

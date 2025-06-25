@@ -11,12 +11,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MfaController = void 0;
 const http_config_1 = require("../../config/http.config");
-const middlewares_1 = require("../../middlewares");
 const mfa_validator_1 = require("../../cummon/validators/mfa.validator");
 const cookies_1 = require("../../cummon/utils/cookies");
+const async_handler_middleware_1 = require("../../middlewares/async-handler.middleware");
 class MfaController {
     constructor(mfaService) {
-        this.generateMFASetup = (0, middlewares_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.generateMFASetup = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             const { secret, qrImageUrl, message } = yield this.mfaService.generateMFASetup(req);
             return res.status(http_config_1.HTTPSTATUS.OK).json({
                 message,
@@ -24,7 +24,7 @@ class MfaController {
                 qrImageUrl,
             });
         }));
-        this.verifyMFASetup = (0, middlewares_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.verifyMFASetup = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             const { code, secretKey } = mfa_validator_1.verifyMfaSchema.parse(Object.assign({}, req === null || req === void 0 ? void 0 : req.body));
             const { message, userPreferences } = yield this.mfaService.verifyMFASetup(req, code, secretKey);
             return res.status(http_config_1.HTTPSTATUS.OK).json({
@@ -32,14 +32,14 @@ class MfaController {
                 userPreferences,
             });
         }));
-        this.revokeMFASetup = (0, middlewares_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.revokeMFASetup = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             const { message, userPreferences } = yield this.mfaService.revokeMFASetup(req);
             return res.status(http_config_1.HTTPSTATUS.OK).json({
                 message,
                 userPreferences,
             });
         }));
-        this.verifyMFAForLogin = (0, middlewares_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.verifyMFAForLogin = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             const { code, email, userAgent } = mfa_validator_1.verifyMFAForLoginSchema.parse(Object.assign(Object.assign({}, req === null || req === void 0 ? void 0 : req.body), { userAgent: req.headers['user-agent'] }));
             const { user, accessToken, refreshToken } = yield this.mfaService.verifyMFAForLogin(code, email, userAgent);
             return (0, cookies_1.setAuthenticationCookies)({ res, accessToken, refreshToken })

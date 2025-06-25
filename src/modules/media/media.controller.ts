@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import { MediaService } from './media.service';
-import { asyncHandler } from '../../middlewares';
 import { BadRequestException } from '../../cummon/utils/catch-errors';
 import { HTTPSTATUS } from '../../config/http.config';
 import { removeFileSchema } from '../../cummon/validators/media.validator';
+import { asyncHandler } from '../../middlewares/async-handler.middleware';
 
 export class MediaController {
   private mediaService: MediaService;

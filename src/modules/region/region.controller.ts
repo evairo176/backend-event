@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { asyncHandler } from '../../middlewares';
 import RegionService from './region.service';
 import { HTTPSTATUS } from '../../config/http.config';
+import { asyncHandler } from '../../middlewares/async-handler.middleware';
 
 export default class RegionController {
   private regionService: RegionService;

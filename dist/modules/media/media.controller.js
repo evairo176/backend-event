@@ -10,13 +10,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MediaController = void 0;
-const middlewares_1 = require("../../middlewares");
 const catch_errors_1 = require("../../cummon/utils/catch-errors");
 const http_config_1 = require("../../config/http.config");
 const media_validator_1 = require("../../cummon/validators/media.validator");
+const async_handler_middleware_1 = require("../../middlewares/async-handler.middleware");
 class MediaController {
     constructor(mediaService) {
-        this.single = (0, middlewares_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.single = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             if (!req.file) {
                 throw new catch_errors_1.BadRequestException('File is not exist');
             }
@@ -26,7 +26,7 @@ class MediaController {
                 data: result,
             });
         }));
-        this.multiple = (0, middlewares_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.multiple = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             if (!req.files || req.files.length === 0) {
                 throw new catch_errors_1.BadRequestException('Files is not exist');
             }
@@ -36,7 +36,7 @@ class MediaController {
                 data: result,
             });
         }));
-        this.remove = (0, middlewares_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.remove = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             const { fileUrl } = media_validator_1.removeFileSchema.parse(Object.assign({}, req === null || req === void 0 ? void 0 : req.body));
             const result = yield this.mediaService.remove(fileUrl);
             return res.status(http_config_1.HTTPSTATUS.OK).json({

@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { asyncHandler } from '../../middlewares';
 import { AuthService } from './auth.service';
 import { HTTPSTATUS } from '../../config/http.config';
 import {
@@ -19,6 +18,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '../../cummon/utils/catch-errors';
+import { asyncHandler } from '../../middlewares/async-handler.middleware';
 
 export class AuthController {
   private authService: AuthService;

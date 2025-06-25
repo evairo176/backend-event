@@ -9,26 +9,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CategoryController = void 0;
-const http_config_1 = require("../../config/http.config");
-const category_validator_1 = require("../../cummon/validators/category.validator");
 const async_handler_middleware_1 = require("../../middlewares/async-handler.middleware");
-class CategoryController {
-    constructor(categoryService) {
+const http_config_1 = require("../../config/http.config");
+const event_validator_1 = require("../../cummon/validators/event.validator");
+class EventController {
+    constructor(eventService) {
         this.create = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const body = category_validator_1.createCategorySchema.parse(Object.assign({}, req === null || req === void 0 ? void 0 : req.body));
-            const result = yield this.categoryService.create(body);
+            const body = event_validator_1.createEventSchema.parse(Object.assign({}, req.body));
+            const result = yield this.eventService.create(body);
             return res.status(http_config_1.HTTPSTATUS.CREATED).json({
-                message: 'Create category successfully',
+                message: 'Create event successfully',
                 data: result,
             });
         }));
         this.findAll = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             const query = req === null || req === void 0 ? void 0 : req.query;
-            const { categories, limit, page, total, totalPages } = yield this.categoryService.findAll(query);
+            const { events, limit, page, total, totalPages } = yield this.eventService.findAll(query);
             return res.status(http_config_1.HTTPSTATUS.OK).json({
-                message: 'Success find all category',
-                data: categories,
+                message: 'Success find all event',
+                data: events,
                 pagination: {
                     limit,
                     page,
@@ -39,30 +38,38 @@ class CategoryController {
         }));
         this.findOne = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             const params = req === null || req === void 0 ? void 0 : req.params;
-            const { category } = yield this.categoryService.findOne(params.id);
+            const result = yield this.eventService.findOne(params.id);
             return res.status(http_config_1.HTTPSTATUS.OK).json({
-                message: 'Success find one category',
-                data: category,
+                message: 'Success find all event',
+                data: result,
             });
         }));
         this.update = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const body = category_validator_1.createCategorySchema.parse(Object.assign({}, req === null || req === void 0 ? void 0 : req.body));
             const params = req === null || req === void 0 ? void 0 : req.params;
-            const category = yield this.categoryService.update(params.id, body);
+            const body = event_validator_1.createEventSchema.parse(Object.assign({}, req.body));
+            const result = yield this.eventService.update(params.id, body);
             return res.status(http_config_1.HTTPSTATUS.OK).json({
-                message: 'Success update category',
-                data: category,
+                message: 'Success update a event',
+                data: result,
             });
         }));
         this.remove = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             const params = req === null || req === void 0 ? void 0 : req.params;
-            const category = yield this.categoryService.remove(params.id);
+            const result = yield this.eventService.remove(params.id);
             return res.status(http_config_1.HTTPSTATUS.OK).json({
-                message: 'Success delete category',
-                data: category,
+                message: 'Success remove event',
+                data: result,
             });
         }));
-        this.categoryService = categoryService;
+        this.findOneBySlug = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const params = req === null || req === void 0 ? void 0 : req.params;
+            const result = yield this.eventService.findOneBySlug(params.slug);
+            return res.status(http_config_1.HTTPSTATUS.OK).json({
+                message: 'Success find one event by slug',
+                data: result,
+            });
+        }));
+        this.eventService = eventService;
     }
 }
-exports.CategoryController = CategoryController;
+exports.default = EventController;

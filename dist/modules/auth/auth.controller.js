@@ -10,14 +10,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthController = void 0;
-const middlewares_1 = require("../../middlewares");
 const http_config_1 = require("../../config/http.config");
 const auth_validator_1 = require("../../cummon/validators/auth.validator");
 const cookies_1 = require("../../cummon/utils/cookies");
 const catch_errors_1 = require("../../cummon/utils/catch-errors");
+const async_handler_middleware_1 = require("../../middlewares/async-handler.middleware");
 class AuthController {
     constructor(authService) {
-        this.register = (0, middlewares_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.register = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             const body = auth_validator_1.registerSchema.parse(Object.assign({}, req === null || req === void 0 ? void 0 : req.body));
             const result = yield this.authService.register(body);
             return res.status(http_config_1.HTTPSTATUS.CREATED).json({
@@ -25,7 +25,7 @@ class AuthController {
                 data: result.user,
             });
         }));
-        this.login = (0, middlewares_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.login = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             const userAgent = req === null || req === void 0 ? void 0 : req.headers['user-agent'];
             const body = auth_validator_1.loginSchema.parse(Object.assign(Object.assign({}, req === null || req === void 0 ? void 0 : req.body), { userAgent }));
             const result = yield this.authService.login(body);
@@ -50,14 +50,14 @@ class AuthController {
                 mfaRequired: result.mfaRequired,
             });
         }));
-        this.me = (0, middlewares_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.me = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             const user = req.user;
             return res.status(http_config_1.HTTPSTATUS.OK).json({
                 message: 'get user successfully',
                 user: user,
             });
         }));
-        this.refreshToken = (0, middlewares_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.refreshToken = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             const refreshToken = req.headers['refresh-token'];
             // console.log(refreshToken);
             if (!refreshToken) {
@@ -75,28 +75,28 @@ class AuthController {
                 accessToken,
             });
         }));
-        this.verifyEmail = (0, middlewares_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.verifyEmail = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             const { code } = auth_validator_1.verificationEmailSchema.parse(Object.assign({}, req === null || req === void 0 ? void 0 : req.body));
             yield this.authService.verifyEmail(code);
             return res.status(http_config_1.HTTPSTATUS.OK).json({
                 message: 'Email verified successfully',
             });
         }));
-        this.forgotPassword = (0, middlewares_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.forgotPassword = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             const email = auth_validator_1.emailSchema.parse(req === null || req === void 0 ? void 0 : req.body.email);
             yield this.authService.forgotPassword(email);
             return res.status(http_config_1.HTTPSTATUS.OK).json({
                 message: 'Password reset email sent',
             });
         }));
-        this.resetPassword = (0, middlewares_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.resetPassword = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             const body = auth_validator_1.resetPasswordSchema.parse(req === null || req === void 0 ? void 0 : req.body);
             yield this.authService.resetPassword(body);
             return (0, cookies_1.clearAuthenticationCookies)(res).status(http_config_1.HTTPSTATUS.OK).json({
                 message: 'Reset password successfully',
             });
         }));
-        this.logout = (0, middlewares_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.logout = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             const sessionId = req.sessionId;
             if (!sessionId) {
                 throw new catch_errors_1.NotFoundException('Session is invalid');
