@@ -13,6 +13,5 @@ exports.createEventSchema = zod_1.z.object({
     isPublish: zod_1.z.boolean().default(false),
     region: zod_1.z.number(),
     coordinates: zod_1.z.array(zod_1.z.number()),
-    userId: zod_1.z.string(),
     categoryId: zod_1.z.string(),
 });

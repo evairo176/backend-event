@@ -1052,10 +1052,6 @@
             "type": "string",
             "example": "fileUrl"
           },
-          "category": {
-            "type": "string",
-            "example": "category ObjectID"
-          },
           "description": {
             "type": "string",
             "example": ""
@@ -1068,24 +1064,15 @@
             "type": "string",
             "example": "yyyy-mm-dd hh:mm:ss"
           },
-          "location": {
-            "type": "object",
-            "properties": {
-              "region": {
-                "type": "number",
-                "example": 3273
-              },
-              "coordinates": {
-                "type": "array",
-                "example": [0, 0],
-                "items": {
-                  "type": "number"
-                }
-              },
-              "address": {
-                "type": "string",
-                "example": ""
-              }
+          "region": {
+            "type": "number",
+            "example": 3273
+          },
+          "coordinates": {
+            "type": "array",
+            "example": [0, 0],
+            "items": {
+              "type": "number"
             }
           },
           "isOnline": {
@@ -1099,6 +1086,10 @@
           "isPublish": {
             "type": "boolean",
             "example": false
+          },
+          "categoryId": {
+            "type": "string",
+            "example": "6858df03022a5c90a60ab811"
           }
         },
         "xml": {

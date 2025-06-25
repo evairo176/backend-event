@@ -64,18 +64,15 @@ exports.doc = {
             CreateEventRequest: {
                 name: '',
                 banner: 'fileUrl',
-                category: 'category ObjectID',
                 description: '',
                 startDate: 'yyyy-mm-dd hh:mm:ss',
                 endDate: 'yyyy-mm-dd hh:mm:ss',
-                location: {
-                    region: 3273,
-                    coordinates: [0, 0],
-                    address: '',
-                },
+                region: 3273,
+                coordinates: [0, 0],
                 isOnline: false,
                 isFeatured: false,
                 isPublish: false,
+                categoryId: '6858df03022a5c90a60ab811',
             },
             RemoveMediaRequest: {
                 fileUrl: '',

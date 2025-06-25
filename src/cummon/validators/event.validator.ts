@@ -11,6 +11,5 @@ export const createEventSchema = z.object({
   isPublish: z.boolean().default(false),
   region: z.number(),
   coordinates: z.array(z.number()),
-  userId: z.string(),
   categoryId: z.string(),
 });

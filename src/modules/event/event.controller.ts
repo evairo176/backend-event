@@ -14,11 +14,15 @@ export default class EventController {
 
   public create = asyncHandler(
     async (req: Request, res: Response): Promise<any> => {
+      const userId = req?.user?.id;
       const body = createEventSchema.parse({
         ...req.body,
       });
 
-      const result = await this.eventService.create(body);
+      const result = await this.eventService.create({
+        ...body,
+        userId: userId as string,
+      });
 
       return res.status(HTTPSTATUS.CREATED).json({
         message: 'Create event successfully',
@@ -62,10 +66,14 @@ export default class EventController {
   public update = asyncHandler(
     async (req: Request, res: Response): Promise<any> => {
       const params = req?.params;
+      const userId = req?.user?.id;
       const body = createEventSchema.parse({
         ...req.body,
       });
-      const result = await this.eventService.update(params.id as string, body);
+      const result = await this.eventService.update(params.id as string, {
+        ...body,
+        userId: userId as string,
+      });
 
       return res.status(HTTPSTATUS.OK).json({
         message: 'Success update a event',

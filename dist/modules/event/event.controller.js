@@ -15,8 +15,10 @@ const event_validator_1 = require("../../cummon/validators/event.validator");
 class EventController {
     constructor(eventService) {
         this.create = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const userId = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.id;
             const body = event_validator_1.createEventSchema.parse(Object.assign({}, req.body));
-            const result = yield this.eventService.create(body);
+            const result = yield this.eventService.create(Object.assign(Object.assign({}, body), { userId: userId }));
             return res.status(http_config_1.HTTPSTATUS.CREATED).json({
                 message: 'Create event successfully',
                 data: result,
@@ -45,9 +47,11 @@ class EventController {
             });
         }));
         this.update = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+            var _a;
             const params = req === null || req === void 0 ? void 0 : req.params;
+            const userId = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.id;
             const body = event_validator_1.createEventSchema.parse(Object.assign({}, req.body));
-            const result = yield this.eventService.update(params.id, body);
+            const result = yield this.eventService.update(params.id, Object.assign(Object.assign({}, body), { userId: userId }));
             return res.status(http_config_1.HTTPSTATUS.OK).json({
                 message: 'Success update a event',
                 data: result,
