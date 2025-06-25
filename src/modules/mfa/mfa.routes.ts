@@ -13,6 +13,12 @@ mfaRoutes.get(
   #swagger.security = [{
     "bearerAuth": {}
   }]
+  #swagger.requestBody = {
+    require: true,
+    schema:{
+      $ref:"#components/schemas/CreateMFASetupRequest"
+    }
+  }
   */
 );
 mfaRoutes.post(

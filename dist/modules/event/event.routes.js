@@ -2,11 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const event_module_1 = require("./event.module");
+const jwt_strategy_1 = require("../../cummon/strategies/jwt.strategy");
 const eventRoutes = (0, express_1.Router)();
-eventRoutes.post('/event', event_module_1.eventController.create);
+eventRoutes.post('/event', jwt_strategy_1.authenticateJWT, event_module_1.eventController.create);
 eventRoutes.get('/event', event_module_1.eventController.findAll);
 eventRoutes.get('/event/:id', event_module_1.eventController.findOne);
-eventRoutes.put('/event/:id', event_module_1.eventController.update);
-eventRoutes.delete('/event/:id', event_module_1.eventController.remove);
+eventRoutes.put('/event/:id', jwt_strategy_1.authenticateJWT, event_module_1.eventController.update);
+eventRoutes.delete('/event/:id', jwt_strategy_1.authenticateJWT, event_module_1.eventController.remove);
 eventRoutes.get('/event/:slug/slug', event_module_1.eventController.findOneBySlug);
 exports.default = eventRoutes;

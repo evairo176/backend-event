@@ -15,6 +15,28 @@ mediaRoutes.post(
     mediaMiddleware.single('file'),
   ],
   mediaController.single,
+  /*
+  #swagger.tags = ['Media']
+  #swagger.security = [{
+    "bearerAuth": {}
+  }]
+  #swagger.requestBody = {
+    require: true,
+    content:{
+      "multipart/form-data":{
+        schema:{
+          type:"object",
+          properties:{
+            file:{
+              type:"string",
+              format:"binary"
+            }
+          }
+        }
+      }
+    }
+  }
+  */
 );
 mediaRoutes.post(
   '/media/upload-multiple',
@@ -24,11 +46,50 @@ mediaRoutes.post(
     mediaMiddleware.multiple('files'),
   ],
   mediaController.multiple,
+
+  /*
+  #swagger.tags = ['Media']
+  #swagger.security = [{
+    "bearerAuth": {}
+  }]
+  #swagger.requestBody = {
+    require: true,
+    content:{
+      "multipart/form-data":{
+        schema:{
+          type:"object",
+          properties:{
+            files:{
+              type:"array",
+              items:{
+                type:"string",
+                format:"binary"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  */
 );
 mediaRoutes.delete(
   '/media/remove',
   [authenticateJWT, aclMiddleware([ROLES.ADMIN, ROLES.MEMBER])],
   mediaController.remove,
+
+  /*
+  #swagger.tags = ['Media']
+  #swagger.security = [{
+    "bearerAuth": {}
+  }]
+  #swagger.requestBody = {
+    require: true,
+    schemas:{
+      $ref:"#/components/schemas/RemoveMediaRequest"
+    }
+  }
+  */
 );
 
 export default mediaRoutes;
