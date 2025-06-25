@@ -95,3 +95,36 @@ model Category {
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
 }
+
+model Province {
+  id        String     @id @map("_id") @default(auto()) @db.ObjectId
+  code      String     @unique
+  name      String
+  regencies Regency[]
+}
+
+model Regency {
+  id         String     @id @map("_id") @default(auto()) @db.ObjectId
+  code       String     @unique
+  name       String
+  province   Province   @relation(fields: [provinceId], references: [id])
+  provinceId String     @db.ObjectId
+  districts  District[]
+}
+
+model District {
+  id        String     @id @map("_id") @default(auto()) @db.ObjectId
+  code      String     @unique
+  name      String
+  regency   Regency    @relation(fields: [regencyId], references: [id])
+  regencyId String     @db.ObjectId
+  villages  Village[]
+}
+
+model Village {
+  id         String  @id @map("_id") @default(auto()) @db.ObjectId
+  code       String  @unique
+  name       String
+  district   District @relation(fields: [districtId], references: [id])
+  districtId String   @db.ObjectId
+}

@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const region_module_1 = require("./region.module");
+const regionRoutes = (0, express_1.Router)();
+regionRoutes.get('/region/provinces', region_module_1.regionController.getAllProvinces);
+regionRoutes.get('/region/province/:id', region_module_1.regionController.getProvince);
+regionRoutes.get('/region/regency/:id', region_module_1.regionController.getRegency);
+regionRoutes.get('/region/district/:id', region_module_1.regionController.getDistrict);
+regionRoutes.get('/region/village/:id', region_module_1.regionController.getVillage);
+regionRoutes.get('/region/search', region_module_1.regionController.findByCity);
+exports.default = regionRoutes;
