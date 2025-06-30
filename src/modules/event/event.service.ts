@@ -9,6 +9,19 @@ export default class EventService {
   public async create(body: ICreateEvent) {
     const nameSlug = slug.generate(body.name);
 
+    const findEvent = await db.event.findFirst({
+      where: {
+        slug: nameSlug,
+      },
+    });
+
+    if (findEvent) {
+      throw new BadRequestException(
+        'Event already exists with this name',
+        ErrorCode.EVENT_NAME_ALREADY_EXISTS,
+      );
+    }
+
     const result = await db.event.create({
       data: {
         ...body,

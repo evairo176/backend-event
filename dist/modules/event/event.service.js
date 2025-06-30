@@ -19,6 +19,14 @@ class EventService {
     create(body) {
         return __awaiter(this, void 0, void 0, function* () {
             const nameSlug = slug_1.default.generate(body.name);
+            const findEvent = yield database_1.db.event.findFirst({
+                where: {
+                    slug: nameSlug,
+                },
+            });
+            if (findEvent) {
+                throw new catch_errors_1.BadRequestException('Event already exists with this name', "EVENT_NAME_ALREADY_EXISTS" /* ErrorCode.EVENT_NAME_ALREADY_EXISTS */);
+            }
             const result = yield database_1.db.event.create({
                 data: Object.assign(Object.assign({}, body), { slug: nameSlug }),
             });

@@ -113,9 +113,9 @@ model Event {
 
   // relation
   createdBy  User     @relation(fields: [userId], references: [id])
-  userId     String   @unique @db.ObjectId
+  userId     String   @db.ObjectId
   category   Category @relation(fields: [categoryId], references: [id])
-  categoryId String   @unique @db.ObjectId
+  categoryId String   @db.ObjectId
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

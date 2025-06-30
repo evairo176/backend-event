@@ -29,10 +29,31 @@ categoryRoutes.post(
 categoryRoutes.get(
   '/category',
   categoryController.findAll,
-
   /**
-   #swagger.tags = ["Category"]
-   */
+ #swagger.tags = ['Category']
+ #swagger.description = 'Endpoint untuk mengambil daftar kategori'
+ #swagger.parameters['page'] = {
+   in: 'query',
+   description: 'Halaman ke berapa',
+   required: false,
+   type: 'integer',
+   example: 1
+ }
+ #swagger.parameters['limit'] = {
+   in: 'query',
+   description: 'Jumlah data per halaman',
+   required: false,
+   type: 'integer',
+   example: 10
+ }
+ #swagger.parameters['search'] = {
+   in: 'query',
+   description: 'Kata kunci pencarian kategori',
+   required: false,
+   type: 'string',
+   example: 'buah'
+ }
+ */
 );
 categoryRoutes.get(
   '/category/:id',

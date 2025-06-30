@@ -240,7 +240,39 @@
                 "tags": [
                     "Category"
                 ],
-                "description": "",
+                "description": "Endpoint untuk mengambil daftar kategori",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Halaman ke berapa",
+                        "required": false,
+                        "example": 1,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Jumlah data per halaman",
+                        "required": false,
+                        "example": 10,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Kata kunci pencarian kategori",
+                        "required": false,
+                        "example": "buah",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "default": {
                         "description": ""
