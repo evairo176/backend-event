@@ -644,8 +644,17 @@
         ],
         "requestBody": {
           "require": true,
-          "schemas": {
-            "$ref": "#/components/schemas/RemoveMediaRequest"
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RemoveMediaRequest"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/RemoveMediaRequest"
+              }
+            }
           }
         }
       }

@@ -85,7 +85,7 @@ mediaRoutes.delete(
   }]
   #swagger.requestBody = {
     require: true,
-    schemas:{
+    schema:{
       $ref:"#/components/schemas/RemoveMediaRequest"
     }
   }
