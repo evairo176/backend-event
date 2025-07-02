@@ -10,22 +10,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.asyncHandler = void 0;
-const database_1 = require("../database/database");
 const asyncHandler = (controller) => (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield controller(req, res, next);
     }
     catch (error) {
         // Simpan error ke database
-        yield database_1.db.errorLog.create({
-            data: {
-                message: error.message || 'Unknown error',
-                stack: error.stack,
-                method: req.method,
-                path: req.originalUrl,
-                statusCode: res.statusCode || 500,
-            },
-        });
         next(error); // teruskan ke middleware error handling Express
     }
 });

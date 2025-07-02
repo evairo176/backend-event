@@ -82,6 +82,8 @@ model ErrorLog {
   stack      String?
   method     String
   path       String
+  code       String?
+  meta       String?
   statusCode Int?
   createdAt  DateTime @default(now())
 }

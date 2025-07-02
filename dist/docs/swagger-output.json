@@ -18,9 +18,7 @@
     "paths": {
         "/auth/register": {
             "post": {
-                "tags": [
-                    "Auth"
-                ],
+                "tags": ["Auth"],
                 "description": "",
                 "responses": {
                     "default": {
@@ -46,9 +44,7 @@
         },
         "/auth/login": {
             "post": {
-                "tags": [
-                    "Auth"
-                ],
+                "tags": ["Auth"],
                 "description": "",
                 "responses": {
                     "default": {
@@ -74,9 +70,7 @@
         },
         "/auth/me": {
             "get": {
-                "tags": [
-                    "Auth"
-                ],
+                "tags": ["Auth"],
                 "description": "",
                 "parameters": [
                     {
@@ -101,9 +95,7 @@
         },
         "/auth/verify/email": {
             "post": {
-                "tags": [
-                    "Auth"
-                ],
+                "tags": ["Auth"],
                 "description": "",
                 "responses": {
                     "default": {
@@ -197,9 +189,7 @@
         },
         "/category": {
             "post": {
-                "tags": [
-                    "Category"
-                ],
+                "tags": ["Category"],
                 "description": "",
                 "parameters": [
                     {
@@ -237,9 +227,7 @@
                 }
             },
             "get": {
-                "tags": [
-                    "Category"
-                ],
+                "tags": ["Category"],
                 "description": "Endpoint untuk mengambil daftar kategori",
                 "parameters": [
                     {
@@ -282,9 +270,7 @@
         },
         "/category/{id}": {
             "get": {
-                "tags": [
-                    "Category"
-                ],
+                "tags": ["Category"],
                 "description": "",
                 "parameters": [
                     {
@@ -303,9 +289,7 @@
                 }
             },
             "put": {
-                "tags": [
-                    "Category"
-                ],
+                "tags": ["Category"],
                 "description": "",
                 "parameters": [
                     {
@@ -351,9 +335,7 @@
                 }
             },
             "delete": {
-                "tags": [
-                    "Category"
-                ],
+                "tags": ["Category"],
                 "description": "",
                 "parameters": [
                     {
@@ -386,9 +368,7 @@
         },
         "/event": {
             "post": {
-                "tags": [
-                    "Events"
-                ],
+                "tags": ["Events"],
                 "description": "",
                 "parameters": [
                     {
@@ -426,9 +406,7 @@
                 }
             },
             "get": {
-                "tags": [
-                    "Events"
-                ],
+                "tags": ["Events"],
                 "description": "",
                 "responses": {
                     "default": {
@@ -439,9 +417,7 @@
         },
         "/event/{id}": {
             "get": {
-                "tags": [
-                    "Events"
-                ],
+                "tags": ["Events"],
                 "description": "",
                 "parameters": [
                     {
@@ -460,9 +436,7 @@
                 }
             },
             "put": {
-                "tags": [
-                    "Events"
-                ],
+                "tags": ["Events"],
                 "description": "",
                 "parameters": [
                     {
@@ -508,9 +482,7 @@
                 }
             },
             "delete": {
-                "tags": [
-                    "Events"
-                ],
+                "tags": ["Events"],
                 "description": "",
                 "parameters": [
                     {
@@ -543,9 +515,7 @@
         },
         "/event/{slug}/slug": {
             "get": {
-                "tags": [
-                    "Events"
-                ],
+                "tags": ["Events"],
                 "description": "",
                 "parameters": [
                     {
@@ -566,9 +536,7 @@
         },
         "/media/upload-single": {
             "post": {
-                "tags": [
-                    "Media"
-                ],
+                "tags": ["Media"],
                 "description": "",
                 "parameters": [
                     {
@@ -609,9 +577,7 @@
         },
         "/media/upload-multiple": {
             "post": {
-                "tags": [
-                    "Media"
-                ],
+                "tags": ["Media"],
                 "description": "",
                 "parameters": [
                     {
@@ -655,9 +621,7 @@
         },
         "/media/remove": {
             "delete": {
-                "tags": [
-                    "Media"
-                ],
+                "tags": ["Media"],
                 "description": "",
                 "parameters": [
                     {
@@ -688,9 +652,7 @@
         },
         "/mfa/setup": {
             "get": {
-                "tags": [
-                    "MFA"
-                ],
+                "tags": ["MFA"],
                 "description": "",
                 "parameters": [
                     {
@@ -730,9 +692,7 @@
         },
         "/mfa/verify": {
             "post": {
-                "tags": [
-                    "MFA"
-                ],
+                "tags": ["MFA"],
                 "description": "",
                 "parameters": [
                     {
@@ -757,9 +717,7 @@
         },
         "/mfa/revoke": {
             "put": {
-                "tags": [
-                    "MFA"
-                ],
+                "tags": ["MFA"],
                 "description": "",
                 "parameters": [
                     {
@@ -784,9 +742,7 @@
         },
         "/mfa/verify-login": {
             "post": {
-                "tags": [
-                    "MFA"
-                ],
+                "tags": ["MFA"],
                 "description": "",
                 "responses": {
                     "default": {
@@ -797,9 +753,7 @@
         },
         "/region/provinces": {
             "get": {
-                "tags": [
-                    "Region"
-                ],
+                "tags": ["Region"],
                 "description": "",
                 "responses": {
                     "default": {
@@ -810,9 +764,7 @@
         },
         "/region/province/{id}": {
             "get": {
-                "tags": [
-                    "Region"
-                ],
+                "tags": ["Region"],
                 "description": "",
                 "parameters": [
                     {
@@ -833,9 +785,7 @@
         },
         "/region/regency/{id}": {
             "get": {
-                "tags": [
-                    "Region"
-                ],
+                "tags": ["Region"],
                 "description": "",
                 "parameters": [
                     {
@@ -856,9 +806,7 @@
         },
         "/region/district/{id}": {
             "get": {
-                "tags": [
-                    "Region"
-                ],
+                "tags": ["Region"],
                 "description": "",
                 "parameters": [
                     {
@@ -879,9 +827,7 @@
         },
         "/region/village/{id}": {
             "get": {
-                "tags": [
-                    "Region"
-                ],
+                "tags": ["Region"],
                 "description": "",
                 "parameters": [
                     {
@@ -902,9 +848,7 @@
         },
         "/region/search": {
             "get": {
-                "tags": [
-                    "Region"
-                ],
+                "tags": ["Region"],
                 "description": "",
                 "responses": {
                     "default": {
@@ -915,9 +859,7 @@
         },
         "/session/all": {
             "get": {
-                "tags": [
-                    "Session"
-                ],
+                "tags": ["Session"],
                 "description": "",
                 "parameters": [
                     {
@@ -942,9 +884,7 @@
         },
         "/session/": {
             "get": {
-                "tags": [
-                    "Session"
-                ],
+                "tags": ["Session"],
                 "description": "",
                 "parameters": [
                     {
@@ -969,9 +909,7 @@
         },
         "/session/{id}": {
             "delete": {
-                "tags": [
-                    "Session"
-                ],
+                "tags": ["Session"],
                 "description": "",
                 "parameters": [
                     {
@@ -1164,10 +1102,7 @@
                     },
                     "coordinates": {
                         "type": "array",
-                        "example": [
-                            0,
-                            0
-                        ],
+                        "example": [0, 0],
                         "items": {
                             "type": "number"
                         }
