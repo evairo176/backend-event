@@ -24,12 +24,30 @@ const formatZodError = (res, error) => {
     }));
     return res.status(http_config_1.HTTPSTATUS.BAD_REQUEST).json({
         message: 'Validation failed',
-        errors: errors,
+        errors,
     });
 };
+const logError = (_a) => __awaiter(void 0, [_a], void 0, function* ({ message, stack, req, statusCode, code, meta, }) {
+    try {
+        yield database_1.db.errorLog.create({
+            data: {
+                message,
+                stack: typeof stack === 'string' ? stack : JSON.stringify(stack),
+                method: req.method,
+                path: req.originalUrl,
+                statusCode,
+                code,
+                meta: meta ? JSON.stringify(meta) : undefined,
+            },
+        });
+    }
+    catch (logError) {
+        console.error('Gagal menyimpan log error ke database:', logError);
+    }
+});
 const errorHandler = (error, req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e, _f;
-    console.error(`Error occurred on PATH: ${req === null || req === void 0 ? void 0 : req.path}`, error);
+    var _a, _b, _c;
+    console.error(`Error occurred on PATH: ${req.path}`, error);
     if (req.path === cookies_1.REFRESH_PATH) {
         (0, cookies_1.clearAuthenticationCookies)(res);
     }
@@ -41,156 +59,112 @@ const errorHandler = (error, req, res, next) => __awaiter(void 0, void 0, void 0
     }
     // Zod validation error
     if (error instanceof zod_1.z.ZodError) {
-        yield database_1.db.errorLog.create({
-            data: {
-                message: 'Validation failed',
-                stack: JSON.stringify(error.issues),
-                method: req.method,
-                path: req.originalUrl,
-                statusCode: http_config_1.HTTPSTATUS.BAD_REQUEST,
-            },
+        yield logError({
+            message: 'Validation failed',
+            stack: error.issues,
+            req,
+            statusCode: http_config_1.HTTPSTATUS.BAD_REQUEST,
         });
         return formatZodError(res, error);
     }
-    // Custom App error
+    // Custom AppError
     if (error instanceof app_error_1.AppError) {
-        yield database_1.db.errorLog.create({
-            data: {
-                message: error.message,
-                stack: error.stack,
-                method: req.method,
-                path: req.originalUrl,
-                statusCode: error.statusCode,
-                code: error.errorCode,
-            },
+        yield logError({
+            message: error.message,
+            stack: error.stack,
+            req,
+            statusCode: error.statusCode,
+            code: error.errorCode,
         });
         return res.status(error.statusCode).json({
             message: error.message,
             errorCode: error.errorCode,
         });
     }
-    // Prisma: Unique constraint failed
+    // Prisma Known Errors
     if (error instanceof client_1.Prisma.PrismaClientKnownRequestError) {
+        let statusCode = http_config_1.HTTPSTATUS.BAD_REQUEST;
+        let message = 'Prisma known error';
         if (error.code === 'P2002') {
-            const fields = Array.isArray((_a = error.meta) === null || _a === void 0 ? void 0 : _a.target)
+            message = `Duplicate field: ${Array.isArray((_a = error.meta) === null || _a === void 0 ? void 0 : _a.target)
                 ? error.meta.target.join(', ')
-                : String((_b = error.meta) === null || _b === void 0 ? void 0 : _b.target);
-            yield database_1.db.errorLog.create({
-                data: {
-                    message: `Duplicate field: ${fields}`,
-                    stack: error.stack,
-                    method: req.method,
-                    path: req.originalUrl,
-                    statusCode: http_config_1.HTTPSTATUS.CONFLICT,
-                    code: error.code,
-                    meta: JSON.stringify(error.meta),
-                },
-            });
-            return res.status(http_config_1.HTTPSTATUS.CONFLICT).json({
-                message: `Duplicate field: ${Array.isArray((_c = error.meta) === null || _c === void 0 ? void 0 : _c.target) ? error.meta.target.join(', ') : String((_d = error.meta) === null || _d === void 0 ? void 0 : _d.target)}`,
-                code: error.code,
-            });
+                : String((_b = error.meta) === null || _b === void 0 ? void 0 : _b.target)}`;
+            statusCode = http_config_1.HTTPSTATUS.CONFLICT;
         }
-        // Example: Record not found
-        if (error.code === 'P2025') {
-            yield database_1.db.errorLog.create({
-                data: {
-                    message: JSON.stringify((_e = error.meta) === null || _e === void 0 ? void 0 : _e.cause) || `Record not found`,
-                    stack: error.stack,
-                    method: req.method,
-                    path: req.originalUrl,
-                    statusCode: http_config_1.HTTPSTATUS.NOT_FOUND,
-                    code: error.code,
-                    meta: JSON.stringify(error.meta),
-                },
-            });
-            return res.status(http_config_1.HTTPSTATUS.NOT_FOUND).json({
-                message: ((_f = error.meta) === null || _f === void 0 ? void 0 : _f.cause) || 'Record not found',
-                code: error.code,
-            });
+        else if (error.code === 'P2025') {
+            message = JSON.stringify((_c = error.meta) === null || _c === void 0 ? void 0 : _c.cause) || 'Record not found';
+            statusCode = http_config_1.HTTPSTATUS.NOT_FOUND;
         }
-        yield database_1.db.errorLog.create({
-            data: {
-                message: 'Prisma known error',
-                stack: error.stack,
-                method: req.method,
-                path: req.originalUrl,
-                statusCode: http_config_1.HTTPSTATUS.BAD_REQUEST,
-                code: error.code,
-                meta: JSON.stringify(error.meta),
-            },
+        yield logError({
+            message,
+            stack: error.stack,
+            req,
+            statusCode,
+            code: error.code,
+            meta: error.meta,
         });
-        // Default Prisma known request error
-        return res.status(http_config_1.HTTPSTATUS.BAD_REQUEST).json({
-            message: 'Prisma known error',
+        return res.status(statusCode).json({
+            message,
             code: error.code,
             meta: error.meta,
         });
     }
-    // Prisma: Validation (e.g. wrong input type)
+    // Prisma Validation Error
     if (error instanceof client_1.Prisma.PrismaClientValidationError) {
-        yield database_1.db.errorLog.create({
-            data: {
-                message: 'Invalid input data. Prisma validation failed.',
-                stack: error.stack,
-                method: req.method,
-                path: req.originalUrl,
-                statusCode: http_config_1.HTTPSTATUS.BAD_REQUEST,
-            },
+        const message = 'Invalid input data. Prisma validation failed.';
+        yield logError({
+            message,
+            stack: error.stack,
+            req,
+            statusCode: http_config_1.HTTPSTATUS.BAD_REQUEST,
         });
         return res.status(http_config_1.HTTPSTATUS.BAD_REQUEST).json({
-            message: 'Invalid input data. Prisma validation failed.',
+            message,
             error: error.message,
         });
     }
-    // Prisma: Unknown client error
+    // Prisma Unknown Error
     if (error instanceof client_1.Prisma.PrismaClientUnknownRequestError) {
-        yield database_1.db.errorLog.create({
-            data: {
-                message: 'An unknown error occurred in the database operation.',
-                stack: error.stack,
-                method: req.method,
-                path: req.originalUrl,
-                statusCode: http_config_1.HTTPSTATUS.INTERNAL_SERVER_ERROR,
-                meta: error.message,
-            },
-        });
-        return res.status(http_config_1.HTTPSTATUS.INTERNAL_SERVER_ERROR).json({
-            message: 'An unknown error occurred in the database operation.',
-            error: error.message,
-        });
-    }
-    // Prisma: Initialization issues
-    if (error instanceof client_1.Prisma.PrismaClientInitializationError) {
-        yield database_1.db.errorLog.create({
-            data: {
-                message: 'Prisma client failed to initialize.',
-                stack: error.stack,
-                method: req.method,
-                path: req.originalUrl,
-                statusCode: http_config_1.HTTPSTATUS.INTERNAL_SERVER_ERROR,
-                meta: error.message,
-            },
-        });
-        return res.status(http_config_1.HTTPSTATUS.INTERNAL_SERVER_ERROR).json({
-            message: 'Prisma client failed to initialize.',
-            error: error.message,
-        });
-    }
-    yield database_1.db.errorLog.create({
-        data: {
-            message: 'Internal Server Error',
+        const message = 'An unknown error occurred in the database operation.';
+        yield logError({
+            message,
             stack: error.stack,
-            method: req.method,
-            path: req.originalUrl,
+            req,
             statusCode: http_config_1.HTTPSTATUS.INTERNAL_SERVER_ERROR,
-            meta: (error === null || error === void 0 ? void 0 : error.message) || 'Unknown error occurred',
-        },
+            meta: error.message,
+        });
+        return res.status(http_config_1.HTTPSTATUS.INTERNAL_SERVER_ERROR).json({
+            message,
+            error: error.message,
+        });
+    }
+    // Prisma Initialization Error
+    if (error instanceof client_1.Prisma.PrismaClientInitializationError) {
+        const message = 'Prisma client failed to initialize.';
+        yield logError({
+            message,
+            stack: error.stack,
+            req,
+            statusCode: http_config_1.HTTPSTATUS.INTERNAL_SERVER_ERROR,
+            meta: error.message,
+        });
+        return res.status(http_config_1.HTTPSTATUS.INTERNAL_SERVER_ERROR).json({
+            message,
+            error: error.message,
+        });
+    }
+    // Fallback: Unknown error
+    const fallbackMessage = (error === null || error === void 0 ? void 0 : error.message) || 'Unknown error occurred';
+    yield logError({
+        message: 'Internal Server Error',
+        stack: error.stack,
+        req,
+        statusCode: http_config_1.HTTPSTATUS.INTERNAL_SERVER_ERROR,
+        meta: fallbackMessage,
     });
-    // Fallback internal error
     return res.status(http_config_1.HTTPSTATUS.INTERNAL_SERVER_ERROR).json({
         message: 'Internal Server Error',
-        error: (error === null || error === void 0 ? void 0 : error.message) || 'Unknown error occurred',
+        error: fallbackMessage,
     });
 });
 exports.errorHandler = errorHandler;

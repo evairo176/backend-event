@@ -643,7 +643,7 @@
           }
         ],
         "requestBody": {
-          "require": true,
+          "required": true,
           "content": {
             "application/json": {
               "schema": {

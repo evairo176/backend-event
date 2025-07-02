@@ -84,9 +84,9 @@ mediaRoutes.delete(
     "bearerAuth": {}
   }]
   #swagger.requestBody = {
-    require: true,
-    schema:{
-      $ref:"#/components/schemas/RemoveMediaRequest"
+    required: true,
+    schema: {
+      $ref: "#/components/schemas/RemoveMediaRequest"
     }
   }
   */
