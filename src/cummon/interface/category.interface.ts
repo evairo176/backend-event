@@ -4,6 +4,12 @@ export interface CreateCategoryDto {
   icon: string;
 }
 
+export interface UpdateCategoryDto {
+  name?: string;
+  description?: string;
+  icon?: string;
+}
+
 export interface IPaginationQuery {
   page: number;
   limit: number;

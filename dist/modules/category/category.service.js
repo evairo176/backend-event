@@ -88,25 +88,30 @@ class CategoryService {
     }
     update(id_1, _a) {
         return __awaiter(this, arguments, void 0, function* (id, { name, description, icon }) {
-            // Cari kategori dengan nama yang sama, tapi berbeda ID
-            const findCategory = yield database_1.db.category.findFirst({
-                where: {
-                    name: name,
-                    NOT: {
-                        id: id,
+            if (name) {
+                // Cari kategori dengan nama yang sama, tapi berbeda ID
+                const findCategory = yield database_1.db.category.findFirst({
+                    where: {
+                        name: name,
+                        NOT: {
+                            id: id,
+                        },
                     },
-                },
-            });
-            if (findCategory) {
-                throw new catch_errors_1.BadRequestException('Category already exists with this name', "CATEGORY_NAME_ALREADY_EXISTS" /* ErrorCode.CATEGORY_NAME_ALREADY_EXISTS */);
+                });
+                if (findCategory) {
+                    throw new catch_errors_1.BadRequestException('Category already exists with this name', "CATEGORY_NAME_ALREADY_EXISTS" /* ErrorCode.CATEGORY_NAME_ALREADY_EXISTS */);
+                }
             }
+            const categoryExisting = yield database_1.db.category.findFirst({
+                where: { id },
+            });
             // Lakukan update
             const category = yield database_1.db.category.update({
                 where: { id },
                 data: {
-                    name,
-                    description,
-                    icon,
+                    name: name ? name : categoryExisting === null || categoryExisting === void 0 ? void 0 : categoryExisting.name,
+                    description: description ? description : categoryExisting === null || categoryExisting === void 0 ? void 0 : categoryExisting.description,
+                    icon: icon ? icon : categoryExisting === null || categoryExisting === void 0 ? void 0 : categoryExisting.icon,
                 },
             });
             return category;

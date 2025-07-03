@@ -1,7 +1,10 @@
 import { Request, Response } from 'express';
 import { HTTPSTATUS } from '../../config/http.config';
 import { CategoryService } from './category.service';
-import { createCategorySchema } from '../../cummon/validators/category.validator';
+import {
+  createCategorySchema,
+  updateCategorySchema,
+} from '../../cummon/validators/category.validator';
 import { IPaginationQuery } from '../../cummon/interface/category.interface';
 import { asyncHandler } from '../../middlewares/async-handler.middleware';
 
@@ -62,7 +65,7 @@ export class CategoryController {
 
   public update = asyncHandler(
     async (req: Request, res: Response): Promise<any> => {
-      const body = createCategorySchema.parse({
+      const body = updateCategorySchema.parse({
         ...req?.body,
       });
       const params = req?.params;

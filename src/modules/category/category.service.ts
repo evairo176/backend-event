@@ -2,6 +2,7 @@ import { ErrorCode } from '../../cummon/enums/error-code.enum';
 import {
   CreateCategoryDto,
   IPaginationQuery,
+  UpdateCategoryDto,
 } from '../../cummon/interface/category.interface';
 import { BadRequestException } from '../../cummon/utils/catch-errors';
 import uploader from '../../cummon/utils/uploader';
@@ -89,31 +90,38 @@ export class CategoryService {
 
   public async update(
     id: string,
-    { name, description, icon }: CreateCategoryDto,
+    { name, description, icon }: UpdateCategoryDto,
   ) {
-    // Cari kategori dengan nama yang sama, tapi berbeda ID
-    const findCategory = await db.category.findFirst({
-      where: {
-        name: name,
-        NOT: {
-          id: id,
+    if (name) {
+      // Cari kategori dengan nama yang sama, tapi berbeda ID
+      const findCategory = await db.category.findFirst({
+        where: {
+          name: name,
+          NOT: {
+            id: id,
+          },
         },
-      },
+      });
+
+      if (findCategory) {
+        throw new BadRequestException(
+          'Category already exists with this name',
+          ErrorCode.CATEGORY_NAME_ALREADY_EXISTS,
+        );
+      }
+    }
+
+    const categoryExisting = await db.category.findFirst({
+      where: { id },
     });
 
-    if (findCategory) {
-      throw new BadRequestException(
-        'Category already exists with this name',
-        ErrorCode.CATEGORY_NAME_ALREADY_EXISTS,
-      );
-    }
     // Lakukan update
     const category = await db.category.update({
       where: { id },
       data: {
-        name,
-        description,
-        icon,
+        name: name ? name : categoryExisting?.name,
+        description: description ? description : categoryExisting?.description,
+        icon: icon ? icon : categoryExisting?.icon,
       },
     });
 
