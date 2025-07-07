@@ -8,7 +8,7 @@ export const createEventSchema = z.object({
   banner: z.string(),
   isFeatured: z.boolean(),
   isOnline: z.boolean(),
-  isPublish: z.boolean().default(false),
+  isPublished: z.boolean().default(false),
   region: z.number(),
   latitude: z.number().optional(),
   longitude: z.number().optional(),

@@ -10,7 +10,7 @@ exports.createEventSchema = zod_1.z.object({
     banner: zod_1.z.string(),
     isFeatured: zod_1.z.boolean(),
     isOnline: zod_1.z.boolean(),
-    isPublish: zod_1.z.boolean().default(false),
+    isPublished: zod_1.z.boolean().default(false),
     region: zod_1.z.number(),
     latitude: zod_1.z.number().optional(),
     longitude: zod_1.z.number().optional(),
