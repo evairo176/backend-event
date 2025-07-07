@@ -10,6 +10,7 @@ export const createEventSchema = z.object({
   isOnline: z.boolean(),
   isPublish: z.boolean().default(false),
   region: z.number(),
-  coordinates: z.array(z.number()),
+  latitude: z.number().optional(),
+  longitude: z.number().optional(),
   categoryId: z.string(),
 });

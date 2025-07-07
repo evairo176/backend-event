@@ -111,7 +111,8 @@ model Event {
   isPublish   Boolean @default(false)
   slug        String  @unique
   region      Int
-  coordinates Float[]
+  longitude   Float?
+  latitude    Float?
 
   // relation
   createdBy  User     @relation(fields: [userId], references: [id])
