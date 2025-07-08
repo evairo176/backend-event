@@ -107,11 +107,13 @@ class EventService {
             if (!currentEvent) {
                 throw new catch_errors_1.NotFoundException('Event not found');
             }
-            const currentCatgeoryId = yield database_1.db.category.findUnique({
-                where: { id: body === null || body === void 0 ? void 0 : body.categoryId },
-            });
-            if (!currentCatgeoryId) {
-                throw new catch_errors_1.NotFoundException('Category not found');
+            if (body === null || body === void 0 ? void 0 : body.categoryId) {
+                const currentCatgeoryId = yield database_1.db.category.findUnique({
+                    where: { id: body === null || body === void 0 ? void 0 : body.categoryId },
+                });
+                if (!currentCatgeoryId) {
+                    throw new catch_errors_1.NotFoundException('Category not found');
+                }
             }
             const updatedEvent = yield database_1.db.event.update({
                 where: {

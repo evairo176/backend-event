@@ -121,12 +121,14 @@ export default class EventService {
       throw new NotFoundException('Event not found');
     }
 
-    const currentCatgeoryId = await db.category.findUnique({
-      where: { id: body?.categoryId },
-    });
+    if (body?.categoryId) {
+      const currentCatgeoryId = await db.category.findUnique({
+        where: { id: body?.categoryId },
+      });
 
-    if (!currentCatgeoryId) {
-      throw new NotFoundException('Category not found');
+      if (!currentCatgeoryId) {
+        throw new NotFoundException('Category not found');
+      }
     }
 
     const updatedEvent = await db.event.update({
