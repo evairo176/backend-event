@@ -65,14 +65,6 @@ class RegionService {
         return __awaiter(this, void 0, void 0, function* () {
             const result = database_1.db.regency.findFirst({
                 where: { code },
-                include: {
-                    province: true,
-                    districts: {
-                        include: {
-                            villages: true,
-                        },
-                    },
-                },
             });
             return result;
         });

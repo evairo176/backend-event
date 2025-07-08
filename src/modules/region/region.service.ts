@@ -51,14 +51,6 @@ export default class RegionService {
   public async getRegency(code: string) {
     const result = db.regency.findFirst({
       where: { code },
-      include: {
-        province: true,
-        districts: {
-          include: {
-            villages: true,
-          },
-        },
-      },
     });
     return result;
   }
