@@ -28,6 +28,17 @@ export default class EventService {
       );
     }
 
+    const currentCatgeoryId = await db.category.findUnique({
+      where: { id: body?.categoryId },
+    });
+
+    if (!currentCatgeoryId) {
+      throw new NotFoundException(
+        'Category not found',
+        ErrorCode.RESOURCE_NOT_FOUND,
+      );
+    }
+
     const result = await db.event.create({
       data: {
         ...body,
@@ -97,7 +108,7 @@ export default class EventService {
     if (body?.name) {
       const findEvent = await db.event.findFirst({
         where: {
-          name: nameSlug,
+          slug: nameSlug,
           NOT: {
             id: id,
           },
@@ -118,7 +129,10 @@ export default class EventService {
     });
 
     if (!currentEvent) {
-      throw new NotFoundException('Event not found');
+      throw new NotFoundException(
+        'Category not found',
+        ErrorCode.RESOURCE_NOT_FOUND,
+      );
     }
 
     if (body?.categoryId) {

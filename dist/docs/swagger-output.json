@@ -18,7 +18,9 @@
     "paths": {
         "/auth/register": {
             "post": {
-                "tags": ["Auth"],
+                "tags": [
+                    "Auth"
+                ],
                 "description": "",
                 "responses": {
                     "default": {
@@ -44,7 +46,9 @@
         },
         "/auth/login": {
             "post": {
-                "tags": ["Auth"],
+                "tags": [
+                    "Auth"
+                ],
                 "description": "",
                 "responses": {
                     "default": {
@@ -70,7 +74,9 @@
         },
         "/auth/me": {
             "get": {
-                "tags": ["Auth"],
+                "tags": [
+                    "Auth"
+                ],
                 "description": "",
                 "parameters": [
                     {
@@ -95,7 +101,9 @@
         },
         "/auth/verify/email": {
             "post": {
-                "tags": ["Auth"],
+                "tags": [
+                    "Auth"
+                ],
                 "description": "",
                 "responses": {
                     "default": {
@@ -189,7 +197,9 @@
         },
         "/category": {
             "post": {
-                "tags": ["Category"],
+                "tags": [
+                    "Category"
+                ],
                 "description": "",
                 "parameters": [
                     {
@@ -227,7 +237,9 @@
                 }
             },
             "get": {
-                "tags": ["Category"],
+                "tags": [
+                    "Category"
+                ],
                 "description": "Endpoint untuk mengambil daftar kategori",
                 "parameters": [
                     {
@@ -270,7 +282,9 @@
         },
         "/category/{id}": {
             "get": {
-                "tags": ["Category"],
+                "tags": [
+                    "Category"
+                ],
                 "description": "",
                 "parameters": [
                     {
@@ -289,7 +303,9 @@
                 }
             },
             "put": {
-                "tags": ["Category"],
+                "tags": [
+                    "Category"
+                ],
                 "description": "",
                 "parameters": [
                     {
@@ -335,7 +351,9 @@
                 }
             },
             "delete": {
-                "tags": ["Category"],
+                "tags": [
+                    "Category"
+                ],
                 "description": "",
                 "parameters": [
                     {
@@ -368,7 +386,9 @@
         },
         "/event": {
             "post": {
-                "tags": ["Events"],
+                "tags": [
+                    "Events"
+                ],
                 "description": "",
                 "parameters": [
                     {
@@ -406,7 +426,9 @@
                 }
             },
             "get": {
-                "tags": ["Events"],
+                "tags": [
+                    "Events"
+                ],
                 "description": "",
                 "responses": {
                     "default": {
@@ -417,7 +439,9 @@
         },
         "/event/{id}": {
             "get": {
-                "tags": ["Events"],
+                "tags": [
+                    "Events"
+                ],
                 "description": "",
                 "parameters": [
                     {
@@ -436,7 +460,9 @@
                 }
             },
             "put": {
-                "tags": ["Events"],
+                "tags": [
+                    "Events"
+                ],
                 "description": "",
                 "parameters": [
                     {
@@ -482,7 +508,9 @@
                 }
             },
             "delete": {
-                "tags": ["Events"],
+                "tags": [
+                    "Events"
+                ],
                 "description": "",
                 "parameters": [
                     {
@@ -515,7 +543,9 @@
         },
         "/event/{slug}/slug": {
             "get": {
-                "tags": ["Events"],
+                "tags": [
+                    "Events"
+                ],
                 "description": "",
                 "parameters": [
                     {
@@ -536,7 +566,9 @@
         },
         "/media/upload-single": {
             "post": {
-                "tags": ["Media"],
+                "tags": [
+                    "Media"
+                ],
                 "description": "",
                 "parameters": [
                     {
@@ -577,7 +609,9 @@
         },
         "/media/upload-multiple": {
             "post": {
-                "tags": ["Media"],
+                "tags": [
+                    "Media"
+                ],
                 "description": "",
                 "parameters": [
                     {
@@ -621,7 +655,9 @@
         },
         "/media/remove": {
             "delete": {
-                "tags": ["Media"],
+                "tags": [
+                    "Media"
+                ],
                 "description": "",
                 "parameters": [
                     {
@@ -661,7 +697,9 @@
         },
         "/mfa/setup": {
             "get": {
-                "tags": ["MFA"],
+                "tags": [
+                    "MFA"
+                ],
                 "description": "",
                 "parameters": [
                     {
@@ -701,7 +739,9 @@
         },
         "/mfa/verify": {
             "post": {
-                "tags": ["MFA"],
+                "tags": [
+                    "MFA"
+                ],
                 "description": "",
                 "parameters": [
                     {
@@ -726,7 +766,9 @@
         },
         "/mfa/revoke": {
             "put": {
-                "tags": ["MFA"],
+                "tags": [
+                    "MFA"
+                ],
                 "description": "",
                 "parameters": [
                     {
@@ -751,7 +793,9 @@
         },
         "/mfa/verify-login": {
             "post": {
-                "tags": ["MFA"],
+                "tags": [
+                    "MFA"
+                ],
                 "description": "",
                 "responses": {
                     "default": {
@@ -762,7 +806,9 @@
         },
         "/region/provinces": {
             "get": {
-                "tags": ["Region"],
+                "tags": [
+                    "Region"
+                ],
                 "description": "",
                 "responses": {
                     "default": {
@@ -773,7 +819,9 @@
         },
         "/region/province/{id}": {
             "get": {
-                "tags": ["Region"],
+                "tags": [
+                    "Region"
+                ],
                 "description": "",
                 "parameters": [
                     {
@@ -794,7 +842,9 @@
         },
         "/region/regency/{id}": {
             "get": {
-                "tags": ["Region"],
+                "tags": [
+                    "Region"
+                ],
                 "description": "",
                 "parameters": [
                     {
@@ -815,7 +865,9 @@
         },
         "/region/district/{id}": {
             "get": {
-                "tags": ["Region"],
+                "tags": [
+                    "Region"
+                ],
                 "description": "",
                 "parameters": [
                     {
@@ -836,7 +888,9 @@
         },
         "/region/village/{id}": {
             "get": {
-                "tags": ["Region"],
+                "tags": [
+                    "Region"
+                ],
                 "description": "",
                 "parameters": [
                     {
@@ -857,7 +911,9 @@
         },
         "/region/search": {
             "get": {
-                "tags": ["Region"],
+                "tags": [
+                    "Region"
+                ],
                 "description": "",
                 "responses": {
                     "default": {
@@ -868,7 +924,9 @@
         },
         "/session/all": {
             "get": {
-                "tags": ["Session"],
+                "tags": [
+                    "Session"
+                ],
                 "description": "",
                 "parameters": [
                     {
@@ -893,7 +951,9 @@
         },
         "/session/": {
             "get": {
-                "tags": ["Session"],
+                "tags": [
+                    "Session"
+                ],
                 "description": "",
                 "parameters": [
                     {
@@ -918,7 +978,198 @@
         },
         "/session/{id}": {
             "delete": {
-                "tags": ["Session"],
+                "tags": [
+                    "Session"
+                ],
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "authorization",
+                        "in": "header",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": {}
+                    }
+                ]
+            }
+        },
+        "/ticket": {
+            "post": {
+                "tags": [
+                    "Ticket"
+                ],
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "authorization",
+                        "in": "header",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": {}
+                    }
+                ],
+                "requestBody": {
+                    "require": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#components/schemas/CreateTicketRequest"
+                            }
+                        },
+                        "application/xml": {
+                            "schema": {
+                                "$ref": "#components/schemas/CreateTicketRequest"
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "Ticket"
+                ],
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Halaman ke berapa",
+                        "required": false,
+                        "example": 1,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Jumlah data per halaman",
+                        "required": false,
+                        "example": 10,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Kata kunci pencarian kategori",
+                        "required": false,
+                        "example": "buah",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/ticket/{id}": {
+            "get": {
+                "tags": [
+                    "Ticket"
+                ],
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Ticket"
+                ],
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "authorization",
+                        "in": "header",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": {}
+                    }
+                ],
+                "requestBody": {
+                    "require": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#components/schemas/CreateTicketRequest"
+                            }
+                        },
+                        "application/xml": {
+                            "schema": {
+                                "$ref": "#components/schemas/CreateTicketRequest"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Ticket"
+                ],
                 "description": "",
                 "parameters": [
                     {
@@ -963,11 +1214,11 @@
                 "properties": {
                     "identifier": {
                         "type": "string",
-                        "example": "evairo176"
+                        "example": "semenjakpetang176@gmail.com"
                     },
                     "password": {
                         "type": "string",
-                        "example": "123456"
+                        "example": "Juara123"
                     }
                 },
                 "xml": {
@@ -1185,7 +1436,7 @@
                         "type": "string",
                         "example": "Ticket Reguler"
                     },
-                    "events": {
+                    "eventId": {
                         "type": "string",
                         "example": "6762aa5dacb76a9b3e2cb1da"
                     },

@@ -26,8 +26,8 @@ export const doc = {
     },
     schemas: {
       LoginRequest: {
-        identifier: 'evairo176',
-        password: '123456',
+        identifier: 'semenjakpetang176@gmail.com',
+        password: 'Juara123',
       },
       RegisterRequest: {
         fullName: 'Dicki Prasetya',
@@ -83,7 +83,7 @@ export const doc = {
       CreateTicketRequest: {
         price: 1500,
         name: 'Ticket Reguler',
-        events: '6762aa5dacb76a9b3e2cb1da',
+        eventId: '6762aa5dacb76a9b3e2cb1da',
         description: 'Ticket Reguler - Description',
         quantity: 100,
       },

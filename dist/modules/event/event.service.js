@@ -27,6 +27,12 @@ class EventService {
             if (findEvent) {
                 throw new catch_errors_1.BadRequestException('Event already exists with this name', "EVENT_NAME_ALREADY_EXISTS" /* ErrorCode.EVENT_NAME_ALREADY_EXISTS */);
             }
+            const currentCatgeoryId = yield database_1.db.category.findUnique({
+                where: { id: body === null || body === void 0 ? void 0 : body.categoryId },
+            });
+            if (!currentCatgeoryId) {
+                throw new catch_errors_1.NotFoundException('Category not found', "RESOURCE_NOT_FOUND" /* ErrorCode.RESOURCE_NOT_FOUND */);
+            }
             const result = yield database_1.db.event.create({
                 data: Object.assign(Object.assign({}, body), { slug: nameSlug }),
             });
@@ -90,7 +96,7 @@ class EventService {
             if (body === null || body === void 0 ? void 0 : body.name) {
                 const findEvent = yield database_1.db.event.findFirst({
                     where: {
-                        name: nameSlug,
+                        slug: nameSlug,
                         NOT: {
                             id: id,
                         },
@@ -105,7 +111,7 @@ class EventService {
                 where: { id },
             });
             if (!currentEvent) {
-                throw new catch_errors_1.NotFoundException('Event not found');
+                throw new catch_errors_1.NotFoundException('Category not found', "RESOURCE_NOT_FOUND" /* ErrorCode.RESOURCE_NOT_FOUND */);
             }
             if (body === null || body === void 0 ? void 0 : body.categoryId) {
                 const currentCatgeoryId = yield database_1.db.category.findUnique({
