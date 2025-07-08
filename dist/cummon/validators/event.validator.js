@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createEventSchema = void 0;
+exports.updateEventSchema = exports.createEventSchema = void 0;
 const zod_1 = require("zod");
 exports.createEventSchema = zod_1.z.object({
     name: zod_1.z.string(),
@@ -15,4 +15,18 @@ exports.createEventSchema = zod_1.z.object({
     latitude: zod_1.z.number().optional(),
     longitude: zod_1.z.number().optional(),
     categoryId: zod_1.z.string(),
+});
+exports.updateEventSchema = zod_1.z.object({
+    name: zod_1.z.string().optional(),
+    startDate: zod_1.z.string().optional(),
+    endDate: zod_1.z.string().optional(),
+    description: zod_1.z.string().optional(),
+    banner: zod_1.z.string().optional(),
+    isFeatured: zod_1.z.boolean().optional(),
+    isOnline: zod_1.z.boolean().optional(),
+    isPublished: zod_1.z.boolean().default(false).optional(),
+    region: zod_1.z.number().optional(),
+    latitude: zod_1.z.number().optional().optional(),
+    longitude: zod_1.z.number().optional().optional(),
+    categoryId: zod_1.z.string().optional(),
 });

@@ -2,7 +2,10 @@ import { Request, Response } from 'express';
 import { asyncHandler } from '../../middlewares/async-handler.middleware';
 import EventService from './event.service';
 import { HTTPSTATUS } from '../../config/http.config';
-import { createEventSchema } from '../../cummon/validators/event.validator';
+import {
+  createEventSchema,
+  updateEventSchema,
+} from '../../cummon/validators/event.validator';
 import { IPaginationQuery } from '../../cummon/interface/category.interface';
 
 export default class EventController {
@@ -67,7 +70,7 @@ export default class EventController {
     async (req: Request, res: Response): Promise<any> => {
       const params = req?.params;
       const userId = req?.user?.id;
-      const body = createEventSchema.parse({
+      const body = updateEventSchema.parse({
         ...req.body,
       });
       const result = await this.eventService.update(params.id as string, {

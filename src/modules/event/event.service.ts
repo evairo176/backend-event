@@ -1,6 +1,9 @@
 import { ErrorCode } from '../../cummon/enums/error-code.enum';
 import { IPaginationQuery } from '../../cummon/interface/category.interface';
-import { ICreateEvent } from '../../cummon/interface/event.interface';
+import {
+  ICreateEvent,
+  IUpdateEvent,
+} from '../../cummon/interface/event.interface';
 import {
   BadRequestException,
   NotFoundException,
@@ -89,8 +92,8 @@ export default class EventService {
     return result;
   }
 
-  public async update(id: string, body: ICreateEvent) {
-    const nameSlug = slug.generate(body?.name);
+  public async update(id: string, body: IUpdateEvent) {
+    const nameSlug = slug.generate(body?.name as string);
     const findEvent = await db.event.findFirst({
       where: {
         name: nameSlug,
