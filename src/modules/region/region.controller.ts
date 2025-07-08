@@ -51,7 +51,7 @@ export default class RegionController {
   public getRegency = asyncHandler(
     async (req: Request, res: Response): Promise<any> => {
       const query = req.query;
-      const result = await this.regionService.getRegency(query?.code as string);
+      const result = await this.regionService.getRegency(query?.id as string);
 
       return res.status(HTTPSTATUS.OK).json({
         message: 'Success get regencies',
