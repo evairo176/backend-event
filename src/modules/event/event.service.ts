@@ -133,7 +133,7 @@ export default class EventService {
       },
       data: {
         name: body?.name ? body?.name : currentEvent?.name,
-        slug: nameSlug ? nameSlug : currentEvent?.slug,
+        slug: body?.name ? nameSlug : currentEvent?.slug,
         banner: body?.banner ? body?.banner : currentEvent.banner,
         categoryId: body?.categoryId
           ? body?.categoryId

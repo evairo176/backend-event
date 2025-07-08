@@ -117,7 +117,7 @@ class EventService {
                 },
                 data: {
                     name: (body === null || body === void 0 ? void 0 : body.name) ? body === null || body === void 0 ? void 0 : body.name : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.name,
-                    slug: nameSlug ? nameSlug : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.slug,
+                    slug: (body === null || body === void 0 ? void 0 : body.name) ? nameSlug : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.slug,
                     banner: (body === null || body === void 0 ? void 0 : body.banner) ? body === null || body === void 0 ? void 0 : body.banner : currentEvent.banner,
                     categoryId: (body === null || body === void 0 ? void 0 : body.categoryId)
                         ? body === null || body === void 0 ? void 0 : body.categoryId
