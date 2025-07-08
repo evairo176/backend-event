@@ -1,7 +1,10 @@
 export default {
   generate(name: string) {
-    const slug = name.split(' ').join('-').toLowerCase();
+    if (name) {
+      const slug = name.split(' ').join('-').toLowerCase();
+      return slug;
+    }
 
-    return slug;
+    return '';
   },
 };
