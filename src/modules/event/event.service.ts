@@ -94,20 +94,22 @@ export default class EventService {
 
   public async update(id: string, body: IUpdateEvent) {
     const nameSlug = slug.generate(body?.name as string);
-    const findEvent = await db.event.findFirst({
-      where: {
-        name: nameSlug,
-        NOT: {
-          id: id,
+    if (body?.name) {
+      const findEvent = await db.event.findFirst({
+        where: {
+          name: nameSlug,
+          NOT: {
+            id: id,
+          },
         },
-      },
-    });
+      });
 
-    if (findEvent) {
-      throw new BadRequestException(
-        'Event already exists with this name',
-        ErrorCode.EVENT_NAME_ALREADY_EXISTS,
-      );
+      if (findEvent) {
+        throw new BadRequestException(
+          'Event already exists with this name',
+          ErrorCode.EVENT_NAME_ALREADY_EXISTS,
+        );
+      }
     }
 
     // Fetch current event for fallback data

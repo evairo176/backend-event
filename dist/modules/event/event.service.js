@@ -87,16 +87,18 @@ class EventService {
     update(id, body) {
         return __awaiter(this, void 0, void 0, function* () {
             const nameSlug = slug_1.default.generate(body === null || body === void 0 ? void 0 : body.name);
-            const findEvent = yield database_1.db.event.findFirst({
-                where: {
-                    name: nameSlug,
-                    NOT: {
-                        id: id,
+            if (body === null || body === void 0 ? void 0 : body.name) {
+                const findEvent = yield database_1.db.event.findFirst({
+                    where: {
+                        name: nameSlug,
+                        NOT: {
+                            id: id,
+                        },
                     },
-                },
-            });
-            if (findEvent) {
-                throw new catch_errors_1.BadRequestException('Event already exists with this name', "EVENT_NAME_ALREADY_EXISTS" /* ErrorCode.EVENT_NAME_ALREADY_EXISTS */);
+                });
+                if (findEvent) {
+                    throw new catch_errors_1.BadRequestException('Event already exists with this name', "EVENT_NAME_ALREADY_EXISTS" /* ErrorCode.EVENT_NAME_ALREADY_EXISTS */);
+                }
             }
             // Fetch current event for fallback data
             const currentEvent = yield database_1.db.event.findUnique({
