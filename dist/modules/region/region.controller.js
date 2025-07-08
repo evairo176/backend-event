@@ -37,24 +37,24 @@ class RegionController {
             });
         }));
         this.getRegency = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const query = req.query;
-            const result = yield this.regionService.getRegency(query === null || query === void 0 ? void 0 : query.id);
+            const params = req.params;
+            const result = yield this.regionService.getRegency(params === null || params === void 0 ? void 0 : params.id);
             return res.status(http_config_1.HTTPSTATUS.OK).json({
                 message: 'Success get regencies',
                 data: result,
             });
         }));
         this.getDistrict = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const query = req.query;
-            const result = yield this.regionService.getDistrict(query === null || query === void 0 ? void 0 : query.id);
+            const params = req.params;
+            const result = yield this.regionService.getDistrict(params === null || params === void 0 ? void 0 : params.id);
             return res.status(http_config_1.HTTPSTATUS.OK).json({
                 message: 'Success get districts',
                 data: result,
             });
         }));
         this.getVillage = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
-            const query = req.query;
-            const result = yield this.regionService.getVillage(query === null || query === void 0 ? void 0 : query.id);
+            const params = req.params;
+            const result = yield this.regionService.getVillage(params === null || params === void 0 ? void 0 : params.id);
             return res.status(http_config_1.HTTPSTATUS.OK).json({
                 message: 'Success get villages',
                 data: result,
