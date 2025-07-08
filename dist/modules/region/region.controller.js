@@ -46,7 +46,7 @@ class RegionController {
         }));
         this.getDistrict = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             const query = req.query;
-            const result = yield this.regionService.getDistrict(query === null || query === void 0 ? void 0 : query.code);
+            const result = yield this.regionService.getDistrict(query === null || query === void 0 ? void 0 : query.id);
             return res.status(http_config_1.HTTPSTATUS.OK).json({
                 message: 'Success get districts',
                 data: result,
@@ -54,7 +54,7 @@ class RegionController {
         }));
         this.getVillage = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             const query = req.query;
-            const result = yield this.regionService.getVillage(query === null || query === void 0 ? void 0 : query.code);
+            const result = yield this.regionService.getVillage(query === null || query === void 0 ? void 0 : query.id);
             return res.status(http_config_1.HTTPSTATUS.OK).json({
                 message: 'Success get villages',
                 data: result,

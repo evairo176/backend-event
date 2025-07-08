@@ -63,9 +63,7 @@ export default class RegionController {
   public getDistrict = asyncHandler(
     async (req: Request, res: Response): Promise<any> => {
       const query = req.query;
-      const result = await this.regionService.getDistrict(
-        query?.code as string,
-      );
+      const result = await this.regionService.getDistrict(query?.id as string);
 
       return res.status(HTTPSTATUS.OK).json({
         message: 'Success get districts',
@@ -77,7 +75,7 @@ export default class RegionController {
   public getVillage = asyncHandler(
     async (req: Request, res: Response): Promise<any> => {
       const query = req.query;
-      const result = await this.regionService.getVillage(query?.code as string);
+      const result = await this.regionService.getVillage(query?.id as string);
 
       return res.status(HTTPSTATUS.OK).json({
         message: 'Success get villages',
