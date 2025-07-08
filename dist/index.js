@@ -24,6 +24,7 @@ const session_routes_1 = __importDefault(require("./modules/session/session.rout
 const auth_routes_1 = __importDefault(require("./modules/auth/auth.routes"));
 const media_routes_1 = __importDefault(require("./modules/media/media.routes"));
 const mfa_routes_1 = __importDefault(require("./modules/mfa/mfa.routes"));
+const ticket_routes_1 = __importDefault(require("./modules/ticket/ticket.routes"));
 const app = (0, express_1.default)();
 const BASE_PATH = app_config_1.config.BASE_PATH;
 // Add JSON middleware to parse incoming requests
@@ -55,6 +56,7 @@ app.use(`${BASE_PATH}`, media_routes_1.default);
 app.use(`${BASE_PATH}`, category_routes_1.default);
 app.use(`${BASE_PATH}`, region_routes_1.default);
 app.use(`${BASE_PATH}`, event_routes_1.default);
+app.use(`${BASE_PATH}`, ticket_routes_1.default);
 // Setup Swagger
 (0, swagger_1.setupSwagger)(app);
 // scheduler
