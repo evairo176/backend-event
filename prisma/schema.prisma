@@ -111,6 +111,7 @@ model Event {
   isPublished Boolean @default(false)
   slug        String  @unique
   region      Int
+  address     String?
   longitude   Float?
   latitude    Float?
 

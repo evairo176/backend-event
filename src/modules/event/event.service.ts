@@ -155,6 +155,7 @@ export default class EventService {
           ? body.description
           : currentEvent?.description,
         region: body.region ? body.region : currentEvent?.region,
+        address: body.address ? body.address : currentEvent?.address,
         latitude: body.latitude ? body.latitude : currentEvent?.latitude,
         longitude: body.longitude ? body.longitude : currentEvent?.longitude,
       },
