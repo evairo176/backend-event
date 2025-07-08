@@ -98,11 +98,46 @@ class EventService {
             if (findEvent) {
                 throw new catch_errors_1.BadRequestException('Event already exists with this name', "EVENT_NAME_ALREADY_EXISTS" /* ErrorCode.EVENT_NAME_ALREADY_EXISTS */);
             }
+            // Fetch current event for fallback data
+            const currentEvent = yield database_1.db.event.findUnique({
+                where: { id },
+            });
+            if (!currentEvent) {
+                throw new catch_errors_1.NotFoundException('Event not found');
+            }
+            const currentCatgeoryId = yield database_1.db.category.findUnique({
+                where: { id: body === null || body === void 0 ? void 0 : body.categoryId },
+            });
+            if (!currentCatgeoryId) {
+                throw new catch_errors_1.NotFoundException('Category not found');
+            }
             const updatedEvent = yield database_1.db.event.update({
                 where: {
                     id,
                 },
-                data: Object.assign(Object.assign({}, body), { slug: nameSlug }),
+                data: {
+                    name: (body === null || body === void 0 ? void 0 : body.name) ? body === null || body === void 0 ? void 0 : body.name : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.name,
+                    slug: nameSlug ? nameSlug : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.slug,
+                    banner: (body === null || body === void 0 ? void 0 : body.banner) ? body === null || body === void 0 ? void 0 : body.banner : currentEvent.banner,
+                    categoryId: (body === null || body === void 0 ? void 0 : body.categoryId)
+                        ? body === null || body === void 0 ? void 0 : body.categoryId
+                        : currentEvent.categoryId,
+                    startDate: body.startDate ? body.startDate : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.startDate,
+                    endDate: body.endDate ? body.endDate : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.endDate,
+                    isFeatured: body.isFeatured
+                        ? body.isFeatured
+                        : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.isFeatured,
+                    isOnline: body.isOnline ? body.isOnline : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.isOnline,
+                    isPublished: body.isPublished
+                        ? body.isPublished
+                        : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.isPublished,
+                    description: body.description
+                        ? body.description
+                        : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.description,
+                    region: body.region ? body.region : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.region,
+                    latitude: body.latitude ? body.latitude : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.latitude,
+                    longitude: body.longitude ? body.longitude : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.longitude,
+                },
             });
             return updatedEvent;
         });

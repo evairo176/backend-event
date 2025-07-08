@@ -1,7 +1,10 @@
 import { ErrorCode } from '../../cummon/enums/error-code.enum';
 import { IPaginationQuery } from '../../cummon/interface/category.interface';
 import { ICreateEvent } from '../../cummon/interface/event.interface';
-import { BadRequestException } from '../../cummon/utils/catch-errors';
+import {
+  BadRequestException,
+  NotFoundException,
+} from '../../cummon/utils/catch-errors';
 import slug from '../../cummon/utils/slug';
 import { db } from '../../database/database';
 
@@ -104,13 +107,49 @@ export default class EventService {
       );
     }
 
+    // Fetch current event for fallback data
+    const currentEvent = await db.event.findUnique({
+      where: { id },
+    });
+
+    if (!currentEvent) {
+      throw new NotFoundException('Event not found');
+    }
+
+    const currentCatgeoryId = await db.category.findUnique({
+      where: { id: body?.categoryId },
+    });
+
+    if (!currentCatgeoryId) {
+      throw new NotFoundException('Category not found');
+    }
+
     const updatedEvent = await db.event.update({
       where: {
         id,
       },
       data: {
-        ...body,
-        slug: nameSlug,
+        name: body?.name ? body?.name : currentEvent?.name,
+        slug: nameSlug ? nameSlug : currentEvent?.slug,
+        banner: body?.banner ? body?.banner : currentEvent.banner,
+        categoryId: body?.categoryId
+          ? body?.categoryId
+          : currentEvent.categoryId,
+        startDate: body.startDate ? body.startDate : currentEvent?.startDate,
+        endDate: body.endDate ? body.endDate : currentEvent?.endDate,
+        isFeatured: body.isFeatured
+          ? body.isFeatured
+          : currentEvent?.isFeatured,
+        isOnline: body.isOnline ? body.isOnline : currentEvent?.isOnline,
+        isPublished: body.isPublished
+          ? body.isPublished
+          : currentEvent?.isPublished,
+        description: body.description
+          ? body.description
+          : currentEvent?.description,
+        region: body.region ? body.region : currentEvent?.region,
+        latitude: body.latitude ? body.latitude : currentEvent?.latitude,
+        longitude: body.longitude ? body.longitude : currentEvent?.longitude,
       },
     });
 
