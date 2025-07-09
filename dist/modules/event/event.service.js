@@ -162,7 +162,7 @@ class EventService {
                     description: body.description
                         ? body.description
                         : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.description,
-                    regionId: body.region ? body.region : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.regionId,
+                    regionId: body.regionId ? body.regionId : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.regionId,
                     address: body.address ? body.address : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.address,
                     latitude: body.latitude ? body.latitude : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.latitude,
                     longitude: body.longitude ? body.longitude : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.longitude,
