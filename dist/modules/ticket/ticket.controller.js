@@ -68,10 +68,17 @@ class TicketController {
         }));
         this.findAllByEvent = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             const params = req === null || req === void 0 ? void 0 : req.params;
-            const event = yield this.ticketService.findAllByEvent(params === null || params === void 0 ? void 0 : params.eventId);
+            const query = req === null || req === void 0 ? void 0 : req.query;
+            const { tickets, limit, page, total, totalPages } = yield this.ticketService.findAllByEvent(params === null || params === void 0 ? void 0 : params.eventId, query);
             return res.status(http_config_1.HTTPSTATUS.OK).json({
-                message: 'Success find all ticket by event',
-                data: event,
+                message: 'Success find all ticket',
+                data: tickets,
+                pagination: {
+                    limit,
+                    page,
+                    total,
+                    totalPages,
+                },
             });
         }));
         this.ticketService = ticketService;

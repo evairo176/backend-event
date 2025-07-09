@@ -155,14 +155,51 @@ class TicketService {
             return findTicket;
         });
     }
-    findAllByEvent(eventId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const result = yield database_1.db.ticket.findMany({
-                where: {
-                    eventId,
-                },
-            });
-            return result;
+    findAllByEvent(eventId_1, _a) {
+        return __awaiter(this, arguments, void 0, function* (eventId, { page = 1, limit = 10, search }) {
+            const where = {
+                AND: [
+                    { eventId }, // filter wajib
+                ],
+            };
+            if (search) {
+                where.AND.push({
+                    OR: [
+                        {
+                            name: {
+                                contains: search,
+                                mode: 'insensitive',
+                            },
+                        },
+                        {
+                            description: {
+                                contains: search,
+                                mode: 'insensitive',
+                            },
+                        },
+                    ],
+                });
+            }
+            const skip = (Number(page) - 1) * Number(limit);
+            const take = Number(limit);
+            const [tickets, total] = yield Promise.all([
+                database_1.db.ticket.findMany({
+                    where,
+                    skip,
+                    take,
+                    orderBy: { updatedAt: 'desc' },
+                }),
+                database_1.db.ticket.count({
+                    where,
+                }),
+            ]);
+            return {
+                tickets,
+                page: Number(page),
+                limit: Number(limit),
+                total,
+                totalPages: Math.ceil(total / Number(limit)),
+            };
         });
     }
 }

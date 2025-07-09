@@ -28,11 +28,11 @@ export default class EventService {
       );
     }
 
-    const currentCatgeoryId = await db.category.findUnique({
+    const currentCategoryId = await db.category.findUnique({
       where: { id: body?.categoryId },
     });
 
-    if (!currentCatgeoryId) {
+    if (!currentCategoryId) {
       throw new NotFoundException(
         'Category not found',
         ErrorCode.RESOURCE_NOT_FOUND,

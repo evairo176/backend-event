@@ -183,13 +183,56 @@ export class TicketService {
 
     return findTicket;
   }
-  public async findAllByEvent(eventId: string) {
-    const result = await db.ticket.findMany({
-      where: {
-        eventId,
-      },
-    });
+  public async findAllByEvent(
+    eventId: string,
+    { page = 1, limit = 10, search }: IPaginationQuery,
+  ) {
+    const where: any = {
+      AND: [
+        { eventId }, // filter wajib
+      ],
+    };
 
-    return result;
+    if (search) {
+      where.AND.push({
+        OR: [
+          {
+            name: {
+              contains: search,
+              mode: 'insensitive',
+            },
+          },
+          {
+            description: {
+              contains: search,
+              mode: 'insensitive',
+            },
+          },
+        ],
+      });
+    }
+
+    const skip = (Number(page) - 1) * Number(limit);
+    const take = Number(limit);
+
+    const [tickets, total] = await Promise.all([
+      db.ticket.findMany({
+        where,
+        skip,
+        take,
+        orderBy: { updatedAt: 'desc' },
+      }),
+      db.ticket.count({
+        where,
+      }),
+    ]);
+
+    return {
+      tickets,
+      page: Number(page),
+      limit: Number(limit),
+      total,
+      totalPages: Math.ceil(total / Number(limit)),
+    };
   }
 }

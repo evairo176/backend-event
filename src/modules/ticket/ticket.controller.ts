@@ -101,14 +101,20 @@ export class TicketController {
   public findAllByEvent = asyncHandler(
     async (req: Request, res: Response): Promise<any> => {
       const params = req?.params;
+      const query = req?.query as unknown as IPaginationQuery;
 
-      const event = await this.ticketService.findAllByEvent(
-        params?.eventId as string,
-      );
+      const { tickets, limit, page, total, totalPages } =
+        await this.ticketService.findAllByEvent(params?.eventId, query);
 
       return res.status(HTTPSTATUS.OK).json({
-        message: 'Success find all ticket by event',
-        data: event,
+        message: 'Success find all ticket',
+        data: tickets,
+        pagination: {
+          limit,
+          page,
+          total,
+          totalPages,
+        },
       });
     },
   );
