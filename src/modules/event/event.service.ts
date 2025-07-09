@@ -69,6 +69,21 @@ export default class EventService {
             mode: 'insensitive',
           },
         },
+        {
+          address: {
+            contains: search,
+            mode: 'insensitive',
+          },
+        },
+
+        {
+          category: {
+            name: {
+              contains: search,
+              mode: 'insensitive',
+            },
+          },
+        },
       ];
     }
 
@@ -78,6 +93,10 @@ export default class EventService {
         skip,
         take,
         orderBy: { updatedAt: 'desc' },
+        include: {
+          category: true,
+          city: true,
+        },
       }),
       db.event.count({
         where: query,
@@ -168,7 +187,7 @@ export default class EventService {
         description: body.description
           ? body.description
           : currentEvent?.description,
-        region: body.region ? body.region : currentEvent?.region,
+        regionId: body.region ? body.region : currentEvent?.regionId,
         address: body.address ? body.address : currentEvent?.address,
         latitude: body.latitude ? body.latitude : currentEvent?.latitude,
         longitude: body.longitude ? body.longitude : currentEvent?.longitude,

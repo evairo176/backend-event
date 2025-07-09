@@ -58,6 +58,20 @@ class EventService {
                             mode: 'insensitive',
                         },
                     },
+                    {
+                        address: {
+                            contains: search,
+                            mode: 'insensitive',
+                        },
+                    },
+                    {
+                        category: {
+                            name: {
+                                contains: search,
+                                mode: 'insensitive',
+                            },
+                        },
+                    },
                 ];
             }
             const [events, total] = yield Promise.all([
@@ -66,6 +80,10 @@ class EventService {
                     skip,
                     take,
                     orderBy: { updatedAt: 'desc' },
+                    include: {
+                        category: true,
+                        city: true,
+                    },
                 }),
                 database_1.db.event.count({
                     where: query,
@@ -144,7 +162,7 @@ class EventService {
                     description: body.description
                         ? body.description
                         : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.description,
-                    region: body.region ? body.region : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.region,
+                    regionId: body.region ? body.region : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.regionId,
                     address: body.address ? body.address : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.address,
                     latitude: body.latitude ? body.latitude : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.latitude,
                     longitude: body.longitude ? body.longitude : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.longitude,

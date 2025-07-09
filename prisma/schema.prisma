@@ -114,7 +114,6 @@ model Event {
   isOnline    Boolean
   isPublished Boolean @default(false)
   slug        String  @unique
-  region      Int
   address     String?
   longitude   Float?
   latitude    Float?
@@ -124,6 +123,8 @@ model Event {
   userId     String    @db.ObjectId
   category   Category? @relation(fields: [categoryId], references: [id])
   categoryId String    @db.ObjectId
+  city       Regency?  @relation(fields: [regionId], references: [code])
+  regionId   String?
 
   tickets Ticket[]
 
@@ -178,6 +179,7 @@ model Regency {
   province   Province   @relation(fields: [provinceId], references: [id])
   provinceId String     @db.ObjectId
   districts  District[]
+  Events     Event[]
 }
 
 model District {
