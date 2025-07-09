@@ -38,6 +38,8 @@ model User {
   updatedAt       DateTime   @updatedAt
 
   // relation
+  banners           Banner[]           @relation("CreatedBanners")
+  updatedBanners    Banner[]           @relation("UpdatedBanners")
   tickets           Ticket[]           @relation("CreatedTickets")
   updatedTickets    Ticket[]           @relation("UpdatedTickets")
   events            Event[]
@@ -146,6 +148,20 @@ model Ticket {
   updatedAt   DateTime @updatedAt
 
   @@unique([name, eventId])
+}
+
+model Banner {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String   @unique
+  image       String
+  isShow      Boolean
+  // relation
+  createdBy   User?    @relation("CreatedBanners", fields: [createById], references: [id])
+  createById  String   @db.ObjectId
+  updatedBy   User?    @relation("UpdatedBanners", fields: [updatedById], references: [id])
+  updatedById String   @db.ObjectId
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Province {
