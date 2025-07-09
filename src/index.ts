@@ -21,6 +21,7 @@ import authRoutes from './modules/auth/auth.routes';
 import mediaRoutes from './modules/media/media.routes';
 import mfaRoutes from './modules/mfa/mfa.routes';
 import ticketRoutes from './modules/ticket/ticket.routes';
+import bannerRoutes from './modules/banner/banner.routes';
 
 const app = express();
 const BASE_PATH = config.BASE_PATH;
@@ -60,6 +61,7 @@ app.use(`${BASE_PATH}`, categoryRoutes);
 app.use(`${BASE_PATH}`, regionRoutes);
 app.use(`${BASE_PATH}`, eventRoutes);
 app.use(`${BASE_PATH}`, ticketRoutes);
+app.use(`${BASE_PATH}`, bannerRoutes);
 
 // Setup Swagger
 setupSwagger(app);
