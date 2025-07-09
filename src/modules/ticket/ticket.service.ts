@@ -188,28 +188,24 @@ export class TicketService {
     { page = 1, limit = 10, search }: IPaginationQuery,
   ) {
     const where: any = {
-      AND: [
-        { eventId }, // filter wajib
-      ],
+      eventId,
     };
 
     if (search) {
-      where.AND.push({
-        OR: [
-          {
-            name: {
-              contains: search,
-              mode: 'insensitive',
-            },
+      where.OR = [
+        {
+          name: {
+            contains: search,
+            mode: 'insensitive',
           },
-          {
-            description: {
-              contains: search,
-              mode: 'insensitive',
-            },
+        },
+        {
+          description: {
+            contains: search,
+            mode: 'insensitive',
           },
-        ],
-      });
+        },
+      ];
     }
 
     const skip = (Number(page) - 1) * Number(limit);

@@ -97,7 +97,7 @@ ticketRoutes.delete(
 );
 
 ticketRoutes.get(
-  '/ticket/:id/event',
+  '/ticket/:eventId/event',
   ticketController.findAllByEvent,
 
   /**

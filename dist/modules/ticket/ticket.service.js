@@ -158,27 +158,23 @@ class TicketService {
     findAllByEvent(eventId_1, _a) {
         return __awaiter(this, arguments, void 0, function* (eventId, { page = 1, limit = 10, search }) {
             const where = {
-                AND: [
-                    { eventId }, // filter wajib
-                ],
+                eventId,
             };
             if (search) {
-                where.AND.push({
-                    OR: [
-                        {
-                            name: {
-                                contains: search,
-                                mode: 'insensitive',
-                            },
+                where.OR = [
+                    {
+                        name: {
+                            contains: search,
+                            mode: 'insensitive',
                         },
-                        {
-                            description: {
-                                contains: search,
-                                mode: 'insensitive',
-                            },
+                    },
+                    {
+                        description: {
+                            contains: search,
+                            mode: 'insensitive',
                         },
-                    ],
-                });
+                    },
+                ];
             }
             const skip = (Number(page) - 1) * Number(limit);
             const take = Number(limit);
