@@ -96,4 +96,13 @@ ticketRoutes.delete(
    */
 );
 
+ticketRoutes.get(
+  '/ticket/:id/event',
+  ticketController.findAllByEvent,
+
+  /**
+   #swagger.tags = ["Ticket"]
+   */
+);
+
 export default ticketRoutes;

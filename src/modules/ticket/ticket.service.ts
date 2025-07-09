@@ -183,5 +183,13 @@ export class TicketService {
 
     return findTicket;
   }
-  public async findAllByTicket() {}
+  public async findAllByEvent(eventId: string) {
+    const result = await db.ticket.findMany({
+      where: {
+        eventId,
+      },
+    });
+
+    return result;
+  }
 }

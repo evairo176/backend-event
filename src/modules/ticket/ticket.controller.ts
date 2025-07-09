@@ -2,11 +2,11 @@ import { Request, Response } from 'express';
 import { asyncHandler } from '../../middlewares/async-handler.middleware';
 import { TicketService } from './ticket.service';
 import { HTTPSTATUS } from '../../config/http.config';
-import { IPaginationQuery } from '../../cummon/interface/category.interface';
 import {
   createTicketSchema,
   updateTicketSchema,
 } from '../../cummon/validators/ticket.validator';
+import { IPaginationQuery } from '../../cummon/interface/event.interface';
 
 export class TicketController {
   private ticketService: TicketService;
@@ -73,14 +73,14 @@ export class TicketController {
       });
       const params = req?.params;
       const userId = req?.user?.id;
-      const category = await this.ticketService.update(params?.id as string, {
+      const event = await this.ticketService.update(params?.id as string, {
         ...body,
         updatedById: userId as string,
       });
 
       return res.status(HTTPSTATUS.OK).json({
-        message: 'Success update category',
-        data: category,
+        message: 'Success update event',
+        data: event,
       });
     },
   );
@@ -89,11 +89,26 @@ export class TicketController {
     async (req: Request, res: Response): Promise<any> => {
       const params = req?.params;
 
-      const category = await this.ticketService.remove(params?.id as string);
+      const event = await this.ticketService.remove(params?.id as string);
 
       return res.status(HTTPSTATUS.OK).json({
         message: 'Success delete ticket',
-        data: category,
+        data: event,
+      });
+    },
+  );
+
+  public findAllByEvent = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+      const params = req?.params;
+
+      const event = await this.ticketService.findAllByEvent(
+        params?.eventId as string,
+      );
+
+      return res.status(HTTPSTATUS.OK).json({
+        message: 'Success find all ticket by event',
+        data: event,
       });
     },
   );

@@ -10,3 +10,8 @@ export interface ICreateEvent extends z.infer<typeof createEventSchema> {
 export interface IUpdateEvent extends z.infer<typeof updateEventSchema> {
   userId: string;
 }
+export interface IPaginationQuery {
+  page: number;
+  limit: number;
+  search?: string;
+}

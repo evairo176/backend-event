@@ -52,18 +52,26 @@ class TicketController {
             const body = ticket_validator_1.updateTicketSchema.parse(Object.assign({}, req === null || req === void 0 ? void 0 : req.body));
             const params = req === null || req === void 0 ? void 0 : req.params;
             const userId = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.id;
-            const category = yield this.ticketService.update(params === null || params === void 0 ? void 0 : params.id, Object.assign(Object.assign({}, body), { updatedById: userId }));
+            const event = yield this.ticketService.update(params === null || params === void 0 ? void 0 : params.id, Object.assign(Object.assign({}, body), { updatedById: userId }));
             return res.status(http_config_1.HTTPSTATUS.OK).json({
-                message: 'Success update category',
-                data: category,
+                message: 'Success update event',
+                data: event,
             });
         }));
         this.remove = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             const params = req === null || req === void 0 ? void 0 : req.params;
-            const category = yield this.ticketService.remove(params === null || params === void 0 ? void 0 : params.id);
+            const event = yield this.ticketService.remove(params === null || params === void 0 ? void 0 : params.id);
             return res.status(http_config_1.HTTPSTATUS.OK).json({
                 message: 'Success delete ticket',
-                data: category,
+                data: event,
+            });
+        }));
+        this.findAllByEvent = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const params = req === null || req === void 0 ? void 0 : req.params;
+            const event = yield this.ticketService.findAllByEvent(params === null || params === void 0 ? void 0 : params.eventId);
+            return res.status(http_config_1.HTTPSTATUS.OK).json({
+                message: 'Success find all ticket by event',
+                data: event,
             });
         }));
         this.ticketService = ticketService;

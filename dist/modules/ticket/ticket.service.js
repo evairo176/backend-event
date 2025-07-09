@@ -155,8 +155,15 @@ class TicketService {
             return findTicket;
         });
     }
-    findAllByTicket() {
-        return __awaiter(this, void 0, void 0, function* () { });
+    findAllByEvent(eventId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield database_1.db.ticket.findMany({
+                where: {
+                    eventId,
+                },
+            });
+            return result;
+        });
     }
 }
 exports.TicketService = TicketService;

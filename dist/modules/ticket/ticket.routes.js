@@ -14,4 +14,5 @@ ticketRoutes.get('/ticket', ticket_module_1.ticketController.findAll);
 ticketRoutes.get('/ticket/:id', ticket_module_1.ticketController.findOne);
 ticketRoutes.put('/ticket/:id', [jwt_strategy_1.authenticateJWT, (0, acl_middleware_1.default)([role_enum_1.ROLES.ADMIN])], ticket_module_1.ticketController.update);
 ticketRoutes.delete('/ticket/:id', [jwt_strategy_1.authenticateJWT, (0, acl_middleware_1.default)([role_enum_1.ROLES.ADMIN])], ticket_module_1.ticketController.remove);
+ticketRoutes.get('/ticket/:id/event', ticket_module_1.ticketController.findAllByEvent);
 exports.default = ticketRoutes;
