@@ -106,7 +106,7 @@ export class BannerService {
       data: {
         title: body?.title ? body?.title : bannerExisting?.title,
         image: body?.image ? body?.image : bannerExisting?.image,
-        isShow: body?.isShow ? body?.isShow : bannerExisting?.isShow,
+        isShow: String(body?.isShow) ? body?.isShow : bannerExisting?.isShow,
       },
     });
 
