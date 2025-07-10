@@ -11,11 +11,11 @@ export interface Payment {
 
 export type TypeResponseMidtrans = {
   token: string;
-  rediredUrl: string;
+  redirect_url: string;
 };
 
-export default {
-  async createLink(payload: Payment): Promise<TypeResponseMidtrans> {
+export class PaymentMidtrans {
+  public async createLink(payload: Payment): Promise<TypeResponseMidtrans> {
     const result = await axios.post<TypeResponseMidtrans>(
       `${config.MIDTRANS.TRANSACTION_URL}`,
       payload,
@@ -33,5 +33,5 @@ export default {
     }
 
     return result?.data;
-  },
-};
+  }
+}
