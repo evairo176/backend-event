@@ -22,6 +22,11 @@ const appConfig = () => ({
     API_KEY: getEnv('CLOUDINARY_CLOUD_API_KEY'),
     API_SECRET: getEnv('CLOUDINARY_CLOUD_API_SECRET'),
   },
+  MIDTRANS: {
+    CLIENT_KEY: getEnv('MIDTRANS_CLIENT_KEY'),
+    SERVER_KEY: getEnv('MIDTRANS_SERVER_KEY'),
+    TRANSACTION_URL: getEnv('MIDTRANS_TRANSACTION_URL'),
+  },
 });
 
 export const config = appConfig();
