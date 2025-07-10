@@ -177,11 +177,13 @@ export default class EventService {
           : currentEvent.categoryId,
         startDate: body.startDate ? body.startDate : currentEvent?.startDate,
         endDate: body.endDate ? body.endDate : currentEvent?.endDate,
-        isFeatured: body.isFeatured
+        isFeatured: String(body.isFeatured)
           ? body.isFeatured
           : currentEvent?.isFeatured,
-        isOnline: body.isOnline ? body.isOnline : currentEvent?.isOnline,
-        isPublished: body.isPublished
+        isOnline: String(body.isOnline)
+          ? body.isOnline
+          : currentEvent?.isOnline,
+        isPublished: String(body.isPublished)
           ? body.isPublished
           : currentEvent?.isPublished,
         description: body.description

@@ -152,11 +152,13 @@ class EventService {
                         : currentEvent.categoryId,
                     startDate: body.startDate ? body.startDate : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.startDate,
                     endDate: body.endDate ? body.endDate : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.endDate,
-                    isFeatured: body.isFeatured
+                    isFeatured: String(body.isFeatured)
                         ? body.isFeatured
                         : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.isFeatured,
-                    isOnline: body.isOnline ? body.isOnline : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.isOnline,
-                    isPublished: body.isPublished
+                    isOnline: String(body.isOnline)
+                        ? body.isOnline
+                        : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.isOnline,
+                    isPublished: String(body.isPublished)
                         ? body.isPublished
                         : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.isPublished,
                     description: body.description
