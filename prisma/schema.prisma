@@ -104,9 +104,9 @@ model Category {
   events Event[]
 
   createdBy   User?    @relation("CreatedCategories", fields: [createById], references: [id])
-  createById  String   @db.ObjectId
+  createById  String?  @db.ObjectId
   updatedBy   User?    @relation("UpdatedCategories", fields: [updatedById], references: [id])
-  updatedById String   @db.ObjectId
+  updatedById String?  @db.ObjectId
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -128,11 +128,11 @@ model Event {
 
   // relation
   createdBy   User?     @relation("CreatedEvents", fields: [createById], references: [id])
-  createById  String    @db.ObjectId
+  createById  String?   @db.ObjectId
   updatedBy   User?     @relation("UpdatedEvents", fields: [updatedById], references: [id])
-  updatedById String    @db.ObjectId
+  updatedById String?   @db.ObjectId
   category    Category? @relation(fields: [categoryId], references: [id])
-  categoryId  String    @db.ObjectId
+  categoryId  String?   @db.ObjectId
   city        Regency?  @relation(fields: [regionId], references: [code])
   regionId    String?
 
@@ -150,11 +150,11 @@ model Ticket {
   quantity    Int
   // relation
   createdBy   User?    @relation("CreatedTickets", fields: [createById], references: [id])
-  createById  String   @db.ObjectId
+  createById  String?  @db.ObjectId
   updatedBy   User?    @relation("UpdatedTickets", fields: [updatedById], references: [id])
-  updatedById String   @db.ObjectId
+  updatedById String?  @db.ObjectId
   event       Event?   @relation(fields: [eventId], references: [id])
-  eventId     String   @db.ObjectId
+  eventId     String?  @db.ObjectId
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -168,9 +168,9 @@ model Banner {
   isShow      Boolean
   // relation
   createdBy   User?    @relation("CreatedBanners", fields: [createById], references: [id])
-  createById  String   @db.ObjectId
+  createById  String?  @db.ObjectId
   updatedBy   User?    @relation("UpdatedBanners", fields: [updatedById], references: [id])
-  updatedById String   @db.ObjectId
+  updatedById String?  @db.ObjectId
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
