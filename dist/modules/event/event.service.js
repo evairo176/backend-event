@@ -143,32 +143,17 @@ class EventService {
                 where: {
                     id,
                 },
-                data: {
-                    name: (body === null || body === void 0 ? void 0 : body.name) ? body === null || body === void 0 ? void 0 : body.name : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.name,
-                    slug: (body === null || body === void 0 ? void 0 : body.name) ? nameSlug : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.slug,
-                    banner: (body === null || body === void 0 ? void 0 : body.banner) ? body === null || body === void 0 ? void 0 : body.banner : currentEvent.banner,
-                    categoryId: (body === null || body === void 0 ? void 0 : body.categoryId)
+                data: Object.assign(Object.assign({}, body), { name: (body === null || body === void 0 ? void 0 : body.name) ? body === null || body === void 0 ? void 0 : body.name : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.name, slug: (body === null || body === void 0 ? void 0 : body.name) ? nameSlug : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.slug, banner: (body === null || body === void 0 ? void 0 : body.banner) ? body === null || body === void 0 ? void 0 : body.banner : currentEvent.banner, categoryId: (body === null || body === void 0 ? void 0 : body.categoryId)
                         ? body === null || body === void 0 ? void 0 : body.categoryId
-                        : currentEvent.categoryId,
-                    startDate: body.startDate ? body.startDate : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.startDate,
-                    endDate: body.endDate ? body.endDate : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.endDate,
-                    isFeatured: String(body.isFeatured)
+                        : currentEvent.categoryId, startDate: body.startDate ? body.startDate : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.startDate, endDate: body.endDate ? body.endDate : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.endDate, isFeatured: String(body.isFeatured)
                         ? body.isFeatured
-                        : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.isFeatured,
-                    isOnline: String(body.isOnline)
+                        : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.isFeatured, isOnline: String(body.isOnline)
                         ? body.isOnline
-                        : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.isOnline,
-                    isPublished: String(body.isPublished)
+                        : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.isOnline, isPublished: String(body.isPublished)
                         ? body.isPublished
-                        : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.isPublished,
-                    description: body.description
+                        : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.isPublished, description: body.description
                         ? body.description
-                        : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.description,
-                    regionId: body.regionId ? body.regionId : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.regionId,
-                    address: body.address ? body.address : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.address,
-                    latitude: body.latitude ? body.latitude : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.latitude,
-                    longitude: body.longitude ? body.longitude : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.longitude,
-                },
+                        : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.description, regionId: body.regionId ? body.regionId : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.regionId, address: body.address ? body.address : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.address, latitude: body.latitude ? body.latitude : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.latitude, longitude: body.longitude ? body.longitude : currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.longitude }),
             });
             return updatedEvent;
         });

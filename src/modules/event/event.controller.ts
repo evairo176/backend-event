@@ -24,7 +24,8 @@ export default class EventController {
 
       const result = await this.eventService.create({
         ...body,
-        userId: userId as string,
+        createById: userId as string,
+        updatedById: userId as string,
       });
 
       return res.status(HTTPSTATUS.CREATED).json({
@@ -75,7 +76,7 @@ export default class EventController {
       });
       const result = await this.eventService.update(params.id as string, {
         ...body,
-        userId: userId as string,
+        updatedById: userId as string,
       });
 
       return res.status(HTTPSTATUS.OK).json({

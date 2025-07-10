@@ -5,10 +5,11 @@ import {
 } from '../validators/event.validator';
 
 export interface ICreateEvent extends z.infer<typeof createEventSchema> {
-  userId: string;
+  createById: string;
+  updatedById: string;
 }
 export interface IUpdateEvent extends z.infer<typeof updateEventSchema> {
-  userId: string;
+  updatedById: string;
 }
 export interface IPaginationQuery {
   page: number;

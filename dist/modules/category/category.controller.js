@@ -16,8 +16,10 @@ const async_handler_middleware_1 = require("../../middlewares/async-handler.midd
 class CategoryController {
     constructor(categoryService) {
         this.create = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+            var _a;
             const body = category_validator_1.createCategorySchema.parse(Object.assign({}, req === null || req === void 0 ? void 0 : req.body));
-            const result = yield this.categoryService.create(body);
+            const userId = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.id;
+            const result = yield this.categoryService.create(Object.assign(Object.assign({}, body), { createById: userId, updatedById: userId }));
             return res.status(http_config_1.HTTPSTATUS.CREATED).json({
                 message: 'Create category successfully',
                 data: result,
@@ -46,9 +48,11 @@ class CategoryController {
             });
         }));
         this.update = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+            var _a;
             const body = category_validator_1.updateCategorySchema.parse(Object.assign({}, req === null || req === void 0 ? void 0 : req.body));
             const params = req === null || req === void 0 ? void 0 : req.params;
-            const category = yield this.categoryService.update(params.id, body);
+            const userId = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.id;
+            const category = yield this.categoryService.update(params.id, Object.assign(Object.assign({}, body), { updatedById: userId }));
             return res.status(http_config_1.HTTPSTATUS.OK).json({
                 message: 'Success update category',
                 data: category,

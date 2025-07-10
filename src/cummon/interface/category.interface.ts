@@ -1,13 +1,16 @@
-export interface CreateCategoryDto {
-  name: string;
-  description?: string;
-  icon: string;
+import { z } from 'zod';
+import {
+  createCategorySchema,
+  updateCategorySchema,
+} from '../validators/category.validator';
+
+export interface CreateBannerDto extends z.infer<typeof createCategorySchema> {
+  createById: string;
+  updatedById: string;
 }
 
-export interface UpdateCategoryDto {
-  name?: string;
-  description?: string;
-  icon?: string;
+export interface UpdateBannerDto extends z.infer<typeof updateCategorySchema> {
+  updatedById: string;
 }
 
 export interface IPaginationQuery {

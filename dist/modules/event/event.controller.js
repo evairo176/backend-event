@@ -18,7 +18,7 @@ class EventController {
             var _a;
             const userId = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.id;
             const body = event_validator_1.createEventSchema.parse(Object.assign({}, req.body));
-            const result = yield this.eventService.create(Object.assign(Object.assign({}, body), { userId: userId }));
+            const result = yield this.eventService.create(Object.assign(Object.assign({}, body), { createById: userId, updatedById: userId }));
             return res.status(http_config_1.HTTPSTATUS.CREATED).json({
                 message: 'Create event successfully',
                 data: result,
@@ -51,7 +51,7 @@ class EventController {
             const params = req === null || req === void 0 ? void 0 : req.params;
             const userId = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.id;
             const body = event_validator_1.updateEventSchema.parse(Object.assign({}, req.body));
-            const result = yield this.eventService.update(params.id, Object.assign(Object.assign({}, body), { userId: userId }));
+            const result = yield this.eventService.update(params.id, Object.assign(Object.assign({}, body), { updatedById: userId }));
             return res.status(http_config_1.HTTPSTATUS.OK).json({
                 message: 'Success update a event',
                 data: result,

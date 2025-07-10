@@ -42,7 +42,10 @@ model User {
   updatedBanners    Banner[]           @relation("UpdatedBanners")
   tickets           Ticket[]           @relation("CreatedTickets")
   updatedTickets    Ticket[]           @relation("UpdatedTickets")
-  events            Event[]
+  events            Event[]            @relation("CreatedEvents")
+  updatedEvents     Event[]            @relation("UpdatedEvents")
+  categories        Category[]         @relation("CreatedCategories")
+  updatedCategories Category[]         @relation("UpdatedCategories")
   userPreferences   UserPreferences?
   sessions          Session[]
   verificationCodes VerificationCode[] // Relasi 1:N
@@ -98,9 +101,14 @@ model Category {
   description String?
   icon        String
 
-  events    Event[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  events Event[]
+
+  createdBy   User?    @relation("CreatedCategories", fields: [createById], references: [id])
+  createById  String   @db.ObjectId
+  updatedBy   User?    @relation("UpdatedCategories", fields: [updatedById], references: [id])
+  updatedById String   @db.ObjectId
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Event {
@@ -119,12 +127,14 @@ model Event {
   latitude    Float?
 
   // relation
-  createdBy  User?     @relation(fields: [userId], references: [id])
-  userId     String    @db.ObjectId
-  category   Category? @relation(fields: [categoryId], references: [id])
-  categoryId String    @db.ObjectId
-  city       Regency?  @relation(fields: [regionId], references: [code])
-  regionId   String?
+  createdBy   User?     @relation("CreatedEvents", fields: [createById], references: [id])
+  createById  String    @db.ObjectId
+  updatedBy   User?     @relation("UpdatedEvents", fields: [updatedById], references: [id])
+  updatedById String    @db.ObjectId
+  category    Category? @relation(fields: [categoryId], references: [id])
+  categoryId  String    @db.ObjectId
+  city        Regency?  @relation(fields: [regionId], references: [code])
+  regionId    String?
 
   tickets Ticket[]
 

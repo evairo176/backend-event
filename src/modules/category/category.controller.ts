@@ -20,8 +20,13 @@ export class CategoryController {
       const body = createCategorySchema.parse({
         ...req?.body,
       });
+      const userId = req?.user?.id;
 
-      const result = await this.categoryService.create(body);
+      const result = await this.categoryService.create({
+        ...body,
+        createById: userId as string,
+        updatedById: userId as string,
+      });
 
       return res.status(HTTPSTATUS.CREATED).json({
         message: 'Create category successfully',
@@ -69,8 +74,12 @@ export class CategoryController {
         ...req?.body,
       });
       const params = req?.params;
+      const userId = req?.user?.id;
 
-      const category = await this.categoryService.update(params.id, body);
+      const category = await this.categoryService.update(params.id, {
+        ...body,
+        updatedById: userId as string,
+      });
 
       return res.status(HTTPSTATUS.OK).json({
         message: 'Success update category',

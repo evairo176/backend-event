@@ -101,7 +101,7 @@ class BannerService {
                 data: {
                     title: (body === null || body === void 0 ? void 0 : body.title) ? body === null || body === void 0 ? void 0 : body.title : bannerExisting === null || bannerExisting === void 0 ? void 0 : bannerExisting.title,
                     image: (body === null || body === void 0 ? void 0 : body.image) ? body === null || body === void 0 ? void 0 : body.image : bannerExisting === null || bannerExisting === void 0 ? void 0 : bannerExisting.image,
-                    isShow: (body === null || body === void 0 ? void 0 : body.isShow) ? body === null || body === void 0 ? void 0 : body.isShow : bannerExisting === null || bannerExisting === void 0 ? void 0 : bannerExisting.isShow,
+                    isShow: String(body === null || body === void 0 ? void 0 : body.isShow) ? body === null || body === void 0 ? void 0 : body.isShow : bannerExisting === null || bannerExisting === void 0 ? void 0 : bannerExisting.isShow,
                 },
             });
             return banner;

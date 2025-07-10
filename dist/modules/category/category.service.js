@@ -14,7 +14,7 @@ const catch_errors_1 = require("../../cummon/utils/catch-errors");
 const database_1 = require("../../database/database");
 class CategoryService {
     create(_a) {
-        return __awaiter(this, arguments, void 0, function* ({ name, description, icon }) {
+        return __awaiter(this, arguments, void 0, function* ({ name, description, icon, createById, updatedById, }) {
             const findCategory = yield database_1.db.category.findFirst({
                 where: {
                     name: name,
@@ -28,6 +28,8 @@ class CategoryService {
                     name,
                     description,
                     icon,
+                    createById,
+                    updatedById,
                 },
             });
             return category;
@@ -87,7 +89,7 @@ class CategoryService {
         });
     }
     update(id_1, _a) {
-        return __awaiter(this, arguments, void 0, function* (id, { name, description, icon }) {
+        return __awaiter(this, arguments, void 0, function* (id, { name, description, icon, updatedById }) {
             if (name) {
                 // Cari kategori dengan nama yang sama, tapi berbeda ID
                 const findCategory = yield database_1.db.category.findFirst({
@@ -112,6 +114,7 @@ class CategoryService {
                     name: name ? name : categoryExisting === null || categoryExisting === void 0 ? void 0 : categoryExisting.name,
                     description: description ? description : categoryExisting === null || categoryExisting === void 0 ? void 0 : categoryExisting.description,
                     icon: icon ? icon : categoryExisting === null || categoryExisting === void 0 ? void 0 : categoryExisting.icon,
+                    updatedById,
                 },
             });
             return category;

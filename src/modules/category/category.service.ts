@@ -1,15 +1,21 @@
 import { ErrorCode } from '../../cummon/enums/error-code.enum';
 import {
-  CreateCategoryDto,
+  CreateBannerDto,
+  UpdateBannerDto,
   IPaginationQuery,
-  UpdateCategoryDto,
 } from '../../cummon/interface/category.interface';
 import { BadRequestException } from '../../cummon/utils/catch-errors';
 import uploader from '../../cummon/utils/uploader';
 import { db } from '../../database/database';
 
 export class CategoryService {
-  public async create({ name, description, icon }: CreateCategoryDto) {
+  public async create({
+    name,
+    description,
+    icon,
+    createById,
+    updatedById,
+  }: CreateBannerDto) {
     const findCategory = await db.category.findFirst({
       where: {
         name: name,
@@ -27,6 +33,8 @@ export class CategoryService {
         name,
         description,
         icon,
+        createById,
+        updatedById,
       },
     });
 
@@ -90,7 +98,7 @@ export class CategoryService {
 
   public async update(
     id: string,
-    { name, description, icon }: UpdateCategoryDto,
+    { name, description, icon, updatedById }: UpdateBannerDto,
   ) {
     if (name) {
       // Cari kategori dengan nama yang sama, tapi berbeda ID
@@ -122,6 +130,7 @@ export class CategoryService {
         name: name ? name : categoryExisting?.name,
         description: description ? description : categoryExisting?.description,
         icon: icon ? icon : categoryExisting?.icon,
+        updatedById,
       },
     });
 
