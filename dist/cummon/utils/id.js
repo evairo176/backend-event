@@ -18,7 +18,6 @@ function generateOrderId(prefixValue) {
         const now = new Date();
         const dateCode = (0, date_fns_1.format)(now, 'yyMMdd');
         const prefix = `${code}-${dateCode}`; // contoh: ORD-250710
-        // Ambil order terakhir dengan prefix ini, urut mundur
         const lastOrder = yield database_1.db.order.findFirst({
             where: {
                 orderId: {

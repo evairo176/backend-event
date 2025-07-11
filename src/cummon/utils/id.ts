@@ -8,7 +8,6 @@ export async function generateOrderId(prefixValue?: string): Promise<string> {
   const dateCode = format(now, 'yyMMdd');
   const prefix = `${code}-${dateCode}`; // contoh: ORD-250710
 
-  // Ambil order terakhir dengan prefix ini, urut mundur
   const lastOrder = await db.order.findFirst({
     where: {
       orderId: {
