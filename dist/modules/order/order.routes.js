@@ -10,4 +10,5 @@ const acl_middleware_1 = __importDefault(require("../../middlewares/acl.middlewa
 const order_module_1 = require("./order.module");
 const orderRoutes = (0, express_1.Router)();
 orderRoutes.post('/order', [jwt_strategy_1.authenticateJWT, (0, acl_middleware_1.default)([role_enum_1.ROLES.MEMBER, role_enum_1.ROLES.ADMIN, role_enum_1.ROLES.MANAGER])], order_module_1.oderController.create);
+orderRoutes.get('/order', [jwt_strategy_1.authenticateJWT, (0, acl_middleware_1.default)([role_enum_1.ROLES.ADMIN, role_enum_1.ROLES.MANAGER])], order_module_1.oderController.findAll);
 exports.default = orderRoutes;

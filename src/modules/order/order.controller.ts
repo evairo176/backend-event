@@ -4,6 +4,7 @@ import { OrderService } from './order.service';
 import { HTTPSTATUS } from '../../config/http.config';
 import { createOrderSchema } from '../../cummon/validators/order.validator';
 import { generateOrderId } from '../../cummon/utils/id';
+import { IPaginationQuery } from '../../cummon/interface/order.interface';
 
 export class OrderController {
   private orderService: OrderService;
@@ -31,6 +32,52 @@ export class OrderController {
       return res.status(HTTPSTATUS.CREATED).json({
         message: 'Success create order',
         data: result,
+      });
+    },
+  );
+
+  public findAll = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+      const query = req?.query as unknown as IPaginationQuery;
+
+      const { orders, limit, page, total, totalPages } =
+        await this.orderService.findAll(query);
+
+      return res.status(HTTPSTATUS.OK).json({
+        message: 'Success find all orders',
+        data: orders,
+        pagination: {
+          limit,
+          page,
+          total,
+          totalPages,
+        },
+      });
+    },
+  );
+
+  public findOne = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+      const params = req?.params;
+
+      const { order } = await this.orderService.findOne(params.id);
+
+      return res.status(HTTPSTATUS.OK).json({
+        message: 'Success find one order',
+        data: order,
+      });
+    },
+  );
+
+  public completed = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+      const params = req?.params;
+      const userId = req?.user?.id;
+
+      await this.orderService.completed(params.id, userId as string);
+
+      return res.status(HTTPSTATUS.OK).json({
+        message: 'order completed',
       });
     },
   );

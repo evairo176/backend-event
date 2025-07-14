@@ -27,6 +27,37 @@ class OrderController {
                 data: result,
             });
         }));
+        this.findAll = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const query = req === null || req === void 0 ? void 0 : req.query;
+            const { orders, limit, page, total, totalPages } = yield this.orderService.findAll(query);
+            return res.status(http_config_1.HTTPSTATUS.OK).json({
+                message: 'Success find all orders',
+                data: orders,
+                pagination: {
+                    limit,
+                    page,
+                    total,
+                    totalPages,
+                },
+            });
+        }));
+        this.findOne = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const params = req === null || req === void 0 ? void 0 : req.params;
+            const { order } = yield this.orderService.findOne(params.id);
+            return res.status(http_config_1.HTTPSTATUS.OK).json({
+                message: 'Success find one order',
+                data: order,
+            });
+        }));
+        this.completed = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const params = req === null || req === void 0 ? void 0 : req.params;
+            const userId = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.id;
+            yield this.orderService.completed(params.id, userId);
+            return res.status(http_config_1.HTTPSTATUS.OK).json({
+                message: 'order completed',
+            });
+        }));
         this.orderService = orderService;
     }
 }

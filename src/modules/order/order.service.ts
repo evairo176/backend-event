@@ -1,8 +1,16 @@
 import { ErrorCode } from '../../cummon/enums/error-code.enum';
-import { CreateOrderDto } from '../../cummon/interface/order.interface';
-import { BadRequestException } from '../../cummon/utils/catch-errors';
+import {
+  CreateOrderDto,
+  IPaginationQuery,
+} from '../../cummon/interface/order.interface';
+import {
+  BadRequestException,
+  NotFoundException,
+} from '../../cummon/utils/catch-errors';
 import { PaymentMidtrans } from '../../cummon/utils/payment';
 import { db } from '../../database/database';
+
+import { nanoid } from 'nanoid';
 
 export class OrderService {
   public async create(body: CreateOrderDto) {
@@ -27,17 +35,14 @@ export class OrderService {
       });
 
       if (!existingEvent) {
-        throw new BadRequestException(
+        throw new NotFoundException(
           'Event not exists',
           ErrorCode.RESOURCE_NOT_FOUND,
         );
       }
 
       if (existingTicket.quantity < body?.quantity) {
-        throw new BadRequestException(
-          'Ticket quantity is not enough',
-          ErrorCode.RESOURCE_NOT_FOUND,
-        );
+        throw new BadRequestException('Ticket quantity is not enough');
       }
 
       const total: number = +existingTicket.price * +body?.quantity;
@@ -82,10 +87,136 @@ export class OrderService {
       return result;
     });
   }
-  public async findAll() {}
-  public async findOne() {}
+  public async findAll({ page = 1, limit = 10, search }: IPaginationQuery) {
+    const query: any = {};
+
+    const skip = (Number(page) - 1) * Number(limit);
+    const take = Number(limit);
+
+    if (search) {
+      query.OR = [
+        // {
+        //   name: {
+        //     contains: search,
+        //     mode: 'insensitive',
+        //   },
+        // },
+        // {
+        //   description: {
+        //     contains: search,
+        //     mode: 'insensitive',
+        //   },
+        // },
+      ];
+    }
+
+    const [orders, total] = await Promise.all([
+      db.order.findMany({
+        where: query,
+        skip,
+        take,
+        orderBy: { updatedAt: 'desc' },
+      }),
+      db.order.count({
+        where: query,
+      }),
+    ]);
+
+    return {
+      orders,
+      page: Number(page),
+      limit: Number(limit),
+      total,
+      totalPages: Math.ceil(total / Number(limit)),
+    };
+  }
+  public async findOne(id: string) {
+    const order = await db.order.findFirst({
+      where: {
+        id,
+      },
+    });
+
+    if (!order) {
+      throw new NotFoundException(
+        'Order not exists',
+        ErrorCode.RESOURCE_NOT_FOUND,
+      );
+    }
+    return {
+      order,
+    };
+  }
   public async findAllByMember() {}
-  public async completed() {}
-  public async pending() {}
-  public async cancelled() {}
+  public async completed(id: string, userId: string) {
+    const order = await db.order.findFirst({
+      where: {
+        id,
+        createById: userId,
+      },
+    });
+
+    if (!order) {
+      throw new NotFoundException(
+        'Order not exists',
+        ErrorCode.RESOURCE_NOT_FOUND,
+      );
+    }
+
+    if (order.status === 'COMPLETED') {
+      throw new BadRequestException('You have been completed this order');
+    }
+
+    const ticket = await db.ticket.findFirst({
+      where: {
+        id: order.ticketId,
+      },
+    });
+
+    if (!ticket) {
+      throw new NotFoundException(
+        'Ticket on not exists this order',
+        ErrorCode.RESOURCE_NOT_FOUND,
+      );
+    }
+
+    const vouchers = Array.from({ length: order.quantity }).map(() => ({
+      isPrint: false,
+      voucherId: nanoid(21),
+      orderId: order.id,
+      createById: userId,
+    }));
+
+    // ✅ Execute all DB operations in a transaction
+    const [createdVouchers, updatedOrder, updatedTicket] =
+      await db.$transaction([
+        db.voucher.createMany({
+          data: vouchers,
+        }),
+        db.order.update({
+          where: {
+            id: order.id,
+          },
+          data: {
+            status: 'COMPLETED',
+          },
+        }),
+        db.ticket.update({
+          where: {
+            id: ticket.id,
+          },
+          data: {
+            quantity: ticket.quantity - order.quantity,
+          },
+        }),
+      ]);
+
+    return {
+      vouchers: createdVouchers,
+      order: updatedOrder,
+      ticket: updatedTicket,
+    };
+  }
+  public async pending(id: string, userId: string) {}
+  public async cancelled(id: string, userId: string) {}
 }

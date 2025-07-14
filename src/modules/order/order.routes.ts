@@ -12,5 +12,10 @@ orderRoutes.post(
   [authenticateJWT, aclMiddleware([ROLES.MEMBER, ROLES.ADMIN, ROLES.MANAGER])],
   oderController.create,
 );
+orderRoutes.get(
+  '/order',
+  [authenticateJWT, aclMiddleware([ROLES.ADMIN, ROLES.MANAGER])],
+  oderController.findAll,
+);
 
 export default orderRoutes;
