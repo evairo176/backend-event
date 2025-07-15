@@ -83,6 +83,18 @@ export class AuthController {
         where: {
           id: user?.id,
         },
+        select: {
+          id: true,
+          fullname: true,
+          username: true,
+          email: true,
+          role: true,
+          profilePicture: true,
+          activationCode: true,
+          isEmailVerified: true,
+          createdAt: true,
+          updatedAt: true,
+        },
       });
       return res.status(HTTPSTATUS.OK).json({
         message: 'get profile successfully',
