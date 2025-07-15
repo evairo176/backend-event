@@ -15,6 +15,7 @@ const auth_validator_1 = require("../../cummon/validators/auth.validator");
 const cookies_1 = require("../../cummon/utils/cookies");
 const catch_errors_1 = require("../../cummon/utils/catch-errors");
 const async_handler_middleware_1 = require("../../middlewares/async-handler.middleware");
+const database_1 = require("../../database/database");
 class AuthController {
     constructor(authService) {
         this.register = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
@@ -52,9 +53,14 @@ class AuthController {
         }));
         this.me = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             const user = req.user;
+            const dataUser = yield database_1.db.user.findFirst({
+                where: {
+                    id: user === null || user === void 0 ? void 0 : user.id,
+                },
+            });
             return res.status(http_config_1.HTTPSTATUS.OK).json({
-                message: 'get user successfully',
-                user: user,
+                message: 'get profile successfully',
+                user: dataUser,
             });
         }));
         this.refreshToken = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
