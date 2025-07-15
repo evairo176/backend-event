@@ -20,7 +20,7 @@ import {
 } from '../../cummon/utils/catch-errors';
 import { asyncHandler } from '../../middlewares/async-handler.middleware';
 import { db } from '../../database/database';
-
+//test
 export class AuthController {
   private authService: AuthService;
 
