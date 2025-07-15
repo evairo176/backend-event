@@ -60,7 +60,7 @@ class AuthController {
             });
             return res.status(http_config_1.HTTPSTATUS.OK).json({
                 message: 'get profile successfully',
-                user: dataUser,
+                data: dataUser,
             });
         }));
         this.refreshToken = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {

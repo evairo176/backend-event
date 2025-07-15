@@ -86,7 +86,7 @@ export class AuthController {
       });
       return res.status(HTTPSTATUS.OK).json({
         message: 'get profile successfully',
-        user: dataUser,
+        data: dataUser,
       });
     },
   );
