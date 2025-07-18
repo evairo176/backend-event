@@ -90,14 +90,20 @@ class EventService {
                     include: {
                         category: true,
                         city: true,
+                        tickets: true,
                     },
                 }),
                 database_1.db.event.count({
                     where: query,
                 }),
             ]);
+            // lalu ambil tiket termurah per event
+            const result = events.map((event) => {
+                const cheapestTicket = event.tickets.reduce((min, curr) => (curr.price < min.price ? curr : min), event.tickets[0]);
+                return Object.assign(Object.assign({}, event), { cheapestTicket });
+            });
             return {
-                events,
+                events: result,
                 page: Number(page),
                 limit: Number(limit),
                 total,
