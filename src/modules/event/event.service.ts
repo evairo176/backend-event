@@ -126,9 +126,15 @@ export default class EventService {
         event.tickets[0],
       );
 
+      const totalAudience = event.tickets.reduce(
+        (sum, ticket) => sum + ticket.quantity,
+        0,
+      );
+
       return {
         ...event,
         cheapestTicket,
+        totalAudience,
       };
     });
 

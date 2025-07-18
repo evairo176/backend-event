@@ -100,7 +100,9 @@ class EventService {
             // lalu ambil tiket termurah per event
             const result = events.map((event) => {
                 const cheapestTicket = event.tickets.reduce((min, curr) => (curr.price < min.price ? curr : min), event.tickets[0]);
-                return Object.assign(Object.assign({}, event), { cheapestTicket });
+                const totalAudience = event.tickets.reduce((sum, ticket) => sum + ticket.quantity, 0);
+                return Object.assign(Object.assign({}, event), { cheapestTicket,
+                    totalAudience });
             });
             return {
                 events: result,
