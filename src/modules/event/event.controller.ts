@@ -6,7 +6,7 @@ import {
   createEventSchema,
   updateEventSchema,
 } from '../../cummon/validators/event.validator';
-import { IPaginationQuery } from '../../cummon/interface/category.interface';
+import { IPaginationQuery } from '../../cummon/interface/event.interface';
 
 export default class EventController {
   private eventService: EventService;

@@ -75,11 +75,11 @@ class EventService {
                 ];
             }
             // Filter boolean values
-            if (typeof isPublished === 'boolean') {
-                query.isPublished = isPublished;
+            if (isPublished) {
+                query.isPublished = isPublished === 'true' ? true : false;
             }
-            if (typeof isFeatured === 'boolean') {
-                query.isFeatured = isFeatured;
+            if (isFeatured) {
+                query.isFeatured = isFeatured === 'true' ? true : false;
             }
             const [events, total] = yield Promise.all([
                 database_1.db.event.findMany({
