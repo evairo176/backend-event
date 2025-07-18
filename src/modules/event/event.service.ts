@@ -1,7 +1,7 @@
 import { ErrorCode } from '../../cummon/enums/error-code.enum';
-import { IPaginationQuery } from '../../cummon/interface/category.interface';
 import {
   ICreateEvent,
+  IPaginationQuery,
   IUpdateEvent,
 } from '../../cummon/interface/event.interface';
 import {
@@ -49,7 +49,13 @@ export default class EventService {
     return result;
   }
 
-  public async findAll({ page = 1, limit = 10, search }: IPaginationQuery) {
+  public async findAll({
+    page = 1,
+    limit = 10,
+    search,
+    isPublished,
+    isFeatured,
+  }: IPaginationQuery) {
     const query: any = {};
 
     const skip = (Number(page) - 1) * Number(limit);
@@ -85,6 +91,15 @@ export default class EventService {
           },
         },
       ];
+    }
+
+    // Filter boolean values
+    if (typeof isPublished === 'boolean') {
+      query.isPublished = isPublished;
+    }
+
+    if (typeof isFeatured === 'boolean') {
+      query.isFeatured = isFeatured;
     }
 
     const [events, total] = await Promise.all([
