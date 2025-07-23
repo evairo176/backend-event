@@ -40,7 +40,7 @@ class EventService {
         });
     }
     findAll(_a) {
-        return __awaiter(this, arguments, void 0, function* ({ page = 1, limit = 10, search, isPublished, isFeatured, }) {
+        return __awaiter(this, arguments, void 0, function* ({ page = 1, limit = 10, search, isPublished, isFeatured, category, }) {
             const query = {};
             const skip = (Number(page) - 1) * Number(limit);
             const take = Number(limit);
@@ -80,6 +80,9 @@ class EventService {
             }
             if (isFeatured) {
                 query.isFeatured = isFeatured === 'true' ? true : false;
+            }
+            if (category) {
+                query.category.id = category;
             }
             const [events, total] = yield Promise.all([
                 database_1.db.event.findMany({
