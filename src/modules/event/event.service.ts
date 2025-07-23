@@ -55,6 +55,7 @@ export default class EventService {
     search,
     isPublished,
     isFeatured,
+    isOnline,
     category,
   }: IPaginationQuery) {
     const query: any = {};
@@ -99,12 +100,16 @@ export default class EventService {
       query.isPublished = isPublished === 'true' ? true : false;
     }
 
+    if (isOnline) {
+      query.isOnline = isOnline === 'true' ? true : false;
+    }
+
     if (isFeatured) {
       query.isFeatured = isFeatured === 'true' ? true : false;
     }
 
     if (category) {
-      query.category.id = category;
+      query.categoryId = category;
     }
 
     const [events, total] = await Promise.all([

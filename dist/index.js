@@ -29,6 +29,25 @@ const banner_routes_1 = __importDefault(require("./modules/banner/banner.routes"
 const order_routes_1 = __importDefault(require("./modules/order/order.routes"));
 const app = (0, express_1.default)();
 const BASE_PATH = app_config_1.config.BASE_PATH;
+function gradeNilai(value) {
+    let grade = '';
+    if (value <= 60) {
+        grade = 'E';
+    }
+    if (value > 60 && value <= 70) {
+        grade = 'D';
+    }
+    if (value > 70 && value <= 80) {
+        grade = 'C';
+    }
+    if (value > 80 && value <= 90) {
+        grade = 'B';
+    }
+    if (value > 90 && value <= 100) {
+        grade = 'A';
+    }
+    return grade;
+}
 // Add JSON middleware to parse incoming requests
 app.use(express_1.default.json({ limit: '100mb' })); // Ubah limit menjadi 50MB
 app.use(express_1.default.urlencoded({ extended: true })); // Ubah limit menjadi 50MB

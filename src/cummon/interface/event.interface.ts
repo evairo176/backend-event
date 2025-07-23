@@ -17,5 +17,6 @@ export interface IPaginationQuery {
   search?: string;
   isPublished?: string;
   isFeatured?: string;
+  isOnline?: string;
   category?: string;
 }
