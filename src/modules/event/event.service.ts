@@ -57,6 +57,7 @@ export default class EventService {
     isFeatured,
     isOnline,
     category,
+    cityName,
   }: IPaginationQuery) {
     const query: any = {};
 
@@ -83,9 +84,16 @@ export default class EventService {
             mode: 'insensitive',
           },
         },
-
         {
           category: {
+            name: {
+              contains: search,
+              mode: 'insensitive',
+            },
+          },
+        },
+        {
+          city: {
             name: {
               contains: search,
               mode: 'insensitive',
@@ -95,21 +103,29 @@ export default class EventService {
       ];
     }
 
-    // Filter boolean values
     if (isPublished) {
-      query.isPublished = isPublished === 'true' ? true : false;
+      query.isPublished = isPublished === 'true';
     }
 
     if (isOnline) {
-      query.isOnline = isOnline === 'true' ? true : false;
+      query.isOnline = isOnline === 'true';
     }
 
     if (isFeatured) {
-      query.isFeatured = isFeatured === 'true' ? true : false;
+      query.isFeatured = isFeatured === 'true';
     }
 
     if (category) {
       query.categoryId = category;
+    }
+
+    if (cityName) {
+      query.city = {
+        name: {
+          contains: cityName,
+          mode: 'insensitive',
+        },
+      };
     }
 
     const [events, total] = await Promise.all([

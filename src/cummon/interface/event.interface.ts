@@ -19,4 +19,5 @@ export interface IPaginationQuery {
   isFeatured?: string;
   isOnline?: string;
   category?: string;
+  cityName?: string;
 }

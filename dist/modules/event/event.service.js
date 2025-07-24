@@ -40,7 +40,7 @@ class EventService {
         });
     }
     findAll(_a) {
-        return __awaiter(this, arguments, void 0, function* ({ page = 1, limit = 10, search, isPublished, isFeatured, isOnline, category, }) {
+        return __awaiter(this, arguments, void 0, function* ({ page = 1, limit = 10, search, isPublished, isFeatured, isOnline, category, cityName, }) {
             const query = {};
             const skip = (Number(page) - 1) * Number(limit);
             const take = Number(limit);
@@ -72,20 +72,35 @@ class EventService {
                             },
                         },
                     },
+                    {
+                        city: {
+                            name: {
+                                contains: search,
+                                mode: 'insensitive',
+                            },
+                        },
+                    },
                 ];
             }
-            // Filter boolean values
             if (isPublished) {
-                query.isPublished = isPublished === 'true' ? true : false;
+                query.isPublished = isPublished === 'true';
             }
             if (isOnline) {
-                query.isOnline = isOnline === 'true' ? true : false;
+                query.isOnline = isOnline === 'true';
             }
             if (isFeatured) {
-                query.isFeatured = isFeatured === 'true' ? true : false;
+                query.isFeatured = isFeatured === 'true';
             }
             if (category) {
                 query.categoryId = category;
+            }
+            if (cityName) {
+                query.city = {
+                    name: {
+                        contains: cityName,
+                        mode: 'insensitive',
+                    },
+                };
             }
             const [events, total] = yield Promise.all([
                 database_1.db.event.findMany({
