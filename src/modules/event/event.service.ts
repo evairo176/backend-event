@@ -286,12 +286,23 @@ export default class EventService {
   }
 
   public async findOneBySlug(slug: string) {
-    const result = await db.event.findFirst({
+    const event = await db.event.findFirst({
       where: {
         slug,
       },
+      include: {
+        tickets: true,
+      },
     });
 
-    return result;
+    const totalAudience = event?.tickets.reduce(
+      (sum, ticket) => sum + ticket.quantity,
+      0,
+    );
+
+    return {
+      ...event,
+      totalAudience,
+    };
   }
 }

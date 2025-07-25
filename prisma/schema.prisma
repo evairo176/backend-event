@@ -262,7 +262,7 @@ model Order {
   updatedById String? @db.ObjectId
 
   event   Event? @relation(fields: [eventId], references: [id])
-  eventId String @db.ObjectId
+  eventId String? @db.ObjectId
 
   ticket   Ticket? @relation(fields: [ticketId], references: [id])
   ticketId String  @db.ObjectId

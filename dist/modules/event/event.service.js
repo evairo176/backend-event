@@ -215,12 +215,16 @@ class EventService {
     }
     findOneBySlug(slug) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield database_1.db.event.findFirst({
+            const event = yield database_1.db.event.findFirst({
                 where: {
                     slug,
                 },
+                include: {
+                    tickets: true,
+                },
             });
-            return result;
+            const totalAudience = event === null || event === void 0 ? void 0 : event.tickets.reduce((sum, ticket) => sum + ticket.quantity, 0);
+            return Object.assign(Object.assign({}, event), { totalAudience });
         });
     }
 }
