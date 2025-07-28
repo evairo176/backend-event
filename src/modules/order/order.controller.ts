@@ -128,4 +128,27 @@ export class OrderController {
       });
     },
   );
+
+  public findAllByMember = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+      const query = req?.query as unknown as IPaginationQuery;
+      const userId = req?.user?.id;
+      const { orders, limit, page, total, totalPages } =
+        await this.orderService.findAllByMember({
+          ...query,
+          createById: userId as string,
+        });
+
+      return res.status(HTTPSTATUS.OK).json({
+        message: 'Success find all orders',
+        data: orders,
+        pagination: {
+          limit,
+          page,
+          total,
+          totalPages,
+        },
+      });
+    },
+  );
 }

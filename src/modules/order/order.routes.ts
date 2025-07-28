@@ -12,10 +12,17 @@ orderRoutes.post(
   [authenticateJWT, aclMiddleware([ROLES.MEMBER, ROLES.ADMIN, ROLES.MANAGER])],
   oderController.create,
 );
+
 orderRoutes.get(
   '/orders',
   [authenticateJWT, aclMiddleware([ROLES.ADMIN, ROLES.MANAGER])],
   oderController.findAll,
+);
+
+orderRoutes.get(
+  '/orders/member',
+  [authenticateJWT, aclMiddleware([ROLES.ADMIN, ROLES.MEMBER, ROLES.MANAGER])],
+  oderController.findAllByMember,
 );
 
 orderRoutes.put(
@@ -28,6 +35,12 @@ orderRoutes.put(
   '/orders/:orderId/pending',
 
   oderController.pending,
+);
+
+orderRoutes.put(
+  '/orders/:orderId/cancelled',
+
+  oderController.cancelled,
 );
 
 orderRoutes.delete(
