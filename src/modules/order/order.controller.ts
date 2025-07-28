@@ -5,6 +5,8 @@ import { HTTPSTATUS } from '../../config/http.config';
 import { createOrderSchema } from '../../cummon/validators/order.validator';
 import { generateOrderId } from '../../cummon/utils/id';
 import { IPaginationQuery } from '../../cummon/interface/order.interface';
+import crypto from 'crypto';
+import { config } from '../../config/app.config';
 
 export class OrderController {
   private orderService: OrderService;
@@ -17,22 +19,15 @@ export class OrderController {
     async (req: Request, res: Response): Promise<any> => {
       const userId = req?.user?.id;
 
-      const body = createOrderSchema.parse({
-        ...req?.body,
-      });
+      const body = createOrderSchema.parse(req?.body);
 
       const orderId = await generateOrderId();
 
-      const result = await this.orderService.create(
-        {
-          ...body,
-        },
-        {
-          createById: userId as string,
-          updatedById: userId as string,
-          orderId,
-        },
-      );
+      const result = await this.orderService.create(body, {
+        createById: userId as string,
+        updatedById: userId as string,
+        orderId,
+      });
       return res.status(HTTPSTATUS.CREATED).json({
         message: 'Success create order',
         data: result,
@@ -73,52 +68,52 @@ export class OrderController {
     },
   );
 
-  public completed = asyncHandler(
-    async (req: Request, res: Response): Promise<any> => {
-      const params = req?.params;
-      const userId = req?.user?.id;
+  // public completed = asyncHandler(
+  //   async (req: Request, res: Response): Promise<any> => {
+  //     const params = req?.params;
+  //     const userId = req?.user?.id;
 
-      await this.orderService.completed(params.orderId, userId as string);
+  //     await this.orderService.completed(params.orderId, userId as string);
 
-      return res.status(HTTPSTATUS.OK).json({
-        message: 'order completed',
-      });
-    },
-  );
+  //     return res.status(HTTPSTATUS.OK).json({
+  //       message: 'order completed',
+  //     });
+  //   },
+  // );
 
-  public pending = asyncHandler(
-    async (req: Request, res: Response): Promise<any> => {
-      const params = req?.params;
-      const userId = req?.user?.id;
+  // public pending = asyncHandler(
+  //   async (req: Request, res: Response): Promise<any> => {
+  //     const params = req?.params;
+  //     const userId = req?.user?.id;
 
-      const result = await this.orderService.pending(
-        params.orderId,
-        userId as string,
-      );
+  //     const result = await this.orderService.pending(
+  //       params.orderId,
+  //       userId as string,
+  //     );
 
-      return res.status(HTTPSTATUS.OK).json({
-        data: result,
-        message: 'order pending',
-      });
-    },
-  );
+  //     return res.status(HTTPSTATUS.OK).json({
+  //       data: result,
+  //       message: 'order pending',
+  //     });
+  //   },
+  // );
 
-  public cancelled = asyncHandler(
-    async (req: Request, res: Response): Promise<any> => {
-      const params = req?.params;
-      const userId = req?.user?.id;
+  // public cancelled = asyncHandler(
+  //   async (req: Request, res: Response): Promise<any> => {
+  //     const params = req?.params;
+  //     const userId = req?.user?.id;
 
-      const result = await this.orderService.cancelled(
-        params.orderId,
-        userId as string,
-      );
+  //     const result = await this.orderService.cancelled(
+  //       params.orderId,
+  //       userId as string,
+  //     );
 
-      return res.status(HTTPSTATUS.OK).json({
-        data: result,
-        message: 'order pending',
-      });
-    },
-  );
+  //     return res.status(HTTPSTATUS.OK).json({
+  //       data: result,
+  //       message: 'order pending',
+  //     });
+  //   },
+  // );
 
   public remove = asyncHandler(
     async (req: Request, res: Response): Promise<any> => {
@@ -152,6 +147,34 @@ export class OrderController {
           total,
           totalPages,
         },
+      });
+    },
+  );
+  public midtransWebhook = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+      const payload = req.body;
+
+      const { order_id, status_code, gross_amount, signature_key } = payload;
+
+      // Step 1: Buat hash berdasarkan data Midtrans
+      const input =
+        order_id + status_code + gross_amount + config.MIDTRANS.SERVER_KEY;
+      const expectedSignature = crypto
+        .createHash('sha512')
+        .update(input)
+        .digest('hex');
+
+      // Step 2: Cek apakah signature valid
+      if (expectedSignature !== signature_key) {
+        console.warn('Signature mismatch: Potential spoofed request');
+        return res.status(403).json({ message: 'Invalid signature' });
+      }
+
+      // Step 3: Lanjutkan logika status pembayaran
+      const transactionStatus = payload.transaction_status;
+
+      return res.status(HTTPSTATUS.OK).json({
+        message: 'Success find all orders',
       });
     },
   );

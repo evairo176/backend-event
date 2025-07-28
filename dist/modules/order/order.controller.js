@@ -8,20 +8,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrderController = void 0;
 const async_handler_middleware_1 = require("../../middlewares/async-handler.middleware");
 const http_config_1 = require("../../config/http.config");
 const order_validator_1 = require("../../cummon/validators/order.validator");
 const id_1 = require("../../cummon/utils/id");
+const crypto_1 = __importDefault(require("crypto"));
+const app_config_1 = require("../../config/app.config");
 class OrderController {
     constructor(orderService) {
         this.create = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             var _a;
             const userId = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.id;
-            const body = order_validator_1.createOrderSchema.parse(Object.assign({}, req === null || req === void 0 ? void 0 : req.body));
+            const body = order_validator_1.createOrderSchema.parse(req === null || req === void 0 ? void 0 : req.body);
             const orderId = yield (0, id_1.generateOrderId)();
-            const result = yield this.orderService.create(Object.assign({}, body), {
+            const result = yield this.orderService.create(body, {
                 createById: userId,
                 updatedById: userId,
                 orderId,
@@ -53,35 +58,44 @@ class OrderController {
                 data: order,
             });
         }));
-        this.completed = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
-            var _a;
-            const params = req === null || req === void 0 ? void 0 : req.params;
-            const userId = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.id;
-            yield this.orderService.completed(params.orderId, userId);
-            return res.status(http_config_1.HTTPSTATUS.OK).json({
-                message: 'order completed',
-            });
-        }));
-        this.pending = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
-            var _a;
-            const params = req === null || req === void 0 ? void 0 : req.params;
-            const userId = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.id;
-            const result = yield this.orderService.pending(params.orderId, userId);
-            return res.status(http_config_1.HTTPSTATUS.OK).json({
-                data: result,
-                message: 'order pending',
-            });
-        }));
-        this.cancelled = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
-            var _a;
-            const params = req === null || req === void 0 ? void 0 : req.params;
-            const userId = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.id;
-            const result = yield this.orderService.cancelled(params.orderId, userId);
-            return res.status(http_config_1.HTTPSTATUS.OK).json({
-                data: result,
-                message: 'order pending',
-            });
-        }));
+        // public completed = asyncHandler(
+        //   async (req: Request, res: Response): Promise<any> => {
+        //     const params = req?.params;
+        //     const userId = req?.user?.id;
+        //     await this.orderService.completed(params.orderId, userId as string);
+        //     return res.status(HTTPSTATUS.OK).json({
+        //       message: 'order completed',
+        //     });
+        //   },
+        // );
+        // public pending = asyncHandler(
+        //   async (req: Request, res: Response): Promise<any> => {
+        //     const params = req?.params;
+        //     const userId = req?.user?.id;
+        //     const result = await this.orderService.pending(
+        //       params.orderId,
+        //       userId as string,
+        //     );
+        //     return res.status(HTTPSTATUS.OK).json({
+        //       data: result,
+        //       message: 'order pending',
+        //     });
+        //   },
+        // );
+        // public cancelled = asyncHandler(
+        //   async (req: Request, res: Response): Promise<any> => {
+        //     const params = req?.params;
+        //     const userId = req?.user?.id;
+        //     const result = await this.orderService.cancelled(
+        //       params.orderId,
+        //       userId as string,
+        //     );
+        //     return res.status(HTTPSTATUS.OK).json({
+        //       data: result,
+        //       message: 'order pending',
+        //     });
+        //   },
+        // );
         this.remove = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             const params = req === null || req === void 0 ? void 0 : req.params;
             const result = yield this.orderService.remove(params.orderId);
@@ -104,6 +118,26 @@ class OrderController {
                     total,
                     totalPages,
                 },
+            });
+        }));
+        this.midtransWebhook = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const payload = req.body;
+            const { order_id, status_code, gross_amount, signature_key } = payload;
+            // Step 1: Buat hash berdasarkan data Midtrans
+            const input = order_id + status_code + gross_amount + app_config_1.config.MIDTRANS.SERVER_KEY;
+            const expectedSignature = crypto_1.default
+                .createHash('sha512')
+                .update(input)
+                .digest('hex');
+            // Step 2: Cek apakah signature valid
+            if (expectedSignature !== signature_key) {
+                console.warn('Signature mismatch: Potential spoofed request');
+                return res.status(403).json({ message: 'Invalid signature' });
+            }
+            // Step 3: Lanjutkan logika status pembayaran
+            const transactionStatus = payload.transaction_status;
+            return res.status(http_config_1.HTTPSTATUS.OK).json({
+                message: 'Success find all orders',
             });
         }));
         this.orderService = orderService;

@@ -32,23 +32,23 @@ orderRoutes.get(
   oderController.findAllByMember,
 );
 
-orderRoutes.put(
-  '/orders/:orderId/completed',
+// orderRoutes.put(
+//   '/orders/:orderId/completed',
 
-  oderController.completed,
-);
+//   oderController.completed,
+// );
 
-orderRoutes.put(
-  '/orders/:orderId/pending',
+// orderRoutes.put(
+//   '/orders/:orderId/pending',
 
-  oderController.pending,
-);
+//   oderController.pending,
+// );
 
-orderRoutes.put(
-  '/orders/:orderId/cancelled',
+// orderRoutes.put(
+//   '/orders/:orderId/cancelled',
 
-  oderController.cancelled,
-);
+//   oderController.cancelled,
+// );
 
 orderRoutes.delete(
   '/orders/:orderId/remove',
@@ -61,5 +61,7 @@ orderRoutes.get(
   [authenticateJWT, aclMiddleware([ROLES.MANAGER])],
   oderController.findAllByMember,
 );
+
+orderRoutes.post('/orders/midtrans', oderController.midtransWebhook);
 
 export default orderRoutes;

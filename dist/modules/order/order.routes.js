@@ -15,9 +15,19 @@ order_module_1.oderController.create);
 orderRoutes.get('/orders', [jwt_strategy_1.authenticateJWT, (0, acl_middleware_1.default)([role_enum_1.ROLES.ADMIN, role_enum_1.ROLES.MANAGER])], order_module_1.oderController.findAll);
 orderRoutes.get('/orders/orderId', [jwt_strategy_1.authenticateJWT, (0, acl_middleware_1.default)([role_enum_1.ROLES.ADMIN, role_enum_1.ROLES.MANAGER])], order_module_1.oderController.findOne);
 orderRoutes.get('/orders/member', [jwt_strategy_1.authenticateJWT, (0, acl_middleware_1.default)([role_enum_1.ROLES.ADMIN, role_enum_1.ROLES.MEMBER, role_enum_1.ROLES.MANAGER])], order_module_1.oderController.findAllByMember);
-orderRoutes.put('/orders/:orderId/completed', order_module_1.oderController.completed);
-orderRoutes.put('/orders/:orderId/pending', order_module_1.oderController.pending);
-orderRoutes.put('/orders/:orderId/cancelled', order_module_1.oderController.cancelled);
+// orderRoutes.put(
+//   '/orders/:orderId/completed',
+//   oderController.completed,
+// );
+// orderRoutes.put(
+//   '/orders/:orderId/pending',
+//   oderController.pending,
+// );
+// orderRoutes.put(
+//   '/orders/:orderId/cancelled',
+//   oderController.cancelled,
+// );
 orderRoutes.delete('/orders/:orderId/remove', [jwt_strategy_1.authenticateJWT, (0, acl_middleware_1.default)([role_enum_1.ROLES.ADMIN, role_enum_1.ROLES.MANAGER])], order_module_1.oderController.remove);
 orderRoutes.get('/orders-history', [jwt_strategy_1.authenticateJWT, (0, acl_middleware_1.default)([role_enum_1.ROLES.MANAGER])], order_module_1.oderController.findAllByMember);
+orderRoutes.post('/orders/midtrans', order_module_1.oderController.midtransWebhook);
 exports.default = orderRoutes;

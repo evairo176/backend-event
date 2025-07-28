@@ -17,7 +17,8 @@ import { nanoid } from 'nanoid';
 export class OrderService {
   public async create(orderData: orderItemDto[], userData: CreateOrderDto) {
     return await db.$transaction(async (tx) => {
-      const results = [];
+      // Ambil tiket & validasi sebelum membuat order
+      let total = 0;
 
       for (const body of orderData) {
         const existingTicket = await tx.ticket.findFirst({
@@ -46,52 +47,79 @@ export class OrderService {
           throw new BadRequestException('Ticket quantity is not enough');
         }
 
-        const orderId = await generateOrderId();
-        const total: number = +existingTicket.price * +body.quantity;
-
-        // Midtrans request tetap di luar transaksi DB
-        const paymentMidtrans = new PaymentMidtrans();
-        const generatePayment = await paymentMidtrans.createLink({
-          transaction_details: {
-            gross_amount: total,
-            order_id: orderId,
-          },
-        });
-
-        const payment = await tx.payment.create({
-          data: {
-            token: generatePayment.token,
-            redirect_url: generatePayment.redirect_url,
-          },
-        });
-
-        const createdOrder = await tx.order.create({
-          data: {
-            ...body,
-            orderId,
-            total,
-            paymentId: payment.id,
-            createById: userData?.createById,
-            updatedById: userData?.createById,
-          },
-        });
-
-        const result = await tx.order.findFirst({
-          where: { id: createdOrder.id },
-          include: {
-            event: true,
-            ticket: true,
-            payment: true,
-            vouchers: true,
-          },
-        });
-
-        results.push(result);
+        total += +existingTicket.price * +body.quantity;
       }
 
-      return results;
+      // Buat orderId
+      const orderId = await generateOrderId();
+
+      // Midtrans request (masih tetap di luar loop dan di dalam transaksi)
+      const paymentMidtrans = new PaymentMidtrans();
+      const generatePayment = await paymentMidtrans.createLink({
+        transaction_details: {
+          gross_amount: total,
+          order_id: orderId,
+        },
+      });
+
+      // Simpan payment
+      const payment = await tx.payment.create({
+        data: {
+          token: generatePayment.token,
+          redirect_url: generatePayment.redirect_url,
+        },
+      });
+
+      // Simpan order
+      const createdOrder = await tx.order.create({
+        data: {
+          orderId,
+          total,
+          paymentId: payment.id,
+          createById: userData?.createById,
+          updatedById: userData?.createById,
+        },
+      });
+
+      // Simpan orderItem berdasarkan masing-masing tiket
+      for (const body of orderData) {
+        const existingTicket = await tx.ticket.findFirst({
+          where: { id: body.ticketId },
+        });
+
+        await tx.orderItem.create({
+          data: {
+            orderId: createdOrder.id,
+            eventId: body.eventId,
+            ticketId: body.ticketId,
+            quantity: body.quantity,
+            price: existingTicket!.price,
+          },
+        });
+      }
+
+      // Ambil order beserta relasinya
+      const result = await tx.order.findFirst({
+        where: { id: createdOrder.id },
+        include: {
+          items: {
+            include: {
+              event: true,
+              ticket: {
+                include: {
+                  vouchers: true,
+                },
+              },
+            },
+          },
+          payment: true,
+        },
+      });
+
+      return result;
     });
   }
+
   public async findAll({ page = 1, limit = 10, search }: IPaginationQuery) {
     const query: any = {};
 
@@ -121,6 +149,9 @@ export class OrderService {
         skip,
         take,
         orderBy: { updatedAt: 'desc' },
+        include: {
+          payment: true,
+        },
       }),
       db.order.count({
         where: query,
@@ -140,6 +171,9 @@ export class OrderService {
       where: {
         orderId,
       },
+      include: {
+        items: true,
+      },
     });
 
     if (!order) {
@@ -153,11 +187,13 @@ export class OrderService {
     };
   }
 
-  public async completed(orderId: string, userId: string) {
+  public async completed(orderId: string) {
     const order = await db.order.findFirst({
       where: {
         orderId,
-        createById: userId,
+      },
+      include: {
+        items: true,
       },
     });
 
@@ -172,61 +208,64 @@ export class OrderService {
       throw new BadRequestException('You have been completed this order');
     }
 
-    const ticket = await db.ticket.findFirst({
-      where: {
-        id: order.ticketId,
-      },
-    });
+    const result = [];
 
-    if (!ticket) {
-      throw new NotFoundException(
-        'Ticket on not exists this order',
-        ErrorCode.RESOURCE_NOT_FOUND,
-      );
+    for (const item of order.items) {
+      const ticket = await db.ticket.findFirst({
+        where: {
+          id: item.ticketId,
+        },
+      });
+
+      if (!ticket) {
+        throw new NotFoundException(
+          'Ticket on not exists this order',
+          ErrorCode.RESOURCE_NOT_FOUND,
+        );
+      }
+
+      const vouchers = Array.from({ length: item.quantity }).map(() => ({
+        code: nanoid(21),
+        ticketId: item.ticketId,
+      }));
+
+      // ✅ Execute all DB operations in a transaction
+      const [createdVouchers, updatedOrder, updatedTicket] =
+        await db.$transaction([
+          db.vocherTicket.createMany({
+            data: vouchers,
+          }),
+          db.order.update({
+            where: {
+              id: order.id,
+            },
+            data: {
+              status: 'COMPLETED',
+            },
+          }),
+          db.ticket.update({
+            where: {
+              id: ticket.id,
+            },
+            data: {
+              quantity: ticket.quantity - item.quantity,
+            },
+          }),
+        ]);
+
+      result.push({
+        createdVouchers,
+        updatedOrder,
+        updatedTicket,
+      });
     }
 
-    const vouchers = Array.from({ length: order.quantity }).map(() => ({
-      isPrint: false,
-      voucherId: nanoid(21),
-      orderId: order.id,
-      createById: userId,
-    }));
-
-    // ✅ Execute all DB operations in a transaction
-    const [createdVouchers, updatedOrder, updatedTicket] =
-      await db.$transaction([
-        db.voucher.createMany({
-          data: vouchers,
-        }),
-        db.order.update({
-          where: {
-            id: order.id,
-          },
-          data: {
-            status: 'COMPLETED',
-          },
-        }),
-        db.ticket.update({
-          where: {
-            id: ticket.id,
-          },
-          data: {
-            quantity: ticket.quantity - order.quantity,
-          },
-        }),
-      ]);
-
-    return {
-      vouchers: createdVouchers,
-      order: updatedOrder,
-      ticket: updatedTicket,
-    };
+    return result;
   }
-  public async pending(orderId: string, userId: string) {
+  public async pending(orderId: string) {
     const order = await db.order.findFirst({
       where: {
         orderId,
-        createById: userId,
       },
     });
 
@@ -255,11 +294,10 @@ export class OrderService {
     });
     return result;
   }
-  public async cancelled(orderId: string, userId: string) {
+  public async cancelled(orderId: string) {
     const order = await db.order.findFirst({
       where: {
         orderId,
-        createById: userId,
       },
     });
 
@@ -355,5 +393,39 @@ export class OrderService {
       total,
       totalPages: Math.ceil(total / Number(limit)),
     };
+  }
+
+  public async midtransWebhook({
+    transactionStatus,
+    order_id,
+  }: {
+    transactionStatus: string;
+    order_id: string;
+  }) {
+    switch (transactionStatus) {
+      case 'capture':
+      case 'settlement':
+        // Pembayaran berhasil
+        await this.completed(order_id); // Ganti 'system' dengan userId yang sesuai jika perlu
+        break;
+
+      case 'cancel':
+        await this.cancelled(order_id);
+        break;
+      case 'deny':
+      case 'expire':
+        // Pembayaran gagal
+        // await db.order.update({
+        //   where: { orderId: order_id },
+        //   data: { status: 'FAILED' },
+        // });
+        break;
+
+      case 'pending':
+        await this.pending(order_id); // Ganti 'system' dengan userId yang sesuai jika perlu
+        break;
+    }
+
+    return 'Berhasil memproses webhook Midtrans';
   }
 }

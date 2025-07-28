@@ -143,20 +143,34 @@ model Event {
   city        Regency?  @relation(fields: [regionId], references: [code])
   regionId    String?
 
-  tickets Ticket[]
-  orders  Order[]
+  tickets   Ticket[]
+  orderItem OrderItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VocherTicket {
+  id     String  @id @default(auto()) @map("_id") @db.ObjectId
+  isUsed Boolean @default(false)
+  code   String  @unique
+
+  ticket   Ticket? @relation(fields: [ticketId], references: [id])
+  ticketId String? @db.ObjectId
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Ticket {
-  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   price       Float
   description String
   quantity    Int
+
   // relation
+
   createdBy   User?   @relation("CreatedTickets", fields: [createById], references: [id])
   createById  String? @db.ObjectId
   updatedBy   User?   @relation("UpdatedTickets", fields: [updatedById], references: [id])
@@ -164,7 +178,8 @@ model Ticket {
   event       Event?  @relation(fields: [eventId], references: [id])
   eventId     String? @db.ObjectId
 
-  orders Order[]
+  orderItem OrderItem[]
+  vouchers  VocherTicket[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -237,41 +252,37 @@ model Payment {
   updatedAt DateTime @updatedAt
 }
 
-model Voucher {
-  id        String  @id @default(auto()) @map("_id") @db.ObjectId
-  voucherId String
-  isPrint   Boolean @default(false)
-
-  order   Order? @relation(fields: [orderId], references: [id])
-  orderId String @db.ObjectId
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
 model Order {
-  id       String      @id @default(auto()) @map("_id") @db.ObjectId
-  quantity Int
-  total    Int
-  status   OrderStatus @default(PENDING)
-  orderId  String      @unique
+  id      String      @id @default(auto()) @map("_id") @db.ObjectId
+  total   Int
+  status  OrderStatus @default(PENDING)
+  orderId String      @unique
 
   createdBy   User?   @relation("CreatedOrders", fields: [createById], references: [id])
   createById  String? @db.ObjectId
   updatedBy   User?   @relation("UpdatedOrders", fields: [updatedById], references: [id])
   updatedById String? @db.ObjectId
 
-  event   Event? @relation(fields: [eventId], references: [id])
-  eventId String? @db.ObjectId
-
-  ticket   Ticket? @relation(fields: [ticketId], references: [id])
-  ticketId String  @db.ObjectId
-
   payment   Payment? @relation(fields: [paymentId], references: [id])
   paymentId String   @db.ObjectId
 
-  vouchers Voucher[]
+  items OrderItem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model OrderItem {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  quantity Int
+  price    Int
+
+  order   Order  @relation(fields: [orderId], references: [id])
+  orderId String @db.ObjectId
+
+  event   Event  @relation(fields: [eventId], references: [id])
+  eventId String @db.ObjectId
+
+  ticket   Ticket @relation(fields: [ticketId], references: [id])
+  ticketId String @db.ObjectId
 }
