@@ -21,7 +21,11 @@ class OrderController {
             const userId = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.id;
             const body = order_validator_1.createOrderSchema.parse(Object.assign({}, req === null || req === void 0 ? void 0 : req.body));
             const orderId = yield (0, id_1.generateOrderId)();
-            const result = yield this.orderService.create(Object.assign(Object.assign({}, body), { createById: userId, updatedById: userId, orderId }));
+            const result = yield this.orderService.create(Object.assign({}, body), {
+                createById: userId,
+                updatedById: userId,
+                orderId,
+            });
             return res.status(http_config_1.HTTPSTATUS.CREATED).json({
                 message: 'Success create order',
                 data: result,
@@ -43,7 +47,7 @@ class OrderController {
         }));
         this.findOne = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             const params = req === null || req === void 0 ? void 0 : req.params;
-            const { order } = yield this.orderService.findOne(params.id);
+            const { order } = yield this.orderService.findOne(params.orderId);
             return res.status(http_config_1.HTTPSTATUS.OK).json({
                 message: 'Success find one order',
                 data: order,

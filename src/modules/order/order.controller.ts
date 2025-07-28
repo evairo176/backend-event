@@ -23,12 +23,16 @@ export class OrderController {
 
       const orderId = await generateOrderId();
 
-      const result = await this.orderService.create({
-        ...body,
-        createById: userId as string,
-        updatedById: userId as string,
-        orderId,
-      });
+      const result = await this.orderService.create(
+        {
+          ...body,
+        },
+        {
+          createById: userId as string,
+          updatedById: userId as string,
+          orderId,
+        },
+      );
       return res.status(HTTPSTATUS.CREATED).json({
         message: 'Success create order',
         data: result,
@@ -60,7 +64,7 @@ export class OrderController {
     async (req: Request, res: Response): Promise<any> => {
       const params = req?.params;
 
-      const { order } = await this.orderService.findOne(params.id);
+      const { order } = await this.orderService.findOne(params.orderId);
 
       return res.status(HTTPSTATUS.OK).json({
         message: 'Success find one order',

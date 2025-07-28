@@ -10,6 +10,7 @@ orderRoutes.post(
   '/orders',
 
   [authenticateJWT, aclMiddleware([ROLES.MEMBER, ROLES.ADMIN, ROLES.MANAGER])],
+  // [authenticateJWT, aclMiddleware([ROLES.MEMBER])],
   oderController.create,
 );
 
@@ -17,6 +18,12 @@ orderRoutes.get(
   '/orders',
   [authenticateJWT, aclMiddleware([ROLES.ADMIN, ROLES.MANAGER])],
   oderController.findAll,
+);
+
+orderRoutes.get(
+  '/orders/orderId',
+  [authenticateJWT, aclMiddleware([ROLES.ADMIN, ROLES.MANAGER])],
+  oderController.findOne,
 );
 
 orderRoutes.get(
@@ -47,6 +54,12 @@ orderRoutes.delete(
   '/orders/:orderId/remove',
   [authenticateJWT, aclMiddleware([ROLES.ADMIN, ROLES.MANAGER])],
   oderController.remove,
+);
+
+orderRoutes.get(
+  '/orders-history',
+  [authenticateJWT, aclMiddleware([ROLES.MANAGER])],
+  oderController.findAllByMember,
 );
 
 export default orderRoutes;

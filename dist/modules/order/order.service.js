@@ -11,63 +11,63 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrderService = void 0;
 const catch_errors_1 = require("../../cummon/utils/catch-errors");
+const id_1 = require("../../cummon/utils/id");
 const payment_1 = require("../../cummon/utils/payment");
 const database_1 = require("../../database/database");
 const nanoid_1 = require("nanoid");
 class OrderService {
-    create(body) {
+    create(orderData, userData) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield database_1.db.$transaction((tx) => __awaiter(this, void 0, void 0, function* () {
-                const existingTicket = yield tx.ticket.findFirst({
-                    where: {
-                        id: body === null || body === void 0 ? void 0 : body.ticketId,
-                    },
-                });
-                if (!existingTicket) {
-                    throw new catch_errors_1.BadRequestException('Ticket not exists', "RESOURCE_NOT_FOUND" /* ErrorCode.RESOURCE_NOT_FOUND */);
+                const results = [];
+                for (const body of orderData) {
+                    const existingTicket = yield tx.ticket.findFirst({
+                        where: { id: body.ticketId },
+                    });
+                    if (!existingTicket) {
+                        throw new catch_errors_1.BadRequestException('Ticket not exists', "RESOURCE_NOT_FOUND" /* ErrorCode.RESOURCE_NOT_FOUND */);
+                    }
+                    const existingEvent = yield tx.event.findFirst({
+                        where: { id: body.eventId },
+                    });
+                    if (!existingEvent) {
+                        throw new catch_errors_1.NotFoundException('Event not exists', "RESOURCE_NOT_FOUND" /* ErrorCode.RESOURCE_NOT_FOUND */);
+                    }
+                    if (existingTicket.quantity < body.quantity) {
+                        throw new catch_errors_1.BadRequestException('Ticket quantity is not enough');
+                    }
+                    const orderId = yield (0, id_1.generateOrderId)();
+                    const total = +existingTicket.price * +body.quantity;
+                    // Midtrans request tetap di luar transaksi DB
+                    const paymentMidtrans = new payment_1.PaymentMidtrans();
+                    const generatePayment = yield paymentMidtrans.createLink({
+                        transaction_details: {
+                            gross_amount: total,
+                            order_id: orderId,
+                        },
+                    });
+                    const payment = yield tx.payment.create({
+                        data: {
+                            token: generatePayment.token,
+                            redirect_url: generatePayment.redirect_url,
+                        },
+                    });
+                    const createdOrder = yield tx.order.create({
+                        data: Object.assign(Object.assign({}, body), { orderId,
+                            total, paymentId: payment.id, createById: userData === null || userData === void 0 ? void 0 : userData.createById, updatedById: userData === null || userData === void 0 ? void 0 : userData.createById }),
+                    });
+                    const result = yield tx.order.findFirst({
+                        where: { id: createdOrder.id },
+                        include: {
+                            event: true,
+                            ticket: true,
+                            payment: true,
+                            vouchers: true,
+                        },
+                    });
+                    results.push(result);
                 }
-                const existingEvent = yield tx.event.findFirst({
-                    where: {
-                        id: body === null || body === void 0 ? void 0 : body.eventId,
-                    },
-                });
-                if (!existingEvent) {
-                    throw new catch_errors_1.NotFoundException('Event not exists', "RESOURCE_NOT_FOUND" /* ErrorCode.RESOURCE_NOT_FOUND */);
-                }
-                if (existingTicket.quantity < (body === null || body === void 0 ? void 0 : body.quantity)) {
-                    throw new catch_errors_1.BadRequestException('Ticket quantity is not enough');
-                }
-                const total = +existingTicket.price * +(body === null || body === void 0 ? void 0 : body.quantity);
-                // Midtrans di luar transaction karena bukan bagian dari DB
-                const paymentMidtrans = new payment_1.PaymentMidtrans();
-                const generatePayment = yield paymentMidtrans.createLink({
-                    transaction_details: {
-                        gross_amount: total,
-                        order_id: body === null || body === void 0 ? void 0 : body.orderId,
-                    },
-                });
-                // Simpan payment ke DB (masuk dalam transaction)
-                const payment = yield tx.payment.create({
-                    data: {
-                        token: generatePayment.token,
-                        redirect_url: generatePayment.redirect_url, // typo? rediredUrl -> redirect_url
-                    },
-                });
-                const createOrder = yield tx.order.create({
-                    data: Object.assign(Object.assign({}, body), { total, paymentId: payment.id }),
-                });
-                const result = yield tx.order.findFirst({
-                    where: {
-                        id: createOrder.id,
-                    },
-                    include: {
-                        event: true,
-                        ticket: true,
-                        payment: true,
-                        vouchers: true,
-                    },
-                });
-                return result;
+                return results;
             }));
         });
     }
@@ -112,11 +112,11 @@ class OrderService {
             };
         });
     }
-    findOne(id) {
+    findOne(orderId) {
         return __awaiter(this, void 0, void 0, function* () {
             const order = yield database_1.db.order.findFirst({
                 where: {
-                    id,
+                    orderId,
                 },
             });
             if (!order) {

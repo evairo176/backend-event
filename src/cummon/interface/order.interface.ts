@@ -1,10 +1,16 @@
 import { z } from 'zod';
 import { createOrderSchema } from '../validators/order.validator';
 
-export interface CreateOrderDto extends z.infer<typeof createOrderSchema> {
+export interface CreateOrderDto {
   createById: string;
   updatedById: string;
   orderId: string;
+}
+
+export interface orderItemDto {
+  quantity: number;
+  eventId: string;
+  ticketId: string;
 }
 
 export interface IPaginationQuery {
