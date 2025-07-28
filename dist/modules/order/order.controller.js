@@ -53,9 +53,37 @@ class OrderController {
             var _a;
             const params = req === null || req === void 0 ? void 0 : req.params;
             const userId = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.id;
-            yield this.orderService.completed(params.id, userId);
+            yield this.orderService.completed(params.orderId, userId);
             return res.status(http_config_1.HTTPSTATUS.OK).json({
                 message: 'order completed',
+            });
+        }));
+        this.pending = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const params = req === null || req === void 0 ? void 0 : req.params;
+            const userId = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.id;
+            const result = yield this.orderService.pending(params.orderId, userId);
+            return res.status(http_config_1.HTTPSTATUS.OK).json({
+                data: result,
+                message: 'order pending',
+            });
+        }));
+        this.cancelled = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const params = req === null || req === void 0 ? void 0 : req.params;
+            const userId = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.id;
+            const result = yield this.orderService.cancelled(params.orderId, userId);
+            return res.status(http_config_1.HTTPSTATUS.OK).json({
+                data: result,
+                message: 'order pending',
+            });
+        }));
+        this.remove = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const params = req === null || req === void 0 ? void 0 : req.params;
+            const result = yield this.orderService.remove(params.orderId);
+            return res.status(http_config_1.HTTPSTATUS.OK).json({
+                data: result,
+                message: 'success to remove an order',
             });
         }));
         this.orderService = orderService;

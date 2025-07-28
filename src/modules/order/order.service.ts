@@ -148,10 +148,11 @@ export class OrderService {
     };
   }
   public async findAllByMember() {}
-  public async completed(id: string, userId: string) {
+
+  public async completed(orderId: string, userId: string) {
     const order = await db.order.findFirst({
       where: {
-        id,
+        orderId,
         createById: userId,
       },
     });
@@ -217,6 +218,87 @@ export class OrderService {
       ticket: updatedTicket,
     };
   }
-  public async pending(id: string, userId: string) {}
-  public async cancelled(id: string, userId: string) {}
+  public async pending(orderId: string, userId: string) {
+    const order = await db.order.findFirst({
+      where: {
+        orderId,
+        createById: userId,
+      },
+    });
+
+    if (!order) {
+      throw new NotFoundException(
+        'Order not exists',
+        ErrorCode.RESOURCE_NOT_FOUND,
+      );
+    }
+
+    if (order.status === 'COMPLETED') {
+      throw new BadRequestException('You have been completed this order');
+    }
+
+    if (order.status === 'PENDING') {
+      throw new BadRequestException('This order is already payment pending');
+    }
+
+    const result = await db.order.update({
+      where: {
+        id: order.id,
+      },
+      data: {
+        status: 'PENDING',
+      },
+    });
+    return result;
+  }
+  public async cancelled(orderId: string, userId: string) {
+    const order = await db.order.findFirst({
+      where: {
+        orderId,
+        createById: userId,
+      },
+    });
+
+    if (!order) {
+      throw new NotFoundException(
+        'Order not exists',
+        ErrorCode.RESOURCE_NOT_FOUND,
+      );
+    }
+
+    if (order.status === 'COMPLETED') {
+      throw new BadRequestException('You have been completed this order');
+    }
+
+    if (order.status === 'CANCELLED') {
+      throw new BadRequestException('This order is already cancelled');
+    }
+
+    const result = await db.order.update({
+      where: {
+        id: order.id,
+      },
+      data: {
+        status: 'CANCELLED',
+      },
+    });
+    return result;
+  }
+
+  public async remove(orderId: string) {
+    const result = await db.order.delete({
+      where: {
+        orderId,
+      },
+    });
+
+    if (!result) {
+      throw new NotFoundException(
+        'Order not exists',
+        ErrorCode.RESOURCE_NOT_FOUND,
+      );
+    }
+
+    return result;
+  }
 }

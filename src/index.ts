@@ -23,32 +23,11 @@ import mfaRoutes from './modules/mfa/mfa.routes';
 import ticketRoutes from './modules/ticket/ticket.routes';
 import bannerRoutes from './modules/banner/banner.routes';
 import orderRoutes from './modules/order/order.routes';
+import { dataTraining, knnClassify } from './libs/clasification';
 
 const app = express();
 const BASE_PATH = config.BASE_PATH;
-function gradeNilai(value: number) {
-  let grade: string = '';
 
-  if (value <= 60) {
-    grade = 'E';
-  }
-
-  if (value > 60 && value <= 70) {
-    grade = 'D';
-  }
-
-  if (value > 70 && value <= 80) {
-    grade = 'C';
-  }
-  if (value > 80 && value <= 90) {
-    grade = 'B';
-  }
-  if (value > 90 && value <= 100) {
-    grade = 'A';
-  }
-
-  return grade;
-}
 // Add JSON middleware to parse incoming requests
 app.use(express.json({ limit: '100mb' })); // Ubah limit menjadi 50MB
 app.use(express.urlencoded({ extended: true })); // Ubah limit menjadi 50MB

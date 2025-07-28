@@ -74,10 +74,57 @@ export class OrderController {
       const params = req?.params;
       const userId = req?.user?.id;
 
-      await this.orderService.completed(params.id, userId as string);
+      await this.orderService.completed(params.orderId, userId as string);
 
       return res.status(HTTPSTATUS.OK).json({
         message: 'order completed',
+      });
+    },
+  );
+
+  public pending = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+      const params = req?.params;
+      const userId = req?.user?.id;
+
+      const result = await this.orderService.pending(
+        params.orderId,
+        userId as string,
+      );
+
+      return res.status(HTTPSTATUS.OK).json({
+        data: result,
+        message: 'order pending',
+      });
+    },
+  );
+
+  public cancelled = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+      const params = req?.params;
+      const userId = req?.user?.id;
+
+      const result = await this.orderService.cancelled(
+        params.orderId,
+        userId as string,
+      );
+
+      return res.status(HTTPSTATUS.OK).json({
+        data: result,
+        message: 'order pending',
+      });
+    },
+  );
+
+  public remove = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+      const params = req?.params;
+
+      const result = await this.orderService.remove(params.orderId);
+
+      return res.status(HTTPSTATUS.OK).json({
+        data: result,
+        message: 'success to remove an order',
       });
     },
   );

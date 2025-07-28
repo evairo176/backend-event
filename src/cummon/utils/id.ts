@@ -1,5 +1,6 @@
 import { format } from 'date-fns';
 import { db } from '../../database/database';
+import { nanoid } from 'nanoid';
 
 export async function generateOrderId(prefixValue?: string): Promise<string> {
   const code = prefixValue ?? 'ORD';

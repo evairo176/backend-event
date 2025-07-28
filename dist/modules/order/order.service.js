@@ -130,11 +130,11 @@ class OrderService {
     findAllByMember() {
         return __awaiter(this, void 0, void 0, function* () { });
     }
-    completed(id, userId) {
+    completed(orderId, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             const order = yield database_1.db.order.findFirst({
                 where: {
-                    id,
+                    orderId,
                     createById: userId,
                 },
             });
@@ -187,11 +187,74 @@ class OrderService {
             };
         });
     }
-    pending(id, userId) {
-        return __awaiter(this, void 0, void 0, function* () { });
+    pending(orderId, userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const order = yield database_1.db.order.findFirst({
+                where: {
+                    orderId,
+                    createById: userId,
+                },
+            });
+            if (!order) {
+                throw new catch_errors_1.NotFoundException('Order not exists', "RESOURCE_NOT_FOUND" /* ErrorCode.RESOURCE_NOT_FOUND */);
+            }
+            if (order.status === 'COMPLETED') {
+                throw new catch_errors_1.BadRequestException('You have been completed this order');
+            }
+            if (order.status === 'PENDING') {
+                throw new catch_errors_1.BadRequestException('This order is already payment pending');
+            }
+            const result = yield database_1.db.order.update({
+                where: {
+                    id: order.id,
+                },
+                data: {
+                    status: 'PENDING',
+                },
+            });
+            return result;
+        });
     }
-    cancelled(id, userId) {
-        return __awaiter(this, void 0, void 0, function* () { });
+    cancelled(orderId, userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const order = yield database_1.db.order.findFirst({
+                where: {
+                    orderId,
+                    createById: userId,
+                },
+            });
+            if (!order) {
+                throw new catch_errors_1.NotFoundException('Order not exists', "RESOURCE_NOT_FOUND" /* ErrorCode.RESOURCE_NOT_FOUND */);
+            }
+            if (order.status === 'COMPLETED') {
+                throw new catch_errors_1.BadRequestException('You have been completed this order');
+            }
+            if (order.status === 'CANCELLED') {
+                throw new catch_errors_1.BadRequestException('This order is already cancelled');
+            }
+            const result = yield database_1.db.order.update({
+                where: {
+                    id: order.id,
+                },
+                data: {
+                    status: 'CANCELLED',
+                },
+            });
+            return result;
+        });
+    }
+    remove(orderId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield database_1.db.order.delete({
+                where: {
+                    orderId,
+                },
+            });
+            if (!result) {
+                throw new catch_errors_1.NotFoundException('Order not exists', "RESOURCE_NOT_FOUND" /* ErrorCode.RESOURCE_NOT_FOUND */);
+            }
+            return result;
+        });
     }
 }
 exports.OrderService = OrderService;
