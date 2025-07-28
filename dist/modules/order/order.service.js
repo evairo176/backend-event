@@ -150,6 +150,7 @@ class OrderService {
                 },
                 include: {
                     items: true,
+                    payment: true,
                 },
             });
             if (!order) {
@@ -344,11 +345,7 @@ class OrderService {
                     break;
                 case 'deny':
                 case 'expire':
-                    // Pembayaran gagal
-                    // await db.order.update({
-                    //   where: { orderId: order_id },
-                    //   data: { status: 'FAILED' },
-                    // });
+                    yield this.cancelled(order_id);
                     break;
                 case 'pending':
                     yield this.pending(order_id); // Ganti 'system' dengan userId yang sesuai jika perlu

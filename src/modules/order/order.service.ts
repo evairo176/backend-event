@@ -169,6 +169,7 @@ export class OrderService {
       },
       include: {
         items: true,
+        payment: true,
       },
     });
 
@@ -410,11 +411,7 @@ export class OrderService {
         break;
       case 'deny':
       case 'expire':
-        // Pembayaran gagal
-        // await db.order.update({
-        //   where: { orderId: order_id },
-        //   data: { status: 'FAILED' },
-        // });
+        await this.cancelled(order_id);
         break;
 
       case 'pending':

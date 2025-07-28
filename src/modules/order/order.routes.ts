@@ -58,7 +58,7 @@ orderRoutes.delete(
 
 orderRoutes.get(
   '/orders-history',
-  [authenticateJWT, aclMiddleware([ROLES.MANAGER])],
+  [authenticateJWT, aclMiddleware([ROLES.MEMBER, ROLES.ADMIN, ROLES.MANAGER])],
   oderController.findAllByMember,
 );
 
