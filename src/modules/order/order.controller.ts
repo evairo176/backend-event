@@ -173,8 +173,10 @@ export class OrderController {
       // Step 3: Lanjutkan logika status pembayaran
       const transactionStatus = payload.transaction_status;
 
+      await this.orderService.midtransWebhook({ transactionStatus, order_id });
+
       return res.status(HTTPSTATUS.OK).json({
-        message: 'Success find all orders',
+        message: 'Midtrans webhook processed successfully',
       });
     },
   );

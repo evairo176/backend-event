@@ -88,11 +88,7 @@ class OrderService {
                         items: {
                             include: {
                                 event: true,
-                                ticket: {
-                                    include: {
-                                        vouchers: true,
-                                    },
-                                },
+                                ticket: true,
                             },
                         },
                         payment: true,

@@ -136,8 +136,9 @@ class OrderController {
             }
             // Step 3: Lanjutkan logika status pembayaran
             const transactionStatus = payload.transaction_status;
+            yield this.orderService.midtransWebhook({ transactionStatus, order_id });
             return res.status(http_config_1.HTTPSTATUS.OK).json({
-                message: 'Success find all orders',
+                message: 'Midtrans webhook processed successfully',
             });
         }));
         this.orderService = orderService;

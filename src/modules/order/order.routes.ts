@@ -21,7 +21,7 @@ orderRoutes.get(
 );
 
 orderRoutes.get(
-  '/orders/orderId',
+  '/orders/:orderId',
   [authenticateJWT, aclMiddleware([ROLES.ADMIN, ROLES.MANAGER])],
   oderController.findOne,
 );
