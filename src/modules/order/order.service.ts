@@ -168,7 +168,12 @@ export class OrderService {
         orderId,
       },
       include: {
-        items: true,
+        items: {
+          include: {
+            event: true,
+            ticket: true,
+          },
+        },
         payment: true,
       },
     });
