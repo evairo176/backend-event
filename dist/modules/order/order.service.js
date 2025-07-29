@@ -196,8 +196,9 @@ class OrderService {
                 if (!ticket) {
                     throw new catch_errors_1.NotFoundException('Ticket on not exists this order', "RESOURCE_NOT_FOUND" /* ErrorCode.RESOURCE_NOT_FOUND */);
                 }
+                const prefixTicketCode = (order === null || order === void 0 ? void 0 : order.orderId.split('-')[3]) || 'TICKET';
                 const vouchers = Array.from({ length: item.quantity }).map(() => ({
-                    code: (0, nanoid_1.nanoid)(21),
+                    code: `${prefixTicketCode}_${(0, nanoid_1.nanoid)(21)}`,
                     ticketId: item.ticketId,
                 }));
                 // ✅ Execute all DB operations in a transaction

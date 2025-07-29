@@ -233,9 +233,10 @@ export class OrderService {
           ErrorCode.RESOURCE_NOT_FOUND,
         );
       }
+      const prefixTicketCode = order?.orderId.split('-')[3] || 'TICKET';
 
       const vouchers = Array.from({ length: item.quantity }).map(() => ({
-        code: nanoid(21),
+        code: `${prefixTicketCode}_${nanoid(21)}`,
         ticketId: item.ticketId,
       }));
 
