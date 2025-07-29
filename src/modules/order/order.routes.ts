@@ -62,6 +62,12 @@ orderRoutes.get(
   oderController.findAllByMember,
 );
 
+orderRoutes.get(
+  '/orders-dashboard',
+  [authenticateJWT, aclMiddleware([ROLES.ADMIN, ROLES.MANAGER])],
+  oderController.dashboardFindAll,
+);
+
 orderRoutes.post('/orders/midtrans', oderController.midtransWebhook);
 
 export default orderRoutes;

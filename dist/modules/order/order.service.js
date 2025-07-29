@@ -8,8 +8,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrderService = void 0;
+const dayjs_1 = __importDefault(require("dayjs"));
 const catch_errors_1 = require("../../cummon/utils/catch-errors");
 const id_1 = require("../../cummon/utils/id");
 const payment_1 = require("../../cummon/utils/payment");
@@ -364,6 +368,52 @@ class OrderService {
                     break;
             }
             return 'Berhasil memproses webhook Midtrans';
+        });
+    }
+    dashboardFindAll(_a) {
+        return __awaiter(this, arguments, void 0, function* ({ filter = 'monthly' }) {
+            const now = (0, dayjs_1.default)();
+            let startDate = null;
+            switch (filter) {
+                case 'daily':
+                    startDate = now.startOf('day').toDate();
+                    break;
+                case 'weekly':
+                    startDate = now.startOf('week').toDate();
+                    break;
+                case 'monthly':
+                    startDate = now.startOf('month').toDate();
+                    break;
+                case 'yearly':
+                    startDate = now.startOf('year').toDate();
+                    break;
+                case 'all':
+                default:
+                    startDate = null;
+                    break;
+            }
+            const query = {};
+            if (startDate) {
+                query.createdAt = {
+                    gte: startDate, // filter dari startDate sampai sekarang
+                };
+            }
+            const [orders, total] = yield Promise.all([
+                database_1.db.order.findMany({
+                    where: query,
+                    orderBy: { updatedAt: 'desc' },
+                    include: {
+                        payment: true,
+                    },
+                }),
+                database_1.db.order.count({
+                    where: query,
+                }),
+            ]);
+            return {
+                orders,
+                total,
+            };
         });
     }
 }

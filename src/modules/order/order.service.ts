@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { ErrorCode } from '../../cummon/enums/error-code.enum';
 import {
   CreateOrderDto,
@@ -162,6 +163,7 @@ export class OrderService {
       totalPages: Math.ceil(total / Number(limit)),
     };
   }
+
   public async findOne(orderId: string) {
     const order = await db.order.findFirst({
       where: {
@@ -444,5 +446,55 @@ export class OrderService {
     }
 
     return 'Berhasil memproses webhook Midtrans';
+  }
+
+  public async dashboardFindAll({ filter = 'monthly' }: { filter: string }) {
+    const now = dayjs();
+    let startDate: Date | null = null;
+
+    switch (filter) {
+      case 'daily':
+        startDate = now.startOf('day').toDate();
+        break;
+      case 'weekly':
+        startDate = now.startOf('week').toDate();
+        break;
+      case 'monthly':
+        startDate = now.startOf('month').toDate();
+        break;
+      case 'yearly':
+        startDate = now.startOf('year').toDate();
+        break;
+      case 'all':
+      default:
+        startDate = null;
+        break;
+    }
+
+    const query: any = {};
+
+    if (startDate) {
+      query.createdAt = {
+        gte: startDate, // filter dari startDate sampai sekarang
+      };
+    }
+
+    const [orders, total] = await Promise.all([
+      db.order.findMany({
+        where: query,
+        orderBy: { updatedAt: 'desc' },
+        include: {
+          payment: true,
+        },
+      }),
+      db.order.count({
+        where: query,
+      }),
+    ]);
+
+    return {
+      orders,
+      total,
+    };
   }
 }

@@ -29,5 +29,6 @@ orderRoutes.get('/orders/member', [jwt_strategy_1.authenticateJWT, (0, acl_middl
 // );
 orderRoutes.delete('/orders/:orderId/remove', [jwt_strategy_1.authenticateJWT, (0, acl_middleware_1.default)([role_enum_1.ROLES.ADMIN, role_enum_1.ROLES.MANAGER])], order_module_1.oderController.remove);
 orderRoutes.get('/orders-history', [jwt_strategy_1.authenticateJWT, (0, acl_middleware_1.default)([role_enum_1.ROLES.MEMBER, role_enum_1.ROLES.ADMIN, role_enum_1.ROLES.MANAGER])], order_module_1.oderController.findAllByMember);
+orderRoutes.get('/orders-dashboard', [jwt_strategy_1.authenticateJWT, (0, acl_middleware_1.default)([role_enum_1.ROLES.ADMIN, role_enum_1.ROLES.MANAGER])], order_module_1.oderController.dashboardFindAll);
 orderRoutes.post('/orders/midtrans', order_module_1.oderController.midtransWebhook);
 exports.default = orderRoutes;

@@ -18,4 +18,5 @@ export interface IPaginationQuery {
   limit: number;
   search?: string;
   createById?: string;
+  filter?: string;
 }

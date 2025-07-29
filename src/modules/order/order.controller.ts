@@ -197,4 +197,23 @@ export class OrderController {
       });
     },
   );
+
+  public dashboardFindAll = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+      const query = req?.query as unknown as IPaginationQuery;
+
+      const { orders, total } = await this.orderService.dashboardFindAll({
+        ...query,
+        filter: query?.filter as string,
+      });
+
+      return res.status(HTTPSTATUS.OK).json({
+        message: 'Success find all orders',
+        data: orders,
+        pagination: {
+          total,
+        },
+      });
+    },
+  );
 }

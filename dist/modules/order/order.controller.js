@@ -150,6 +150,17 @@ class OrderController {
                 message: 'Midtrans webhook processed successfully',
             });
         }));
+        this.dashboardFindAll = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const query = req === null || req === void 0 ? void 0 : req.query;
+            const { orders, total } = yield this.orderService.dashboardFindAll(Object.assign(Object.assign({}, query), { filter: query === null || query === void 0 ? void 0 : query.filter }));
+            return res.status(http_config_1.HTTPSTATUS.OK).json({
+                message: 'Success find all orders',
+                data: orders,
+                pagination: {
+                    total,
+                },
+            });
+        }));
         this.orderService = orderService;
     }
 }
