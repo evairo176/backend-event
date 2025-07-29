@@ -284,6 +284,7 @@ model Order {
   payment     Payment? @relation(fields: [paymentId], references: [id])
   paymentId   String   @db.ObjectId
   paymentType String?
+  paymentDate String?
 
   items OrderItem[]
 

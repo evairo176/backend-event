@@ -160,6 +160,8 @@ export class OrderController {
         gross_amount,
         signature_key,
         payment_type,
+        settlement_time, // <-- ambil ini (jika ada)
+        transaction_time, // <-- fallback kalau settlement_time tidak ada
       } = payload;
 
       // Step 1: Buat hash berdasarkan data Midtrans
@@ -179,10 +181,15 @@ export class OrderController {
       // Step 3: Lanjutkan logika status pembayaran
       const transactionStatus = payload.transaction_status;
 
+      // Step 3: Tentukan payment date
+      const paymentDate =
+        settlement_time || transaction_time || new Date().toISOString();
+
       await this.orderService.midtransWebhook({
         transactionStatus,
         order_id,
         paymentType: payment_type,
+        paymentDate,
       });
 
       return res.status(HTTPSTATUS.OK).json({

@@ -189,7 +189,11 @@ export class OrderService {
     };
   }
 
-  public async completed(orderId: string, paymentType?: string) {
+  public async completed(
+    orderId: string,
+    paymentType: string,
+    paymentDate: string,
+  ) {
     const order = await db.order.findFirst({
       where: {
         orderId,
@@ -244,6 +248,7 @@ export class OrderService {
             data: {
               status: 'COMPLETED',
               paymentType,
+              paymentDate,
             },
           }),
           db.ticket.update({
@@ -402,16 +407,22 @@ export class OrderService {
     transactionStatus,
     order_id,
     paymentType,
+    paymentDate,
   }: {
     transactionStatus: string;
     order_id: string;
     paymentType?: string;
+    paymentDate?: string;
   }) {
     switch (transactionStatus) {
       case 'capture':
       case 'settlement':
         // Pembayaran berhasil
-        await this.completed(order_id, paymentType); // Ganti 'system' dengan userId yang sesuai jika perlu
+        await this.completed(
+          order_id,
+          paymentType as string,
+          paymentDate as string,
+        ); // Ganti 'system' dengan userId yang sesuai jika perlu
         break;
 
       case 'cancel':

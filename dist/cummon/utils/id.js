@@ -12,8 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateOrderId = generateOrderId;
 const date_fns_1 = require("date-fns");
 const nanoid_1 = require("nanoid");
-function generateOrderId(prefixValue) {
-    return __awaiter(this, void 0, void 0, function* () {
+function generateOrderId() {
+    return __awaiter(this, arguments, void 0, function* (type = 'EVT', prefixValue) {
         const code = prefixValue !== null && prefixValue !== void 0 ? prefixValue : 'ORD';
         const now = new Date();
         // Allowed characters: a-z and 1-9 + 0 (no special characters or uppercase)
@@ -23,7 +23,7 @@ function generateOrderId(prefixValue) {
         // Generate a new ID
         const id = nanoid();
         const dateCode = (0, date_fns_1.format)(now, 'yyMMdd');
-        const prefix = `${code}-${dateCode}`; // contoh: ORD-250710
+        const prefix = `${type}-${code}-${dateCode}`; // contoh: ORD-250710
         // const lastOrder = await db.order.findFirst({
         //   where: {
         //     orderId: {

@@ -1,8 +1,11 @@
 import { format } from 'date-fns';
-import { db } from '../../database/database';
 import { customAlphabet, nanoid } from 'nanoid';
+type ORDER_TYPE = 'EVT';
 
-export async function generateOrderId(prefixValue?: string): Promise<string> {
+export async function generateOrderId(
+  type: ORDER_TYPE = 'EVT',
+  prefixValue?: string,
+): Promise<string> {
   const code = prefixValue ?? 'ORD';
   const now = new Date();
   // Allowed characters: a-z and 1-9 + 0 (no special characters or uppercase)
@@ -15,7 +18,7 @@ export async function generateOrderId(prefixValue?: string): Promise<string> {
   const id = nanoid();
 
   const dateCode = format(now, 'yyMMdd');
-  const prefix = `${code}-${dateCode}`; // contoh: ORD-250710
+  const prefix = `${type}-${code}-${dateCode}`; // contoh: ORD-250710
 
   // const lastOrder = await db.order.findFirst({
   //   where: {
