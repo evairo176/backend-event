@@ -161,7 +161,7 @@ class OrderService {
             };
         });
     }
-    completed(orderId) {
+    completed(orderId, paymentType) {
         return __awaiter(this, void 0, void 0, function* () {
             const order = yield database_1.db.order.findFirst({
                 where: {
@@ -202,6 +202,7 @@ class OrderService {
                         },
                         data: {
                             status: 'COMPLETED',
+                            paymentType,
                         },
                     }),
                     database_1.db.ticket.update({
@@ -333,12 +334,12 @@ class OrderService {
         });
     }
     midtransWebhook(_a) {
-        return __awaiter(this, arguments, void 0, function* ({ transactionStatus, order_id, }) {
+        return __awaiter(this, arguments, void 0, function* ({ transactionStatus, order_id, paymentType, }) {
             switch (transactionStatus) {
                 case 'capture':
                 case 'settlement':
                     // Pembayaran berhasil
-                    yield this.completed(order_id); // Ganti 'system' dengan userId yang sesuai jika perlu
+                    yield this.completed(order_id, paymentType); // Ganti 'system' dengan userId yang sesuai jika perlu
                     break;
                 case 'cancel':
                     yield this.cancelled(order_id);

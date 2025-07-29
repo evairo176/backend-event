@@ -122,7 +122,7 @@ class OrderController {
         }));
         this.midtransWebhook = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             const payload = req.body;
-            const { order_id, status_code, gross_amount, signature_key } = payload;
+            const { order_id, status_code, gross_amount, signature_key, payment_type, } = payload;
             // Step 1: Buat hash berdasarkan data Midtrans
             const input = order_id + status_code + gross_amount + app_config_1.config.MIDTRANS.SERVER_KEY;
             const expectedSignature = crypto_1.default
@@ -136,7 +136,11 @@ class OrderController {
             }
             // Step 3: Lanjutkan logika status pembayaran
             const transactionStatus = payload.transaction_status;
-            yield this.orderService.midtransWebhook({ transactionStatus, order_id });
+            yield this.orderService.midtransWebhook({
+                transactionStatus,
+                order_id,
+                paymentType: payment_type,
+            });
             return res.status(http_config_1.HTTPSTATUS.OK).json({
                 message: 'Midtrans webhook processed successfully',
             });

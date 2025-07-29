@@ -281,8 +281,9 @@ model Order {
   updatedBy   User?   @relation("UpdatedOrders", fields: [updatedById], references: [id])
   updatedById String? @db.ObjectId
 
-  payment   Payment? @relation(fields: [paymentId], references: [id])
-  paymentId String   @db.ObjectId
+  payment     Payment? @relation(fields: [paymentId], references: [id])
+  paymentId   String   @db.ObjectId
+  paymentType String?
 
   items OrderItem[]
 
