@@ -152,7 +152,11 @@ class OrderService {
                     items: {
                         include: {
                             event: true,
-                            ticket: true,
+                            ticket: {
+                                include: {
+                                    vouchers: true,
+                                },
+                            },
                         },
                     },
                     payment: true,
@@ -198,7 +202,7 @@ class OrderService {
                 }));
                 // ✅ Execute all DB operations in a transaction
                 const [createdVouchers, updatedOrder, updatedTicket] = yield database_1.db.$transaction([
-                    database_1.db.vocherTicket.createMany({
+                    database_1.db.voucherTicket.createMany({
                         data: vouchers,
                     }),
                     database_1.db.order.update({

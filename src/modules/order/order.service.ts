@@ -171,7 +171,11 @@ export class OrderService {
         items: {
           include: {
             event: true,
-            ticket: true,
+            ticket: {
+              include: {
+                vouchers: true,
+              },
+            },
           },
         },
         payment: true,
@@ -238,7 +242,7 @@ export class OrderService {
       // ✅ Execute all DB operations in a transaction
       const [createdVouchers, updatedOrder, updatedTicket] =
         await db.$transaction([
-          db.vocherTicket.createMany({
+          db.voucherTicket.createMany({
             data: vouchers,
           }),
           db.order.update({
