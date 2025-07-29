@@ -15,3 +15,15 @@ export interface ResetPasswordDto {
   password: string;
   verificationCode: string;
 }
+
+export interface UpdatePasswordDto {
+  oldPassword: string;
+  password: string;
+  userId: string;
+}
+
+export interface UpdateProfileDto {
+  userId: string;
+  fullname: string;
+  profilePicture: string;
+}

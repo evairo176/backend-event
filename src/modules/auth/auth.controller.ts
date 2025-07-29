@@ -6,6 +6,8 @@ import {
   loginSchema,
   registerSchema,
   resetPasswordSchema,
+  updatePasswordSchema,
+  updateProfileSchema,
   verificationEmailSchema,
 } from '../../cummon/validators/auth.validator';
 import {
@@ -176,6 +178,35 @@ export class AuthController {
       await this.authService.logout(sessionId);
       return clearAuthenticationCookies(res).status(HTTPSTATUS.OK).json({
         message: 'User logout successfully',
+      });
+    },
+  );
+
+  public updateProfile = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+      const body = updateProfileSchema.parse(req?.body);
+      const userId = req.user?.id;
+
+      await this.authService.updateProfile({
+        ...body,
+        userId: userId as string,
+      });
+      return res.status(HTTPSTATUS.OK).json({
+        message: 'Update profile successfully',
+      });
+    },
+  );
+
+  public updatePassword = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+      const body = updatePasswordSchema.parse(req?.body);
+      const userId = req.user?.id;
+      await this.authService.updatePassword({
+        ...body,
+        userId: userId as string,
+      });
+      return res.status(HTTPSTATUS.OK).json({
+        message: 'Update password successfully',
       });
     },
   );

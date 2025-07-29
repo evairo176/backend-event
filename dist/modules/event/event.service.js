@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const catch_errors_1 = require("../../cummon/utils/catch-errors");
 const slug_1 = __importDefault(require("../../cummon/utils/slug"));
+const uploader_1 = __importDefault(require("../../cummon/utils/uploader"));
 const database_1 = require("../../database/database");
 class EventService {
     create(body) {
@@ -210,6 +211,7 @@ class EventService {
                     id: findEvent.id,
                 },
             });
+            yield uploader_1.default.remove(findEvent.banner);
             return findEvent;
         });
     }

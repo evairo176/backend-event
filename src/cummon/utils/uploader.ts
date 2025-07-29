@@ -49,6 +49,6 @@ export default {
   },
   async remove(fileUrl: string) {
     const publicId = getPublicIdFromFileUrl(fileUrl);
-    const result = await cloudinary.uploader.destroy(publicId);
+    await cloudinary.uploader.destroy(publicId);
   },
 };

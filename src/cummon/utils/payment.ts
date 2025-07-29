@@ -7,6 +7,13 @@ export interface Payment {
     order_id: string;
     gross_amount: number;
   };
+
+  credit_card?: {
+    secure: boolean;
+  };
+  callbacks?: {
+    finish: string;
+  };
 }
 
 export type TypeResponseMidtrans = {
@@ -18,7 +25,15 @@ export class PaymentMidtrans {
   public async createLink(payload: Payment): Promise<TypeResponseMidtrans> {
     const result = await axios.post<TypeResponseMidtrans>(
       `${config.MIDTRANS.TRANSACTION_URL}`,
-      payload,
+      {
+        ...payload,
+        credit_card: {
+          secure: true,
+        },
+        callbacks: {
+          finish: `${config.MIDTRANS.FINISH_REDIRECT_URL}`, // tambahkan ini
+        },
+      },
       {
         headers: {
           'Content-Type': 'application/json',

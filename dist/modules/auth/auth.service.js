@@ -363,5 +363,124 @@ class AuthService {
             });
         });
     }
+    updateProfile(_a) {
+        return __awaiter(this, arguments, void 0, function* ({ fullname, profilePicture, userId, }) {
+            const oldUser = yield database_1.db.user.findFirst({
+                where: {
+                    id: userId,
+                },
+            });
+            if (!oldUser) {
+                throw new catch_errors_1.BadRequestException('Failed to update profile');
+            }
+            if (oldUser.fullname === fullname &&
+                oldUser.profilePicture === profilePicture) {
+                throw new catch_errors_1.BadRequestException('No changes detected');
+            }
+            const updateUser = yield database_1.db.user.update({
+                where: {
+                    id: userId,
+                },
+                data: {
+                    fullname,
+                    profilePicture,
+                },
+            });
+            if (!updateUser) {
+                throw new catch_errors_1.BadRequestException('Failed to update profile');
+            }
+            yield database_1.db.userHistoryUpdate.create({
+                data: {
+                    userId: updateUser.id,
+                    oldFullname: oldUser.fullname,
+                    oldProfilePicture: oldUser.profilePicture,
+                    fullname,
+                    profilePicture,
+                    message: 'User updated profile',
+                },
+            });
+            const showUser = yield database_1.db.user.findFirst({
+                where: {
+                    id: updateUser.id,
+                },
+                select: {
+                    id: true,
+                    fullname: true,
+                    email: true,
+                    isEmailVerified: true,
+                    createdAt: true,
+                    updatedAt: true,
+                    userPreferences: true,
+                    sessions: true,
+                },
+            });
+            return {
+                user: showUser,
+            };
+        });
+    }
+    updatePassword(_a) {
+        return __awaiter(this, arguments, void 0, function* ({ oldPassword, password, userId, }) {
+            const user = yield database_1.db.user.findFirst({
+                where: {
+                    id: userId,
+                },
+                select: {
+                    id: true,
+                    fullname: true,
+                    email: true,
+                    isEmailVerified: true,
+                    createdAt: true,
+                    updatedAt: true,
+                    userPreferences: true,
+                    password: true, // Include password for validation
+                },
+            });
+            if (!user) {
+                throw new catch_errors_1.BadRequestException('Invalid user id provided', "AUTH_USER_NOT_FOUND" /* ErrorCode.AUTH_USER_NOT_FOUND */);
+            }
+            const hashOldPassword = yield (0, bcrypt_1.encryptValue)(oldPassword);
+            const isPasswordValid = hashOldPassword === user.password;
+            if (!isPasswordValid) {
+                throw new catch_errors_1.BadRequestException('Invalid password provided', "AUTH_USER_NOT_FOUND" /* ErrorCode.AUTH_USER_NOT_FOUND */);
+            }
+            const newHashPassword = yield (0, bcrypt_1.encryptValue)(password);
+            const updateUser = yield database_1.db.user.update({
+                where: {
+                    id: userId,
+                },
+                data: {
+                    password: newHashPassword,
+                },
+            });
+            if (!updateUser) {
+                throw new catch_errors_1.BadRequestException('Failed to update password');
+            }
+            yield database_1.db.userHistoryUpdate.create({
+                data: {
+                    userId: updateUser.id,
+                    message: 'User updated password',
+                },
+            });
+            const showUser = yield database_1.db.user.findFirst({
+                where: {
+                    id: updateUser.id,
+                },
+                select: {
+                    id: true,
+                    fullname: true,
+                    email: true,
+                    isEmailVerified: true,
+                    createdAt: true,
+                    updatedAt: true,
+                    userPreferences: true,
+                    sessions: true,
+                },
+            });
+            return {
+                user: showUser,
+            };
+        });
+    }
 }
 exports.AuthService = AuthService;

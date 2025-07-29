@@ -125,6 +125,24 @@ class AuthController {
                 message: 'User logout successfully',
             });
         }));
+        this.updateProfile = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const body = auth_validator_1.updateProfileSchema.parse(req === null || req === void 0 ? void 0 : req.body);
+            const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
+            yield this.authService.updateProfile(Object.assign(Object.assign({}, body), { userId: userId }));
+            return res.status(http_config_1.HTTPSTATUS.OK).json({
+                message: 'Update profile successfully',
+            });
+        }));
+        this.updatePassword = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const body = auth_validator_1.updatePasswordSchema.parse(req === null || req === void 0 ? void 0 : req.body);
+            const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
+            yield this.authService.updatePassword(Object.assign(Object.assign({}, body), { userId: userId }));
+            return res.status(http_config_1.HTTPSTATUS.OK).json({
+                message: 'Update password successfully',
+            });
+        }));
         this.authService = authService;
     }
 }

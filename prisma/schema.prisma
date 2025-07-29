@@ -55,7 +55,25 @@ model User {
 
   userPreferences   UserPreferences?
   sessions          Session[]
-  verificationCodes VerificationCode[] // Relasi 1:N
+  verificationCodes VerificationCode[]
+  userHistoryUpdate UserHistoryUpdate[]
+}
+
+model UserHistoryUpdate {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  fullname    String?
+  oldFullname String?
+
+  profilePicture    String?
+  oldProfilePicture String?
+
+  user   User?   @relation(fields: [userId], references: [id])
+  userId String? @db.ObjectId
+
+  message String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model UserPreferences {

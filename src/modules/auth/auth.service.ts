@@ -5,6 +5,8 @@ import {
   LoginDto,
   RegisterDto,
   ResetPasswordDto,
+  UpdatePasswordDto,
+  UpdateProfileDto,
 } from '../../cummon/interface/auth.interface';
 import { encryptValue } from '../../cummon/utils/bcrypt';
 import {
@@ -453,5 +455,152 @@ export class AuthService {
         id: sessionId,
       },
     });
+  }
+
+  public async updateProfile({
+    fullname,
+    profilePicture,
+    userId,
+  }: UpdateProfileDto) {
+    const oldUser = await db.user.findFirst({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (!oldUser) {
+      throw new BadRequestException('Failed to update profile');
+    }
+
+    if (
+      oldUser.fullname === fullname &&
+      oldUser.profilePicture === profilePicture
+    ) {
+      throw new BadRequestException('No changes detected');
+    }
+    const updateUser = await db.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        fullname,
+        profilePicture,
+      },
+    });
+
+    if (!updateUser) {
+      throw new BadRequestException('Failed to update profile');
+    }
+
+    await db.userHistoryUpdate.create({
+      data: {
+        userId: updateUser.id,
+        oldFullname: oldUser.fullname,
+        oldProfilePicture: oldUser.profilePicture,
+        fullname,
+        profilePicture,
+        message: 'User updated profile',
+      },
+    });
+
+    const showUser = await db.user.findFirst({
+      where: {
+        id: updateUser.id,
+      },
+      select: {
+        id: true,
+        fullname: true,
+        email: true,
+        isEmailVerified: true,
+        createdAt: true,
+        updatedAt: true,
+        userPreferences: true,
+        sessions: true,
+      },
+    });
+
+    return {
+      user: showUser,
+    };
+  }
+
+  public async updatePassword({
+    oldPassword,
+    password,
+    userId,
+  }: UpdatePasswordDto) {
+    const user = await db.user.findFirst({
+      where: {
+        id: userId,
+      },
+      select: {
+        id: true,
+        fullname: true,
+        email: true,
+        isEmailVerified: true,
+        createdAt: true,
+        updatedAt: true,
+        userPreferences: true,
+        password: true, // Include password for validation
+      },
+    });
+
+    if (!user) {
+      throw new BadRequestException(
+        'Invalid user id provided',
+        ErrorCode.AUTH_USER_NOT_FOUND,
+      );
+    }
+
+    const hashOldPassword = await encryptValue(oldPassword);
+    const isPasswordValid = hashOldPassword === user.password;
+
+    if (!isPasswordValid) {
+      throw new BadRequestException(
+        'Invalid password provided',
+        ErrorCode.AUTH_USER_NOT_FOUND,
+      );
+    }
+
+    const newHashPassword = await encryptValue(password);
+    const updateUser = await db.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        password: newHashPassword,
+      },
+    });
+
+    if (!updateUser) {
+      throw new BadRequestException('Failed to update password');
+    }
+
+    await db.userHistoryUpdate.create({
+      data: {
+        userId: updateUser.id,
+        message: 'User updated password',
+      },
+    });
+
+    const showUser = await db.user.findFirst({
+      where: {
+        id: updateUser.id,
+      },
+      select: {
+        id: true,
+        fullname: true,
+        email: true,
+        isEmailVerified: true,
+        createdAt: true,
+        updatedAt: true,
+        userPreferences: true,
+        sessions: true,
+      },
+    });
+
+    return {
+      user: showUser,
+    };
   }
 }

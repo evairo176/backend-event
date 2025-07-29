@@ -19,7 +19,11 @@ const catch_errors_1 = require("./catch-errors");
 class PaymentMidtrans {
     createLink(payload) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield axios_1.default.post(`${app_config_1.config.MIDTRANS.TRANSACTION_URL}`, payload, {
+            const result = yield axios_1.default.post(`${app_config_1.config.MIDTRANS.TRANSACTION_URL}`, Object.assign(Object.assign({}, payload), { credit_card: {
+                    secure: true,
+                }, callbacks: {
+                    finish: `${app_config_1.config.MIDTRANS.FINISH_REDIRECT_URL}`, // tambahkan ini
+                } }), {
                 headers: {
                     'Content-Type': 'application/json',
                     Accept: 'application/json',

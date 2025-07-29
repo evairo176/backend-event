@@ -26,6 +26,10 @@ const appConfig = () => ({
     CLIENT_KEY: getEnv('MIDTRANS_CLIENT_KEY'),
     SERVER_KEY: getEnv('MIDTRANS_SERVER_KEY'),
     TRANSACTION_URL: getEnv('MIDTRANS_TRANSACTION_URL'),
+    FINISH_REDIRECT_URL: getEnv(
+      'FINISH_REDIRECT_URL',
+      'https://frontend-event-two.vercel.app/payment/success',
+    ),
   },
 });
 

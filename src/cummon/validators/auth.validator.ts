@@ -40,3 +40,19 @@ export const resetPasswordSchema = z.object({
   password: passwordSchema,
   verificationCode: verificationCodeSchema,
 });
+
+export const updatePasswordSchema = z
+  .object({
+    oldPassword: passwordSchema,
+    password: passwordSchema,
+    confirmPassword: passwordSchema,
+  })
+  .refine((value) => value.password === value.confirmPassword, {
+    message: 'Password does not match',
+    path: ['confirmPassword'],
+  });
+
+export const updateProfileSchema = z.object({
+  fullname: z.string().trim().min(1).max(255),
+  profilePicture: z.string(),
+});

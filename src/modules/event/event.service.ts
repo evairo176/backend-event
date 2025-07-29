@@ -9,6 +9,7 @@ import {
   NotFoundException,
 } from '../../cummon/utils/catch-errors';
 import slug from '../../cummon/utils/slug';
+import uploader from '../../cummon/utils/uploader';
 import { db } from '../../database/database';
 
 export default class EventService {
@@ -281,6 +282,8 @@ export default class EventService {
         id: findEvent.id,
       },
     });
+
+    await uploader.remove(findEvent.banner);
 
     return findEvent;
   }

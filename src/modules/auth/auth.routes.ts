@@ -3,6 +3,7 @@ import { authController } from './auth.module';
 import { authenticateJWT } from '../../cummon/strategies/jwt.strategy';
 import aclMiddleware from '../../middlewares/acl.middleware';
 import { ROLES } from '../../cummon/enums/role.enum';
+import { ROLE_USER } from '@prisma/client';
 
 const authRoutes = Router();
 
@@ -48,6 +49,19 @@ authRoutes.get(
   */
 );
 
+authRoutes.put(
+  '/auth/me/update',
+  authenticateJWT,
+  aclMiddleware([ROLES.ADMIN, ROLES.MEMBER, ROLES.MANAGER]),
+  authController.updateProfile,
+  /*
+  #swagger.tags = ['Auth']
+  #swagger.security = [{
+    "bearerAuth": {}
+  }]
+  */
+);
+
 authRoutes.post(
   '/auth/verify/email',
   authController.verifyEmail,
@@ -60,6 +74,12 @@ authRoutes.post(
         }
     }
     */
+);
+authRoutes.put(
+  '/auth/password/update',
+  authenticateJWT,
+  aclMiddleware([ROLES.ADMIN, ROLES.MEMBER, ROLES.MANAGER]),
+  authController.updatePassword,
 );
 authRoutes.post('/auth/password/forgot', authController.forgotPassword);
 authRoutes.post('/auth/password/reset', authController.resetPassword);

@@ -49,7 +49,7 @@ exports.default = {
     remove(fileUrl) {
         return __awaiter(this, void 0, void 0, function* () {
             const publicId = getPublicIdFromFileUrl(fileUrl);
-            const result = yield cloudinary_1.v2.uploader.destroy(publicId);
+            yield cloudinary_1.v2.uploader.destroy(publicId);
         });
     },
 };
