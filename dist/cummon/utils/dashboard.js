@@ -47,7 +47,7 @@ class Dashboard {
                 case 'all':
                     // Jangan batasi startDate, tapi group per bulan-tahun
                     startDate = undefined;
-                    groupFormat = 'MMM YYYY'; // 💡 tampilkan seluruh data per bulan
+                    groupFormat = 'DD MMM YYYY';
                     break;
             }
             const orders = yield database_1.db.order.findMany({
