@@ -502,13 +502,30 @@ export class OrderService {
   public async dashboardOrderChart() {
     const dashboard = new Dashboard();
 
-    const [hourly, daily, weekly, monthly, yearly, all] = await Promise.all([
+    const [
+      hourly,
+      daily,
+      weekly,
+      monthly,
+      yearly,
+      all,
+      prevHourly,
+      prevDaily,
+      prevWeekly,
+      prevMonthly,
+      prevYearly,
+    ] = await Promise.all([
       await dashboard.getOrderSummaryByTime('hourly'),
       await dashboard.getOrderSummaryByTime('daily'),
       await dashboard.getOrderSummaryByTime('weekly'),
       await dashboard.getOrderSummaryByTime('monthly'),
       await dashboard.getOrderSummaryByTime('yearly'),
       await dashboard.getOrderSummaryByTime('all'),
+      await dashboard.getOrderSummaryByTime('prevHourly'),
+      await dashboard.getOrderSummaryByTime('prevDaily'),
+      await dashboard.getOrderSummaryByTime('prevWeekly'),
+      await dashboard.getOrderSummaryByTime('prevMonthly'),
+      await dashboard.getOrderSummaryByTime('prevYearly'),
     ]);
     return {
       hourly,
@@ -517,6 +534,11 @@ export class OrderService {
       monthly,
       yearly,
       all,
+      prevHourly,
+      prevDaily,
+      prevWeekly,
+      prevMonthly,
+      prevYearly,
     };
   }
 }
