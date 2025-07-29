@@ -7,6 +7,7 @@ import { generateOrderId } from '../../cummon/utils/id';
 import { IPaginationQuery } from '../../cummon/interface/order.interface';
 import crypto from 'crypto';
 import { config } from '../../config/app.config';
+import { TimeFilter } from '../../cummon/utils/dashboard';
 
 export class OrderController {
   private orderService: OrderService;
@@ -213,6 +214,17 @@ export class OrderController {
         pagination: {
           total,
         },
+      });
+    },
+  );
+
+  public dashboardChart = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+      const result = await this.orderService.dashboardOrderChart();
+
+      return res.status(HTTPSTATUS.OK).json({
+        message: 'Success find all orders for dashboard chart',
+        data: result,
       });
     },
   );

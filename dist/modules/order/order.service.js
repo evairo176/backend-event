@@ -19,6 +19,7 @@ const id_1 = require("../../cummon/utils/id");
 const payment_1 = require("../../cummon/utils/payment");
 const database_1 = require("../../database/database");
 const nanoid_1 = require("nanoid");
+const dashboard_1 = require("../../cummon/utils/dashboard");
 class OrderService {
     create(orderData, userData) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -400,7 +401,7 @@ class OrderService {
             }
             const [orders, total] = yield Promise.all([
                 database_1.db.order.findMany({
-                    where: query,
+                    // where: query,
                     orderBy: { updatedAt: 'desc' },
                     include: {
                         payment: true,
@@ -413,6 +414,25 @@ class OrderService {
             return {
                 orders,
                 total,
+            };
+        });
+    }
+    dashboardOrderChart() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const dashboard = new dashboard_1.Dashboard();
+            const hourly = yield dashboard.getOrderSummaryByTime('hourly');
+            const daily = yield dashboard.getOrderSummaryByTime('daily');
+            const weekly = yield dashboard.getOrderSummaryByTime('weekly');
+            const monthly = yield dashboard.getOrderSummaryByTime('monthly');
+            const yearly = yield dashboard.getOrderSummaryByTime('yearly');
+            const all = yield dashboard.getOrderSummaryByTime('all');
+            return {
+                hourly,
+                daily,
+                weekly,
+                monthly,
+                yearly,
+                all,
             };
         });
     }

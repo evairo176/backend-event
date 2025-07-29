@@ -161,6 +161,13 @@ class OrderController {
                 },
             });
         }));
+        this.dashboardChart = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const result = yield this.orderService.dashboardOrderChart();
+            return res.status(http_config_1.HTTPSTATUS.OK).json({
+                message: 'Success find all orders for dashboard chart',
+                data: result,
+            });
+        }));
         this.orderService = orderService;
     }
 }

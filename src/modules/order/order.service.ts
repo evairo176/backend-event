@@ -14,6 +14,7 @@ import { PaymentMidtrans } from '../../cummon/utils/payment';
 import { db } from '../../database/database';
 
 import { nanoid } from 'nanoid';
+import { Dashboard, TimeFilter } from '../../cummon/utils/dashboard';
 
 export class OrderService {
   public async create(orderData: orderItemDto[], userData: CreateOrderDto) {
@@ -481,7 +482,7 @@ export class OrderService {
 
     const [orders, total] = await Promise.all([
       db.order.findMany({
-        where: query,
+        // where: query,
         orderBy: { updatedAt: 'desc' },
         include: {
           payment: true,
@@ -495,6 +496,25 @@ export class OrderService {
     return {
       orders,
       total,
+    };
+  }
+
+  public async dashboardOrderChart() {
+    const dashboard = new Dashboard();
+
+    const hourly = await dashboard.getOrderSummaryByTime('hourly');
+    const daily = await dashboard.getOrderSummaryByTime('daily');
+    const weekly = await dashboard.getOrderSummaryByTime('weekly');
+    const monthly = await dashboard.getOrderSummaryByTime('monthly');
+    const yearly = await dashboard.getOrderSummaryByTime('yearly');
+    const all = await dashboard.getOrderSummaryByTime('all');
+    return {
+      hourly,
+      daily,
+      weekly,
+      monthly,
+      yearly,
+      all,
     };
   }
 }

@@ -68,6 +68,8 @@ orderRoutes.get(
   oderController.dashboardFindAll,
 );
 
+orderRoutes.get('/orders-dashboard/chart', oderController.dashboardChart);
+
 orderRoutes.post('/orders/midtrans', oderController.midtransWebhook);
 
 export default orderRoutes;
