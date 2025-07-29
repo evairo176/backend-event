@@ -13,7 +13,7 @@ orderRoutes.post('/orders', [jwt_strategy_1.authenticateJWT, (0, acl_middleware_
 // [authenticateJWT, aclMiddleware([ROLES.MEMBER])],
 order_module_1.oderController.create);
 orderRoutes.get('/orders', [jwt_strategy_1.authenticateJWT, (0, acl_middleware_1.default)([role_enum_1.ROLES.ADMIN, role_enum_1.ROLES.MANAGER])], order_module_1.oderController.findAll);
-orderRoutes.get('/orders/:orderId', [jwt_strategy_1.authenticateJWT, (0, acl_middleware_1.default)([role_enum_1.ROLES.ADMIN, role_enum_1.ROLES.MANAGER])], order_module_1.oderController.findOne);
+orderRoutes.get('/orders/:orderId', [jwt_strategy_1.authenticateJWT, (0, acl_middleware_1.default)([role_enum_1.ROLES.ADMIN, role_enum_1.ROLES.MANAGER, role_enum_1.ROLES.MEMBER])], order_module_1.oderController.findOne);
 orderRoutes.get('/orders/member', [jwt_strategy_1.authenticateJWT, (0, acl_middleware_1.default)([role_enum_1.ROLES.ADMIN, role_enum_1.ROLES.MEMBER, role_enum_1.ROLES.MANAGER])], order_module_1.oderController.findAllByMember);
 // orderRoutes.put(
 //   '/orders/:orderId/completed',

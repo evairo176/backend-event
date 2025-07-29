@@ -22,7 +22,7 @@ orderRoutes.get(
 
 orderRoutes.get(
   '/orders/:orderId',
-  [authenticateJWT, aclMiddleware([ROLES.ADMIN, ROLES.MANAGER])],
+  [authenticateJWT, aclMiddleware([ROLES.ADMIN, ROLES.MANAGER, ROLES.MEMBER])],
   oderController.findOne,
 );
 
