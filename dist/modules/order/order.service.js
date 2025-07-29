@@ -420,12 +420,14 @@ class OrderService {
     dashboardOrderChart() {
         return __awaiter(this, void 0, void 0, function* () {
             const dashboard = new dashboard_1.Dashboard();
-            const hourly = yield dashboard.getOrderSummaryByTime('hourly');
-            const daily = yield dashboard.getOrderSummaryByTime('daily');
-            const weekly = yield dashboard.getOrderSummaryByTime('weekly');
-            const monthly = yield dashboard.getOrderSummaryByTime('monthly');
-            const yearly = yield dashboard.getOrderSummaryByTime('yearly');
-            const all = yield dashboard.getOrderSummaryByTime('all');
+            const [hourly, daily, weekly, monthly, yearly, all] = yield Promise.all([
+                yield dashboard.getOrderSummaryByTime('hourly'),
+                yield dashboard.getOrderSummaryByTime('daily'),
+                yield dashboard.getOrderSummaryByTime('weekly'),
+                yield dashboard.getOrderSummaryByTime('monthly'),
+                yield dashboard.getOrderSummaryByTime('yearly'),
+                yield dashboard.getOrderSummaryByTime('all'),
+            ]);
             return {
                 hourly,
                 daily,

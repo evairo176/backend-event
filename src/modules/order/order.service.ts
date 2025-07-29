@@ -502,12 +502,14 @@ export class OrderService {
   public async dashboardOrderChart() {
     const dashboard = new Dashboard();
 
-    const hourly = await dashboard.getOrderSummaryByTime('hourly');
-    const daily = await dashboard.getOrderSummaryByTime('daily');
-    const weekly = await dashboard.getOrderSummaryByTime('weekly');
-    const monthly = await dashboard.getOrderSummaryByTime('monthly');
-    const yearly = await dashboard.getOrderSummaryByTime('yearly');
-    const all = await dashboard.getOrderSummaryByTime('all');
+    const [hourly, daily, weekly, monthly, yearly, all] = await Promise.all([
+      await dashboard.getOrderSummaryByTime('hourly'),
+      await dashboard.getOrderSummaryByTime('daily'),
+      await dashboard.getOrderSummaryByTime('weekly'),
+      await dashboard.getOrderSummaryByTime('monthly'),
+      await dashboard.getOrderSummaryByTime('yearly'),
+      await dashboard.getOrderSummaryByTime('all'),
+    ]);
     return {
       hourly,
       daily,
