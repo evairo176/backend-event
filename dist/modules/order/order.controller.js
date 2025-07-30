@@ -122,6 +122,7 @@ class OrderController {
         }));
         this.midtransWebhook = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             const payload = req.body;
+            console.log('🔥 Callback masuk:', req.body);
             const { order_id, status_code, gross_amount, signature_key, payment_type, settlement_time, // <-- ambil ini (jika ada)
             transaction_time, // <-- fallback kalau settlement_time tidak ada
              } = payload;
