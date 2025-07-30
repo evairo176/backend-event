@@ -24,6 +24,6 @@ export interface UpdatePasswordDto {
 
 export interface UpdateProfileDto {
   userId: string;
-  fullname: string;
+  fullname?: string;
   profilePicture: string;
 }

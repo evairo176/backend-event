@@ -49,6 +49,6 @@ exports.updatePasswordSchema = zod_1.z
     path: ['confirmPassword'],
 });
 exports.updateProfileSchema = zod_1.z.object({
-    fullname: zod_1.z.string().trim().min(1).max(255),
+    fullname: zod_1.z.string().trim().min(1).max(255).optional(),
     profilePicture: zod_1.z.string(),
 });

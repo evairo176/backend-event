@@ -483,7 +483,7 @@ export class AuthService {
         id: userId,
       },
       data: {
-        fullname,
+        fullname: fullname ? fullname : oldUser?.fullname,
         profilePicture,
       },
     });

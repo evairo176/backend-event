@@ -382,7 +382,7 @@ class AuthService {
                     id: userId,
                 },
                 data: {
-                    fullname,
+                    fullname: fullname ? fullname : oldUser === null || oldUser === void 0 ? void 0 : oldUser.fullname,
                     profilePicture,
                 },
             });

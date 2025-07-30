@@ -53,6 +53,6 @@ export const updatePasswordSchema = z
   });
 
 export const updateProfileSchema = z.object({
-  fullname: z.string().trim().min(1).max(255),
+  fullname: z.string().trim().min(1).max(255).optional(),
   profilePicture: z.string(),
 });
