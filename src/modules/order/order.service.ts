@@ -422,6 +422,7 @@ export class OrderService {
     paymentType?: string;
     paymentDate?: string;
   }) {
+    console.log({ transactionStatus, order_id, paymentType, paymentDate });
     switch (transactionStatus) {
       case 'capture':
         await this.completed(

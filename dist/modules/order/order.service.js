@@ -351,6 +351,7 @@ class OrderService {
     }
     midtransWebhook(_a) {
         return __awaiter(this, arguments, void 0, function* ({ transactionStatus, order_id, paymentType, paymentDate, }) {
+            console.log({ transactionStatus, order_id, paymentType, paymentDate });
             switch (transactionStatus) {
                 case 'capture':
                     yield this.completed(order_id, paymentType, paymentDate); // Ganti 'system' dengan userId yang sesuai jika perlu
