@@ -22,7 +22,11 @@ class PaymentMidtrans {
             const result = yield axios_1.default.post(`${app_config_1.config.MIDTRANS.TRANSACTION_URL}`, Object.assign(Object.assign({}, payload), { credit_card: {
                     secure: true,
                 }, callbacks: {
-                    finish: `${app_config_1.config.MIDTRANS.FINISH_REDIRECT_URL}`, // tambahkan ini
+                    finish: `${app_config_1.config.MIDTRANS.FINISH_REDIRECT_URL}`,
+                }, expiry: {
+                    start_time: new Date().toISOString(), // waktu mulai sekarang
+                    unit: 'minute',
+                    duration: 2, // expired dalam 2 menit
                 } }), {
                 headers: {
                     'Content-Type': 'application/json',

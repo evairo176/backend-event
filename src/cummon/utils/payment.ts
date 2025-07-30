@@ -31,7 +31,12 @@ export class PaymentMidtrans {
           secure: true,
         },
         callbacks: {
-          finish: `${config.MIDTRANS.FINISH_REDIRECT_URL}`, // tambahkan ini
+          finish: `${config.MIDTRANS.FINISH_REDIRECT_URL}`,
+        },
+        expiry: {
+          start_time: new Date().toISOString(), // waktu mulai sekarang
+          unit: 'minute',
+          duration: 2, // expired dalam 2 menit
         },
       },
       {
