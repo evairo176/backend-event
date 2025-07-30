@@ -290,6 +290,7 @@ class OrderService {
                     status: 'CANCELLED',
                 },
             });
+            console.log('Order cancelled:', result);
             return result;
         });
     }

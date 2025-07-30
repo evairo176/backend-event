@@ -25,7 +25,6 @@ export type TypeResponseMidtrans = {
 export class PaymentMidtrans {
   public async createLink(payload: Payment): Promise<TypeResponseMidtrans> {
     try {
-      const startTime = dayjs().format('YYYY-MM-DD HH:mm:ss') + ' +0700';
       const result = await axios.post<TypeResponseMidtrans>(
         `${config.MIDTRANS.TRANSACTION_URL}`,
         {
@@ -38,11 +37,6 @@ export class PaymentMidtrans {
             error: `${config.MIDTRANS.FINISH_REDIRECT_URL}?errorCJ=true`,
           },
           is_custom_expiry: true,
-          expiry: {
-            start_time: startTime, // waktu mulai sekarang
-            unit: 'minute',
-            duration: 2, // expired dalam 2 menit
-          },
         },
         {
           headers: {

@@ -16,23 +16,17 @@ exports.PaymentMidtrans = void 0;
 const axios_1 = __importDefault(require("axios"));
 const app_config_1 = require("../../config/app.config");
 const catch_errors_1 = require("./catch-errors");
-const dayjs_1 = __importDefault(require("dayjs"));
 class PaymentMidtrans {
     createLink(payload) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a;
             try {
-                const startTime = (0, dayjs_1.default)().format('YYYY-MM-DD HH:mm:ss') + ' +0700';
                 const result = yield axios_1.default.post(`${app_config_1.config.MIDTRANS.TRANSACTION_URL}`, Object.assign(Object.assign({}, payload), { credit_card: {
                         secure: true,
                     }, callbacks: {
                         finish: `${app_config_1.config.MIDTRANS.FINISH_REDIRECT_URL}`,
                         error: `${app_config_1.config.MIDTRANS.FINISH_REDIRECT_URL}?errorCJ=true`,
-                    }, is_custom_expiry: true, expiry: {
-                        start_time: startTime, // waktu mulai sekarang
-                        unit: 'minute',
-                        duration: 2, // expired dalam 2 menit
-                    } }), {
+                    }, is_custom_expiry: true }), {
                     headers: {
                         'Content-Type': 'application/json',
                         Accept: 'application/json',
