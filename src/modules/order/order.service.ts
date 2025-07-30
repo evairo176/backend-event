@@ -424,6 +424,12 @@ export class OrderService {
   }) {
     switch (transactionStatus) {
       case 'capture':
+        await this.completed(
+          order_id,
+          paymentType as string,
+          paymentDate as string,
+        ); // Ganti 'system' dengan userId yang sesuai jika perlu
+        break;
       case 'settlement':
         // Pembayaran berhasil
         await this.completed(
@@ -437,12 +443,12 @@ export class OrderService {
         await this.cancelled(order_id);
         break;
       case 'deny':
+        await this.cancelled(order_id);
+        break;
       case 'expire':
         await this.cancelled(order_id);
         break;
-
       case 'pending':
-        await this.pending(order_id); // Ganti 'system' dengan userId yang sesuai jika perlu
         break;
     }
 

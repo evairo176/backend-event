@@ -353,6 +353,8 @@ class OrderService {
         return __awaiter(this, arguments, void 0, function* ({ transactionStatus, order_id, paymentType, paymentDate, }) {
             switch (transactionStatus) {
                 case 'capture':
+                    yield this.completed(order_id, paymentType, paymentDate); // Ganti 'system' dengan userId yang sesuai jika perlu
+                    break;
                 case 'settlement':
                     // Pembayaran berhasil
                     yield this.completed(order_id, paymentType, paymentDate); // Ganti 'system' dengan userId yang sesuai jika perlu
@@ -361,11 +363,12 @@ class OrderService {
                     yield this.cancelled(order_id);
                     break;
                 case 'deny':
+                    yield this.cancelled(order_id);
+                    break;
                 case 'expire':
                     yield this.cancelled(order_id);
                     break;
                 case 'pending':
-                    yield this.pending(order_id); // Ganti 'system' dengan userId yang sesuai jika perlu
                     break;
             }
             return 'Berhasil memproses webhook Midtrans';
