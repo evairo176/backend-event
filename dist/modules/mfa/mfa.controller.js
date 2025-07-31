@@ -47,6 +47,9 @@ class MfaController {
                 .json({
                 message: 'Verified & login successfully',
                 user,
+                accessToken,
+                refreshToken,
+                mfaRequired: true,
             });
         }));
         this.mfaService = mfaService;
