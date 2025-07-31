@@ -442,7 +442,7 @@ class AuthService {
             const hashOldPassword = yield (0, bcrypt_1.encryptValue)(oldPassword);
             const isPasswordValid = hashOldPassword === user.password;
             if (!isPasswordValid) {
-                throw new catch_errors_1.BadRequestException('Invalid password provided', "AUTH_USER_NOT_FOUND" /* ErrorCode.AUTH_USER_NOT_FOUND */);
+                throw new catch_errors_1.BadRequestException('Invalid current password', "AUTH_USER_NOT_FOUND" /* ErrorCode.AUTH_USER_NOT_FOUND */);
             }
             const newHashPassword = yield (0, bcrypt_1.encryptValue)(password);
             const updateUser = yield database_1.db.user.update({

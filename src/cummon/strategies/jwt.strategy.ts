@@ -44,6 +44,9 @@ export const setupJwtStrategy = (passport: PassportStatic) => {
           where: {
             id: payload.userId,
           },
+          include: {
+            userPreferences: true,
+          },
         });
         if (!user) {
           return done(null, false);
