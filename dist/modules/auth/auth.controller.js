@@ -69,6 +69,7 @@ class AuthController {
                     isEmailVerified: true,
                     createdAt: true,
                     updatedAt: true,
+                    userPreferences: true,
                 },
             });
             return res.status(http_config_1.HTTPSTATUS.OK).json({

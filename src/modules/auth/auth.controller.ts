@@ -96,6 +96,7 @@ export class AuthController {
           isEmailVerified: true,
           createdAt: true,
           updatedAt: true,
+          userPreferences: true,
         },
       });
       return res.status(HTTPSTATUS.OK).json({
