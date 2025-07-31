@@ -557,7 +557,7 @@ export class AuthService {
 
     if (!isPasswordValid) {
       throw new BadRequestException(
-        'Invalid password provided',
+        'Invalid current password',
         ErrorCode.AUTH_USER_NOT_FOUND,
       );
     }
