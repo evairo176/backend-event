@@ -207,6 +207,7 @@ export class MfaService {
         createdAt: true,
         updatedAt: true,
         userPreferences: true,
+        role: true,
       },
     });
 
