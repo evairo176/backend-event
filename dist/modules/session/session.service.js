@@ -13,6 +13,42 @@ exports.SessionService = void 0;
 const catch_errors_1 = require("../../cummon/utils/catch-errors");
 const database_1 = require("../../database/database");
 class SessionService {
+    getAllSessionUser(userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const sessions = yield database_1.db.session.findMany({
+                where: {
+                    expiredAt: {
+                        gt: new Date(Date.now()),
+                    },
+                    NOT: {
+                        userId,
+                    },
+                },
+                orderBy: {
+                    createdAt: 'desc',
+                },
+                select: {
+                    id: true,
+                    userId: true,
+                    userAgent: true,
+                    createdAt: true,
+                    expiredAt: true,
+                    user: {
+                        select: {
+                            fullname: true,
+                            email: true,
+                            username: true,
+                            profilePicture: true,
+                            isEmailVerified: true,
+                        },
+                    },
+                },
+            });
+            return {
+                sessions,
+            };
+        });
+    }
     getAllSession(userId) {
         return __awaiter(this, void 0, void 0, function* () {
             const sessions = yield database_1.db.session.findMany({

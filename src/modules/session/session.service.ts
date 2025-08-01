@@ -2,6 +2,41 @@ import { NotFoundException } from '../../cummon/utils/catch-errors';
 import { db } from '../../database/database';
 
 export class SessionService {
+  public async getAllSessionUser(userId: string) {
+    const sessions = await db.session.findMany({
+      where: {
+        expiredAt: {
+          gt: new Date(Date.now()),
+        },
+        NOT: {
+          userId,
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      select: {
+        id: true,
+        userId: true,
+        userAgent: true,
+        createdAt: true,
+        expiredAt: true,
+        user: {
+          select: {
+            fullname: true,
+            email: true,
+            username: true,
+            profilePicture: true,
+            isEmailVerified: true,
+          },
+        },
+      },
+    });
+
+    return {
+      sessions,
+    };
+  }
   public async getAllSession(userId?: string) {
     const sessions = await db.session.findMany({
       where: {

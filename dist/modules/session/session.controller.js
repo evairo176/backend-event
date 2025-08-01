@@ -16,6 +16,19 @@ const zod_1 = require("zod");
 const async_handler_middleware_1 = require("../../middlewares/async-handler.middleware");
 class SessionController {
     constructor(sessionService) {
+        this.getAllSessionUser = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const sessionId = req.sessionId;
+            const userId = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.id;
+            const { sessions } = yield this.sessionService.getAllSessionUser(userId);
+            const modifySession = sessions === null || sessions === void 0 ? void 0 : sessions.map((session) => {
+                return Object.assign(Object.assign({}, session), { isCurrent: session.id === sessionId ? true : false });
+            });
+            return res.status(http_config_1.HTTPSTATUS.OK).json({
+                message: 'Retrieved all session user successfully',
+                sessions: modifySession,
+            });
+        }));
         this.getAllSession = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             var _a;
             const userId = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.id;

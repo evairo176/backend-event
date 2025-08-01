@@ -1,8 +1,22 @@
 import { Router } from 'express';
 import { sessionController } from './session.module';
 import { authenticateJWT } from '../../cummon/strategies/jwt.strategy';
+import aclMiddleware from '../../middlewares/acl.middleware';
+import { ROLES } from '../../cummon/enums/role.enum';
 
 const sessionRoutes = Router();
+
+sessionRoutes.get(
+  '/session/user',
+  [authenticateJWT, aclMiddleware([ROLES.ADMIN])],
+  sessionController.getAllSessionUser,
+  /*
+  #swagger.tags = ['Session']
+  #swagger.security = [{
+    "bearerAuth": {}
+  }]
+  */
+);
 
 sessionRoutes.get(
   '/session/all',
@@ -15,6 +29,7 @@ sessionRoutes.get(
   }]
   */
 );
+
 sessionRoutes.get(
   '/session/',
   authenticateJWT,

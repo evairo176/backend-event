@@ -12,6 +12,28 @@ export class SessionController {
     this.sessionService = sessionService;
   }
 
+  public getAllSessionUser = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+      const sessionId = req.sessionId;
+      const userId = req?.user?.id;
+      const { sessions } = await this.sessionService.getAllSessionUser(
+        userId as string,
+      );
+
+      const modifySession = sessions?.map((session) => {
+        return {
+          ...session,
+          isCurrent: session.id === sessionId ? true : false,
+        };
+      });
+
+      return res.status(HTTPSTATUS.OK).json({
+        message: 'Retrieved all session user successfully',
+        sessions: modifySession,
+      });
+    },
+  );
+
   public getAllSession = asyncHandler(
     async (req: Request, res: Response): Promise<any> => {
       const userId = req?.user?.id;

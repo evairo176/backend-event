@@ -484,6 +484,7 @@ class AuthService {
     }
     getProfile(identifier) {
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             const user = yield database_1.db.user.findFirst({
                 where: {
                     OR: [
@@ -509,9 +510,10 @@ class AuthService {
             if (!user) {
                 throw new catch_errors_1.BadRequestException('Invalid username or email provided', "AUTH_USER_NOT_FOUND" /* ErrorCode.AUTH_USER_NOT_FOUND */);
             }
+            const mfaRequired = (_a = user === null || user === void 0 ? void 0 : user.userPreferences) === null || _a === void 0 ? void 0 : _a.enable2FA;
             return {
                 user: user,
-                mfaRequired: true,
+                mfaRequired: mfaRequired,
                 refreshToken: '',
                 accessToken: '',
             };

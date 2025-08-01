@@ -40,6 +40,20 @@ export const setupJwtStrategy = (passport: PassportStatic) => {
   passport.use(
     new JwtStrategy(options, async (req, payload: JwtPayload, done) => {
       try {
+        const session = await db.session.findUnique({
+          where: {
+            id: payload.sessionId,
+          },
+        });
+        console.log({ session });
+        if (!session || session.expiredAt < new Date()) {
+          console.log('session have been revoke', +payload?.sessionId);
+          return done(null, false, {
+            name: 'SessionRevoked',
+            message: 'Session has been revoked or expired',
+          });
+        }
+
         const user = await db.user.findFirst({
           where: {
             id: payload.userId,
@@ -48,9 +62,11 @@ export const setupJwtStrategy = (passport: PassportStatic) => {
             userPreferences: true,
           },
         });
+
         if (!user) {
           return done(null, false);
         }
+
         req.sessionId = payload.sessionId;
         return done(null, user);
       } catch (error) {
@@ -59,27 +75,31 @@ export const setupJwtStrategy = (passport: PassportStatic) => {
     }),
   );
 };
+
 export const authenticateJWT = (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
-  // 🔒 Validasi manual Authorization header
   const authHeader = req.headers.authorization;
 
   if (!authHeader || typeof authHeader !== 'string') {
-    throw new UnauthorizedException(
-      'Authorization header is missing',
-      ErrorCode.AUTH_TOKEN_NOT_FOUND,
+    return next(
+      new UnauthorizedException(
+        'Authorization header is missing',
+        ErrorCode.AUTH_TOKEN_NOT_FOUND,
+      ),
     );
   }
 
   const [prefix, token] = authHeader.split(' ');
 
   if (prefix !== 'Bearer' || !token) {
-    throw new UnauthorizedException(
-      'Authorization header is malformed',
-      ErrorCode.AUTH_INVALID_TOKEN,
+    return next(
+      new UnauthorizedException(
+        'Authorization header is malformed',
+        ErrorCode.AUTH_INVALID_TOKEN,
+      ),
     );
   }
 
@@ -89,25 +109,48 @@ export const authenticateJWT = (
     (err: any, user: any, info: any) => {
       if (err || !user) {
         if (info?.name === 'TokenExpiredError') {
-          throw new UnauthorizedException(
-            'Access token expired',
-            ErrorCode.AUTH_TOKEN_EXPIRED,
+          return next(
+            new UnauthorizedException(
+              'Access token expired',
+              ErrorCode.AUTH_TOKEN_EXPIRED,
+            ),
           );
         }
 
         if (info?.name === 'JsonWebTokenError') {
-          throw new UnauthorizedException(
-            'Access token is invalid',
-            ErrorCode.AUTH_INVALID_TOKEN,
+          return next(
+            new UnauthorizedException(
+              'Access token is invalid',
+              ErrorCode.AUTH_INVALID_TOKEN,
+            ),
           );
         }
 
         if (info?.message === 'No auth token') {
-          throw new UnauthorizedException(
-            'Access token not found',
-            ErrorCode.AUTH_TOKEN_NOT_FOUND,
+          return next(
+            new UnauthorizedException(
+              'Access token not found',
+              ErrorCode.AUTH_TOKEN_NOT_FOUND,
+            ),
           );
         }
+
+        if (info?.name === 'SessionRevoked') {
+          return next(
+            new UnauthorizedException(
+              info?.message,
+              ErrorCode.AUTH_SESSION_REVOKED,
+            ),
+          );
+        }
+
+        // fallback jika info tidak cocok
+        return next(
+          new UnauthorizedException(
+            'Unauthorized access',
+            ErrorCode.AUTH_UNAUTHORIZED,
+          ),
+        );
       }
 
       req.user = user;

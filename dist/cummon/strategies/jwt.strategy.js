@@ -40,6 +40,19 @@ const options = {
 const setupJwtStrategy = (passport) => {
     passport.use(new passport_jwt_1.Strategy(options, (req, payload, done) => __awaiter(void 0, void 0, void 0, function* () {
         try {
+            const session = yield database_1.db.session.findUnique({
+                where: {
+                    id: payload.sessionId,
+                },
+            });
+            console.log({ session });
+            if (!session || session.expiredAt < new Date()) {
+                console.log('session have been revoke', +(payload === null || payload === void 0 ? void 0 : payload.sessionId));
+                return done(null, false, {
+                    name: 'SessionRevoked',
+                    message: 'Session has been revoked or expired',
+                });
+            }
             const user = yield database_1.db.user.findFirst({
                 where: {
                     id: payload.userId,
@@ -61,26 +74,30 @@ const setupJwtStrategy = (passport) => {
 };
 exports.setupJwtStrategy = setupJwtStrategy;
 const authenticateJWT = (req, res, next) => {
-    // 🔒 Validasi manual Authorization header
     const authHeader = req.headers.authorization;
     if (!authHeader || typeof authHeader !== 'string') {
-        throw new catch_errors_1.UnauthorizedException('Authorization header is missing', "AUTH_TOKEN_NOT_FOUND" /* ErrorCode.AUTH_TOKEN_NOT_FOUND */);
+        return next(new catch_errors_1.UnauthorizedException('Authorization header is missing', "AUTH_TOKEN_NOT_FOUND" /* ErrorCode.AUTH_TOKEN_NOT_FOUND */));
     }
     const [prefix, token] = authHeader.split(' ');
     if (prefix !== 'Bearer' || !token) {
-        throw new catch_errors_1.UnauthorizedException('Authorization header is malformed', "AUTH_INVALID_TOKEN" /* ErrorCode.AUTH_INVALID_TOKEN */);
+        return next(new catch_errors_1.UnauthorizedException('Authorization header is malformed', "AUTH_INVALID_TOKEN" /* ErrorCode.AUTH_INVALID_TOKEN */));
     }
     passport_1.default.authenticate('jwt', { session: false }, (err, user, info) => {
         if (err || !user) {
             if ((info === null || info === void 0 ? void 0 : info.name) === 'TokenExpiredError') {
-                throw new catch_errors_1.UnauthorizedException('Access token expired', "AUTH_TOKEN_EXPIRED" /* ErrorCode.AUTH_TOKEN_EXPIRED */);
+                return next(new catch_errors_1.UnauthorizedException('Access token expired', "AUTH_TOKEN_EXPIRED" /* ErrorCode.AUTH_TOKEN_EXPIRED */));
             }
             if ((info === null || info === void 0 ? void 0 : info.name) === 'JsonWebTokenError') {
-                throw new catch_errors_1.UnauthorizedException('Access token is invalid', "AUTH_INVALID_TOKEN" /* ErrorCode.AUTH_INVALID_TOKEN */);
+                return next(new catch_errors_1.UnauthorizedException('Access token is invalid', "AUTH_INVALID_TOKEN" /* ErrorCode.AUTH_INVALID_TOKEN */));
             }
             if ((info === null || info === void 0 ? void 0 : info.message) === 'No auth token') {
-                throw new catch_errors_1.UnauthorizedException('Access token not found', "AUTH_TOKEN_NOT_FOUND" /* ErrorCode.AUTH_TOKEN_NOT_FOUND */);
+                return next(new catch_errors_1.UnauthorizedException('Access token not found', "AUTH_TOKEN_NOT_FOUND" /* ErrorCode.AUTH_TOKEN_NOT_FOUND */));
             }
+            if ((info === null || info === void 0 ? void 0 : info.name) === 'SessionRevoked') {
+                return next(new catch_errors_1.UnauthorizedException(info === null || info === void 0 ? void 0 : info.message, "AUTH_SESSION_REVOKED" /* ErrorCode.AUTH_SESSION_REVOKED */));
+            }
+            // fallback jika info tidak cocok
+            return next(new catch_errors_1.UnauthorizedException('Unauthorized access', "AUTH_UNAUTHORIZED" /* ErrorCode.AUTH_UNAUTHORIZED */));
         }
         req.user = user;
         next();

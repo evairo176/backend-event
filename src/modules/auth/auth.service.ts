@@ -635,9 +635,11 @@ export class AuthService {
       );
     }
 
+    const mfaRequired = user?.userPreferences?.enable2FA;
+
     return {
       user: user,
-      mfaRequired: true,
+      mfaRequired: mfaRequired,
       refreshToken: '',
       accessToken: '',
     };
