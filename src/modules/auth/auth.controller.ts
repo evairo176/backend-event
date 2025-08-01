@@ -58,7 +58,7 @@ export class AuthController {
       const email = req?.body?.email;
       const result = await this.authService.login(body);
 
-      if (result.mfaRequired) {
+      if (result.mfaRequired && !code) {
         return res.status(HTTPSTATUS.OK).json({
           message: 'Verify MFA authentication',
           mfaRequired: result.mfaRequired,

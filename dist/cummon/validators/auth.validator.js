@@ -30,6 +30,7 @@ exports.loginSchema = zod_1.z.object({
     identifier: zod_1.z.string().trim().min(1).max(50).or(exports.emailSchema),
     password: exports.passwordSchema,
     userAgent: zod_1.z.string().trim().optional(),
+    code: zod_1.z.number().optional(),
 });
 exports.verificationEmailSchema = zod_1.z.object({
     code: exports.verificationCodeSchema,

@@ -34,7 +34,7 @@ class AuthController {
             const code = (_a = req === null || req === void 0 ? void 0 : req.body) === null || _a === void 0 ? void 0 : _a.code;
             const email = (_b = req === null || req === void 0 ? void 0 : req.body) === null || _b === void 0 ? void 0 : _b.email;
             const result = yield this.authService.login(body);
-            if (result.mfaRequired) {
+            if (result.mfaRequired && !code) {
                 return res.status(http_config_1.HTTPSTATUS.OK).json({
                     message: 'Verify MFA authentication',
                     mfaRequired: result.mfaRequired,
