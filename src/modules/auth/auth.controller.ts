@@ -22,12 +22,15 @@ import {
 } from '../../cummon/utils/catch-errors';
 import { asyncHandler } from '../../middlewares/async-handler.middleware';
 import { db } from '../../database/database';
+import { MfaService } from '../mfa/mfa.service';
 //test
 export class AuthController {
   private authService: AuthService;
+  private mfaService: MfaService;
 
-  constructor(authService: AuthService) {
+  constructor(authService: AuthService, mfaService: MfaService) {
     this.authService = authService;
+    this.mfaService = mfaService;
   }
 
   public register = asyncHandler(
@@ -51,15 +54,34 @@ export class AuthController {
         ...req?.body,
         userAgent,
       });
-
+      const code = req?.body?.code;
+      const email = req?.body?.email;
       const result = await this.authService.login(body);
 
       if (result.mfaRequired) {
         return res.status(HTTPSTATUS.OK).json({
           message: 'Verify MFA authentication',
           mfaRequired: result.mfaRequired,
-          user: result.user,
+          user: null,
         });
+      }
+
+      if (result.mfaRequired && code) {
+        const { user, accessToken, refreshToken } =
+          await this.mfaService.verifyMFAForLogin(code, email, userAgent);
+        return setAuthenticationCookies({
+          res,
+          accessToken: result.accessToken,
+          refreshToken: result.refreshToken,
+        })
+          .status(HTTPSTATUS.OK)
+          .json({
+            message: 'User login with 2fa successfully',
+            user,
+            accessToken,
+            refreshToken,
+            mfaRequired: result.mfaRequired,
+          });
       }
 
       return setAuthenticationCookies({

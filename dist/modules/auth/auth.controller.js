@@ -18,7 +18,7 @@ const async_handler_middleware_1 = require("../../middlewares/async-handler.midd
 const database_1 = require("../../database/database");
 //test
 class AuthController {
-    constructor(authService) {
+    constructor(authService, mfaService) {
         this.register = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             const body = auth_validator_1.registerSchema.parse(Object.assign({}, req === null || req === void 0 ? void 0 : req.body));
             const result = yield this.authService.register(body);
@@ -28,14 +28,33 @@ class AuthController {
             });
         }));
         this.login = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+            var _a, _b;
             const userAgent = req === null || req === void 0 ? void 0 : req.headers['user-agent'];
             const body = auth_validator_1.loginSchema.parse(Object.assign(Object.assign({}, req === null || req === void 0 ? void 0 : req.body), { userAgent }));
+            const code = (_a = req === null || req === void 0 ? void 0 : req.body) === null || _a === void 0 ? void 0 : _a.code;
+            const email = (_b = req === null || req === void 0 ? void 0 : req.body) === null || _b === void 0 ? void 0 : _b.email;
             const result = yield this.authService.login(body);
             if (result.mfaRequired) {
                 return res.status(http_config_1.HTTPSTATUS.OK).json({
                     message: 'Verify MFA authentication',
                     mfaRequired: result.mfaRequired,
-                    user: result.user,
+                    user: null,
+                });
+            }
+            if (result.mfaRequired && code) {
+                const { user, accessToken, refreshToken } = yield this.mfaService.verifyMFAForLogin(code, email, userAgent);
+                return (0, cookies_1.setAuthenticationCookies)({
+                    res,
+                    accessToken: result.accessToken,
+                    refreshToken: result.refreshToken,
+                })
+                    .status(http_config_1.HTTPSTATUS.OK)
+                    .json({
+                    message: 'User login with 2fa successfully',
+                    user,
+                    accessToken,
+                    refreshToken,
+                    mfaRequired: result.mfaRequired,
                 });
             }
             return (0, cookies_1.setAuthenticationCookies)({
@@ -145,6 +164,7 @@ class AuthController {
             });
         }));
         this.authService = authService;
+        this.mfaService = mfaService;
     }
 }
 exports.AuthController = AuthController;
