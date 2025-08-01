@@ -4,6 +4,7 @@ import { HTTPSTATUS } from '../../config/http.config';
 import { NotFoundException } from '../../cummon/utils/catch-errors';
 import { z } from 'zod';
 import { asyncHandler } from '../../middlewares/async-handler.middleware';
+import { IPaginationQuery } from '../../cummon/interface/session.interface';
 
 export class SessionController {
   private sessionService: SessionService;
@@ -38,8 +39,13 @@ export class SessionController {
     async (req: Request, res: Response): Promise<any> => {
       const userId = req?.user?.id;
       const sessionId = req.sessionId;
+      const query = req?.query as unknown as IPaginationQuery;
 
-      const { sessions } = await this.sessionService.getAllSession(userId);
+      const { sessions, limit, page, total, totalPages } =
+        await this.sessionService.getAllSession({
+          ...query,
+          userId: userId as string,
+        });
 
       const modifySession = sessions?.map((session) => {
         return {
@@ -51,6 +57,12 @@ export class SessionController {
       return res.status(HTTPSTATUS.OK).json({
         message: 'Retrieved all session successfully',
         sessions: modifySession,
+        pagination: {
+          limit,
+          page,
+          total,
+          totalPages,
+        },
       });
     },
   );

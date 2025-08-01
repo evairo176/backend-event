@@ -56,7 +56,7 @@ export class AuthController {
       });
       const code = req?.body?.code;
       const existingUser = await this.authService.getProfile(body?.identifier);
-      console.log(existingUser);
+
       if (existingUser.mfaRequired && !code) {
         return res.status(HTTPSTATUS.OK).json({
           message: 'Verify MFA authentication',

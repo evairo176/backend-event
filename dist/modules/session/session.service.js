@@ -49,28 +49,67 @@ class SessionService {
             };
         });
     }
-    getAllSession(userId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const sessions = yield database_1.db.session.findMany({
-                where: {
-                    userId,
-                    expiredAt: {
-                        gt: new Date(Date.now()),
+    getAllSession(_a) {
+        return __awaiter(this, arguments, void 0, function* ({ page = 1, limit = 10, search, userId, }) {
+            // const sessions = await db.session.findMany({
+            //   where: {
+            //     userId,
+            //     expiredAt: {
+            //       gt: new Date(Date.now()),
+            //     },
+            //   },
+            // });
+            // return {
+            //   sessions,
+            // };
+            const query = {
+                userId,
+                expiredAt: {
+                    gt: new Date(Date.now()),
+                },
+            };
+            const skip = (Number(page) - 1) * Number(limit);
+            const take = Number(limit);
+            if (search) {
+                query.OR = [
+                    {
+                        name: {
+                            contains: search,
+                            mode: 'insensitive',
+                        },
                     },
-                },
-                orderBy: {
-                    createdAt: 'desc',
-                },
-                select: {
-                    id: true,
-                    userId: true,
-                    userAgent: true,
-                    createdAt: true,
-                    expiredAt: true,
-                },
-            });
+                    {
+                        description: {
+                            contains: search,
+                            mode: 'insensitive',
+                        },
+                    },
+                ];
+            }
+            const [sessions, total] = yield Promise.all([
+                database_1.db.session.findMany({
+                    where: query,
+                    skip,
+                    take,
+                    orderBy: { createdAt: 'desc' },
+                    select: {
+                        id: true,
+                        userId: true,
+                        userAgent: true,
+                        createdAt: true,
+                        expiredAt: true,
+                    },
+                }),
+                database_1.db.session.count({
+                    where: query,
+                }),
+            ]);
             return {
                 sessions,
+                page: Number(page),
+                limit: Number(limit),
+                total,
+                totalPages: Math.ceil(total / Number(limit)),
             };
         });
     }

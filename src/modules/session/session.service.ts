@@ -1,3 +1,4 @@
+import { IPaginationQuery } from '../../cummon/interface/session.interface';
 import { NotFoundException } from '../../cummon/utils/catch-errors';
 import { db } from '../../database/database';
 
@@ -37,28 +38,78 @@ export class SessionService {
       sessions,
     };
   }
-  public async getAllSession(userId?: string) {
-    const sessions = await db.session.findMany({
-      where: {
-        userId,
-        expiredAt: {
-          gt: new Date(Date.now()),
+  public async getAllSession({
+    page = 1,
+    limit = 10,
+    search,
+    userId,
+  }: IPaginationQuery) {
+    // const sessions = await db.session.findMany({
+    //   where: {
+    //     userId,
+    //     expiredAt: {
+    //       gt: new Date(Date.now()),
+    //     },
+    //   },
+
+    // });
+
+    // return {
+    //   sessions,
+    // };
+
+    const query: any = {
+      userId,
+      expiredAt: {
+        gt: new Date(Date.now()),
+      },
+    };
+
+    const skip = (Number(page) - 1) * Number(limit);
+    const take = Number(limit);
+
+    if (search) {
+      query.OR = [
+        {
+          name: {
+            contains: search,
+            mode: 'insensitive',
+          },
         },
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-      select: {
-        id: true,
-        userId: true,
-        userAgent: true,
-        createdAt: true,
-        expiredAt: true,
-      },
-    });
+        {
+          description: {
+            contains: search,
+            mode: 'insensitive',
+          },
+        },
+      ];
+    }
+
+    const [sessions, total] = await Promise.all([
+      db.session.findMany({
+        where: query,
+        skip,
+        take,
+        orderBy: { createdAt: 'desc' },
+        select: {
+          id: true,
+          userId: true,
+          userAgent: true,
+          createdAt: true,
+          expiredAt: true,
+        },
+      }),
+      db.session.count({
+        where: query,
+      }),
+    ]);
 
     return {
       sessions,
+      page: Number(page),
+      limit: Number(limit),
+      total,
+      totalPages: Math.ceil(total / Number(limit)),
     };
   }
 

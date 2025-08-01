@@ -45,7 +45,6 @@ const setupJwtStrategy = (passport) => {
                     id: payload.sessionId,
                 },
             });
-            console.log({ session });
             if (!session || session.expiredAt < new Date()) {
                 console.log('session have been revoke', +(payload === null || payload === void 0 ? void 0 : payload.sessionId));
                 return done(null, false, {
