@@ -28,25 +28,24 @@ class AuthController {
             });
         }));
         this.login = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
-            var _a, _b;
+            var _a;
             const userAgent = req === null || req === void 0 ? void 0 : req.headers['user-agent'];
             const body = auth_validator_1.loginSchema.parse(Object.assign(Object.assign({}, req === null || req === void 0 ? void 0 : req.body), { userAgent }));
             const code = (_a = req === null || req === void 0 ? void 0 : req.body) === null || _a === void 0 ? void 0 : _a.code;
-            const email = (_b = req === null || req === void 0 ? void 0 : req.body) === null || _b === void 0 ? void 0 : _b.email;
-            const result = yield this.authService.login(body);
-            if (result.mfaRequired && !code) {
+            const existingUser = yield this.authService.getProfile(body === null || body === void 0 ? void 0 : body.identifier);
+            if (existingUser.mfaRequired && !code) {
                 return res.status(http_config_1.HTTPSTATUS.OK).json({
                     message: 'Verify MFA authentication',
-                    mfaRequired: result.mfaRequired,
+                    mfaRequired: existingUser.mfaRequired,
                     user: null,
                 });
             }
-            if (result.mfaRequired && code) {
-                const { user, accessToken, refreshToken } = yield this.mfaService.verifyMFAForLogin(code, email, userAgent);
+            if (existingUser.mfaRequired && code) {
+                const { user, accessToken, refreshToken } = yield this.mfaService.verifyMFAForLogin(code, existingUser.user.email, userAgent);
                 return (0, cookies_1.setAuthenticationCookies)({
                     res,
-                    accessToken: result.accessToken,
-                    refreshToken: result.refreshToken,
+                    accessToken: existingUser.accessToken,
+                    refreshToken: existingUser.refreshToken,
                 })
                     .status(http_config_1.HTTPSTATUS.OK)
                     .json({
@@ -54,9 +53,10 @@ class AuthController {
                     user,
                     accessToken,
                     refreshToken,
-                    mfaRequired: result.mfaRequired,
+                    mfaRequired: existingUser.mfaRequired,
                 });
             }
+            const result = yield this.authService.login(body);
             return (0, cookies_1.setAuthenticationCookies)({
                 res,
                 accessToken: result.accessToken,

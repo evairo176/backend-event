@@ -154,7 +154,7 @@ export class AuthService {
 
     if (!user) {
       throw new BadRequestException(
-        'Invalid email provided',
+        'Invalid username or email provided',
         ErrorCode.AUTH_USER_NOT_FOUND,
       );
     }
@@ -601,6 +601,45 @@ export class AuthService {
 
     return {
       user: showUser,
+    };
+  }
+
+  public async getProfile(identifier: string) {
+    const user = await db.user.findFirst({
+      where: {
+        OR: [
+          {
+            username: identifier,
+          },
+          {
+            email: identifier,
+          },
+        ],
+      },
+      select: {
+        id: true,
+        fullname: true,
+        email: true,
+        isEmailVerified: true,
+        createdAt: true,
+        updatedAt: true,
+        userPreferences: true,
+        password: true, // Include password for validation
+      },
+    });
+
+    if (!user) {
+      throw new BadRequestException(
+        'Invalid username or email provided',
+        ErrorCode.AUTH_USER_NOT_FOUND,
+      );
+    }
+
+    return {
+      user: user,
+      mfaRequired: true,
+      refreshToken: '',
+      accessToken: '',
     };
   }
 }

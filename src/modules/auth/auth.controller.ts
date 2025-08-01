@@ -55,24 +55,27 @@ export class AuthController {
         userAgent,
       });
       const code = req?.body?.code;
-      const email = req?.body?.email;
-      const result = await this.authService.login(body);
+      const existingUser = await this.authService.getProfile(body?.identifier);
 
-      if (result.mfaRequired && !code) {
+      if (existingUser.mfaRequired && !code) {
         return res.status(HTTPSTATUS.OK).json({
           message: 'Verify MFA authentication',
-          mfaRequired: result.mfaRequired,
+          mfaRequired: existingUser.mfaRequired,
           user: null,
         });
       }
 
-      if (result.mfaRequired && code) {
+      if (existingUser.mfaRequired && code) {
         const { user, accessToken, refreshToken } =
-          await this.mfaService.verifyMFAForLogin(code, email, userAgent);
+          await this.mfaService.verifyMFAForLogin(
+            code,
+            existingUser.user.email,
+            userAgent,
+          );
         return setAuthenticationCookies({
           res,
-          accessToken: result.accessToken,
-          refreshToken: result.refreshToken,
+          accessToken: existingUser.accessToken,
+          refreshToken: existingUser.refreshToken,
         })
           .status(HTTPSTATUS.OK)
           .json({
@@ -80,9 +83,10 @@ export class AuthController {
             user,
             accessToken,
             refreshToken,
-            mfaRequired: result.mfaRequired,
+            mfaRequired: existingUser.mfaRequired,
           });
       }
+      const result = await this.authService.login(body);
 
       return setAuthenticationCookies({
         res,

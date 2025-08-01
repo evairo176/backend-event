@@ -117,7 +117,7 @@ class AuthService {
                 },
             });
             if (!user) {
-                throw new catch_errors_1.BadRequestException('Invalid email provided', "AUTH_USER_NOT_FOUND" /* ErrorCode.AUTH_USER_NOT_FOUND */);
+                throw new catch_errors_1.BadRequestException('Invalid username or email provided', "AUTH_USER_NOT_FOUND" /* ErrorCode.AUTH_USER_NOT_FOUND */);
             }
             const isPasswordValid = (yield (0, bcrypt_1.encryptValue)(password)) === user.password;
             if (!isPasswordValid) {
@@ -479,6 +479,41 @@ class AuthService {
             });
             return {
                 user: showUser,
+            };
+        });
+    }
+    getProfile(identifier) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield database_1.db.user.findFirst({
+                where: {
+                    OR: [
+                        {
+                            username: identifier,
+                        },
+                        {
+                            email: identifier,
+                        },
+                    ],
+                },
+                select: {
+                    id: true,
+                    fullname: true,
+                    email: true,
+                    isEmailVerified: true,
+                    createdAt: true,
+                    updatedAt: true,
+                    userPreferences: true,
+                    password: true, // Include password for validation
+                },
+            });
+            if (!user) {
+                throw new catch_errors_1.BadRequestException('Invalid username or email provided', "AUTH_USER_NOT_FOUND" /* ErrorCode.AUTH_USER_NOT_FOUND */);
+            }
+            return {
+                user: user,
+                mfaRequired: true,
+                refreshToken: '',
+                accessToken: '',
             };
         });
     }
