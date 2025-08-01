@@ -70,18 +70,12 @@ export class SessionService {
 
     if (search) {
       query.OR = [
-        {
-          name: {
-            contains: search,
-            mode: 'insensitive',
-          },
-        },
-        {
-          description: {
-            contains: search,
-            mode: 'insensitive',
-          },
-        },
+        // {
+        //   name: {
+        //     contains: search,
+        //     mode: 'insensitive',
+        //   },
+        // },
       ];
     }
 

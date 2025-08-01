@@ -72,18 +72,12 @@ class SessionService {
             const take = Number(limit);
             if (search) {
                 query.OR = [
-                    {
-                        name: {
-                            contains: search,
-                            mode: 'insensitive',
-                        },
-                    },
-                    {
-                        description: {
-                            contains: search,
-                            mode: 'insensitive',
-                        },
-                    },
+                // {
+                //   name: {
+                //     contains: search,
+                //     mode: 'insensitive',
+                //   },
+                // },
                 ];
             }
             const [sessions, total] = yield Promise.all([

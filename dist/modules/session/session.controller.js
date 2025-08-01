@@ -40,7 +40,7 @@ class SessionController {
             });
             return res.status(http_config_1.HTTPSTATUS.OK).json({
                 message: 'Retrieved all session successfully',
-                sessions: modifySession,
+                data: modifySession,
                 pagination: {
                     limit,
                     page,

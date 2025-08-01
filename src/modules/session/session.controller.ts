@@ -56,7 +56,7 @@ export class SessionController {
 
       return res.status(HTTPSTATUS.OK).json({
         message: 'Retrieved all session successfully',
-        sessions: modifySession,
+        data: modifySession,
         pagination: {
           limit,
           page,
