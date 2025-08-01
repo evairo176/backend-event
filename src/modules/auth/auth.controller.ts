@@ -74,8 +74,8 @@ export class AuthController {
           );
         return setAuthenticationCookies({
           res,
-          accessToken: existingUser.accessToken,
-          refreshToken: existingUser.refreshToken,
+          accessToken,
+          refreshToken,
         })
           .status(HTTPSTATUS.OK)
           .json({

@@ -44,8 +44,8 @@ class AuthController {
                 const { user, accessToken, refreshToken } = yield this.mfaService.verifyMFAForLogin(code, existingUser.user.email, userAgent);
                 return (0, cookies_1.setAuthenticationCookies)({
                     res,
-                    accessToken: existingUser.accessToken,
-                    refreshToken: existingUser.refreshToken,
+                    accessToken,
+                    refreshToken,
                 })
                     .status(http_config_1.HTTPSTATUS.OK)
                     .json({
