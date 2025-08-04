@@ -37,4 +37,15 @@ userRoutes.get(
  */
 );
 
+userRoutes.put(
+  '/user/activate',
+  [authenticateJWT, aclMiddleware([ROLES.ADMIN])],
+  userController.updateActivate,
+  /**
+ #swagger.tags = ['User']
+
+ }
+ */
+);
+
 export default userRoutes;

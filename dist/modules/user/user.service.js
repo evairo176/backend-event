@@ -10,6 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
+const client_1 = require("@prisma/client");
+const catch_errors_1 = require("../../cummon/utils/catch-errors");
 const database_1 = require("../../database/database");
 class UserService {
     findUserById(userId) {
@@ -85,6 +87,74 @@ class UserService {
                 limit: Number(limit),
                 total,
                 totalPages: Math.ceil(total / Number(limit)),
+            };
+        });
+    }
+    updateActivate(_a) {
+        return __awaiter(this, arguments, void 0, function* ({ userId }) {
+            if (!userId) {
+                throw new catch_errors_1.BadRequestException('Invalid user id provided', "RESOURCE_NOT_FOUND" /* ErrorCode.RESOURCE_NOT_FOUND */);
+            }
+            const user = yield database_1.db.user.findFirst({
+                where: {
+                    id: userId,
+                },
+                select: {
+                    id: true,
+                    fullname: true,
+                    email: true,
+                    isEmailVerified: true,
+                    createdAt: true,
+                    updatedAt: true,
+                    userPreferences: true,
+                    status: true,
+                    role: true,
+                },
+            });
+            if (!user) {
+                throw new catch_errors_1.BadRequestException('Invalid user id provided', "AUTH_USER_NOT_FOUND" /* ErrorCode.AUTH_USER_NOT_FOUND */);
+            }
+            if (user.status === 'NORMAL') {
+                throw new catch_errors_1.BadRequestException('User is not allowed this action', "USER_NOT_ALLOWED" /* ErrorCode.USER_NOT_ALLOWED */);
+            }
+            if (user.status === 'APPROVE') {
+                throw new catch_errors_1.BadRequestException('User status already approved', "USER_STATUS_APPROVED" /* ErrorCode.USER_STATUS_APPROVED */);
+            }
+            const updateUser = yield database_1.db.user.update({
+                where: {
+                    id: userId,
+                },
+                data: {
+                    status: 'APPROVE',
+                },
+            });
+            if (!updateUser) {
+                throw new catch_errors_1.BadRequestException('Failed to update password');
+            }
+            yield database_1.db.userHistoryUpdate.create({
+                data: {
+                    userId: updateUser.id,
+                    message: `update status ${client_1.UserStatus.APPROVE}`,
+                },
+            });
+            const showUser = yield database_1.db.user.findFirst({
+                where: {
+                    id: updateUser.id,
+                },
+                select: {
+                    id: true,
+                    fullname: true,
+                    email: true,
+                    isEmailVerified: true,
+                    createdAt: true,
+                    updatedAt: true,
+                    status: true,
+                    role: true,
+                    company: true,
+                },
+            });
+            return {
+                user: showUser,
             };
         });
     }

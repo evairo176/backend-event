@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserController = void 0;
 const async_handler_middleware_1 = require("../../middlewares/async-handler.middleware");
 const http_config_1 = require("../../config/http.config");
+const user_validator_1 = require("../../cummon/validators/user.validator");
 class UserController {
     constructor(userService) {
         this.findAll = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
@@ -28,6 +29,13 @@ class UserController {
                     total,
                     totalPages,
                 },
+            });
+        }));
+        this.updateActivate = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const body = user_validator_1.updateActivateSchema.parse(req === null || req === void 0 ? void 0 : req.body);
+            yield this.userService.updateActivate(Object.assign({}, body));
+            return res.status(http_config_1.HTTPSTATUS.OK).json({
+                message: 'Update activate successfully',
             });
         }));
         this.userService = userService;

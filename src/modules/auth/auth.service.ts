@@ -1,4 +1,4 @@
-import { VerificationType } from '@prisma/client';
+import { UserStatus, VerificationType } from '@prisma/client';
 import { config } from '../../config/app.config';
 import { ErrorCode } from '../../cummon/enums/error-code.enum';
 import {

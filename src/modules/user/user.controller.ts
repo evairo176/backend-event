@@ -3,6 +3,7 @@ import { asyncHandler } from '../../middlewares/async-handler.middleware';
 import { UserService } from './user.service';
 import { IPaginationQuery } from '../../cummon/interface/user.interface';
 import { HTTPSTATUS } from '../../config/http.config';
+import { updateActivateSchema } from '../../cummon/validators/user.validator';
 
 export class UserController {
   private userService: UserService;
@@ -30,6 +31,18 @@ export class UserController {
           total,
           totalPages,
         },
+      });
+    },
+  );
+
+  public updateActivate = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+      const body = updateActivateSchema.parse(req?.body);
+      await this.userService.updateActivate({
+        ...body,
+      });
+      return res.status(HTTPSTATUS.OK).json({
+        message: 'Update activate successfully',
       });
     },
   );

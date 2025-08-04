@@ -1,4 +1,10 @@
-import { IPaginationQuery } from '../../cummon/interface/user.interface';
+import { UserStatus } from '@prisma/client';
+import { ErrorCode } from '../../cummon/enums/error-code.enum';
+import {
+  IPaginationQuery,
+  UpdateActivateDto,
+} from '../../cummon/interface/user.interface';
+import { BadRequestException } from '../../cummon/utils/catch-errors';
 import { db } from '../../database/database';
 
 export class UserService {
@@ -83,6 +89,93 @@ export class UserService {
       limit: Number(limit),
       total,
       totalPages: Math.ceil(total / Number(limit)),
+    };
+  }
+
+  public async updateActivate({ userId }: UpdateActivateDto) {
+    if (!userId) {
+      throw new BadRequestException(
+        'Invalid user id provided',
+        ErrorCode.RESOURCE_NOT_FOUND,
+      );
+    }
+    const user = await db.user.findFirst({
+      where: {
+        id: userId,
+      },
+      select: {
+        id: true,
+        fullname: true,
+        email: true,
+        isEmailVerified: true,
+        createdAt: true,
+        updatedAt: true,
+        userPreferences: true,
+        status: true,
+        role: true,
+      },
+    });
+
+    if (!user) {
+      throw new BadRequestException(
+        'Invalid user id provided',
+        ErrorCode.AUTH_USER_NOT_FOUND,
+      );
+    }
+
+    if (user.status === 'NORMAL') {
+      throw new BadRequestException(
+        'User is not allowed this action',
+        ErrorCode.USER_NOT_ALLOWED,
+      );
+    }
+
+    if (user.status === 'APPROVE') {
+      throw new BadRequestException(
+        'User status already approved',
+        ErrorCode.USER_STATUS_APPROVED,
+      );
+    }
+
+    const updateUser = await db.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        status: 'APPROVE',
+      },
+    });
+
+    if (!updateUser) {
+      throw new BadRequestException('Failed to update password');
+    }
+
+    await db.userHistoryUpdate.create({
+      data: {
+        userId: updateUser.id,
+        message: `update status ${UserStatus.APPROVE}`,
+      },
+    });
+
+    const showUser = await db.user.findFirst({
+      where: {
+        id: updateUser.id,
+      },
+      select: {
+        id: true,
+        fullname: true,
+        email: true,
+        isEmailVerified: true,
+        createdAt: true,
+        updatedAt: true,
+        status: true,
+        role: true,
+        company: true,
+      },
+    });
+
+    return {
+      user: showUser,
     };
   }
 }

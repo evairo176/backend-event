@@ -4,3 +4,7 @@ export interface IPaginationQuery {
   search?: string;
   userId: string;
 }
+
+export interface UpdateActivateDto {
+  userId: string;
+}
