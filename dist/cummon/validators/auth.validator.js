@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateProfileSchema = exports.updatePasswordSchema = exports.resetPasswordSchema = exports.verificationEmailSchema = exports.loginSchema = exports.registerSchema = exports.verificationCodeSchema = exports.passwordSchema = exports.userNameSchema = exports.emailSchema = void 0;
+exports.updateProfileSchema = exports.updatePasswordSchema = exports.resetPasswordSchema = exports.verificationEmailSchema = exports.loginSchema = exports.companyRegisterSchema = exports.registerSchema = exports.verificationCodeSchema = exports.passwordSchema = exports.userNameSchema = exports.emailSchema = void 0;
 const zod_1 = require("zod");
 exports.emailSchema = zod_1.z.string().trim().email().min(1).max(255);
 exports.userNameSchema = zod_1.z.string().trim().min(1).max(50);
@@ -17,6 +17,19 @@ exports.verificationCodeSchema = zod_1.z.string().trim().min(1).max(25);
 exports.registerSchema = zod_1.z
     .object({
     fullname: zod_1.z.string().trim().min(1).max(255),
+    username: exports.userNameSchema,
+    email: exports.emailSchema,
+    password: exports.passwordSchema,
+    confirmPassword: exports.passwordSchema,
+})
+    .refine((value) => value.password === value.confirmPassword, {
+    message: 'Password does not match',
+    path: ['confirmPassword'],
+});
+exports.companyRegisterSchema = zod_1.z
+    .object({
+    fullname: zod_1.z.string().trim().min(1).max(255),
+    companyName: zod_1.z.string().trim().min(1).max(255),
     username: exports.userNameSchema,
     email: exports.emailSchema,
     password: exports.passwordSchema,

@@ -23,7 +23,7 @@ import mfaRoutes from './modules/mfa/mfa.routes';
 import ticketRoutes from './modules/ticket/ticket.routes';
 import bannerRoutes from './modules/banner/banner.routes';
 import orderRoutes from './modules/order/order.routes';
-import { dataTraining, knnClassify } from './libs/clasification';
+import userRoutes from './modules/user/user.routes';
 
 const app = express();
 const BASE_PATH = config.BASE_PATH;
@@ -65,6 +65,7 @@ app.use(`${BASE_PATH}`, eventRoutes);
 app.use(`${BASE_PATH}`, ticketRoutes);
 app.use(`${BASE_PATH}`, bannerRoutes);
 app.use(`${BASE_PATH}`, orderRoutes);
+app.use(`${BASE_PATH}`, userRoutes);
 
 // Setup Swagger
 setupSwagger(app);

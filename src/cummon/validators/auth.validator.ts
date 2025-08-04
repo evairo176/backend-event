@@ -26,6 +26,20 @@ export const registerSchema = z
     path: ['confirmPassword'],
   });
 
+export const companyRegisterSchema = z
+  .object({
+    fullname: z.string().trim().min(1).max(255),
+    companyName: z.string().trim().min(1).max(255),
+    username: userNameSchema,
+    email: emailSchema,
+    password: passwordSchema,
+    confirmPassword: passwordSchema,
+  })
+  .refine((value) => value.password === value.confirmPassword, {
+    message: 'Password does not match',
+    path: ['confirmPassword'],
+  });
+
 export const loginSchema = z.object({
   identifier: z.string().trim().min(1).max(50).or(emailSchema),
   password: passwordSchema,

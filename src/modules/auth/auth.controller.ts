@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { HTTPSTATUS } from '../../config/http.config';
 import {
+  companyRegisterSchema,
   emailSchema,
   loginSchema,
   registerSchema,
@@ -23,6 +24,7 @@ import {
 import { asyncHandler } from '../../middlewares/async-handler.middleware';
 import { db } from '../../database/database';
 import { MfaService } from '../mfa/mfa.service';
+import { ROLE_USER } from '@prisma/client';
 //test
 export class AuthController {
   private authService: AuthService;
@@ -40,6 +42,23 @@ export class AuthController {
       });
 
       const result = await this.authService.register(body);
+      return res.status(HTTPSTATUS.CREATED).json({
+        message: 'User registered successfully',
+        data: result.user,
+      });
+    },
+  );
+
+  public companyRegister = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+      const body = companyRegisterSchema.parse({
+        ...req?.body,
+      });
+
+      const result = await this.authService.companyRegister({
+        ...body,
+        role: ROLE_USER.company,
+      });
       return res.status(HTTPSTATUS.CREATED).json({
         message: 'User registered successfully',
         data: result.user,

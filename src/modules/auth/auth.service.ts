@@ -2,6 +2,7 @@ import { VerificationType } from '@prisma/client';
 import { config } from '../../config/app.config';
 import { ErrorCode } from '../../cummon/enums/error-code.enum';
 import {
+  CompanyRegisterDto,
   LoginDto,
   RegisterDto,
   ResetPasswordDto,
@@ -117,6 +118,113 @@ export class AuthService {
         createdAt: true,
         updatedAt: true,
         userPreferences: true,
+      },
+    });
+
+    return {
+      user: showNewUser,
+    };
+  }
+
+  public async companyRegister(registerData: CompanyRegisterDto) {
+    const { fullname, companyName, username, email, password, role } =
+      registerData;
+
+    const existingCompanyName = await db.company.findFirst({
+      where: {
+        name: companyName,
+      },
+    });
+
+    if (existingCompanyName) {
+      throw new BadRequestException(
+        'Company name already exists',
+        ErrorCode.AUTH_COMPANY_NAME_ALREADY_EXISTS,
+      );
+    }
+    const existingUser = await db.user.findFirst({
+      where: {
+        email,
+      },
+    });
+
+    if (existingUser) {
+      throw new BadRequestException(
+        'User already exists with this email',
+        ErrorCode.AUTH_EMAIL_ALREADY_EXISTS,
+      );
+    }
+    if (username) {
+      const existingUsername = await db.user.findFirst({
+        where: {
+          username,
+        },
+      });
+
+      if (existingUsername) {
+        throw new BadRequestException(
+          'Username already exists',
+          ErrorCode.AUTH_USERNAME_ALREADY_EXISTS,
+        );
+      }
+    }
+
+    const newCompany = await db.company.create({
+      data: {
+        name: companyName,
+      },
+    });
+    const newUser = await db.user.create({
+      data: {
+        fullname,
+        username,
+        email,
+        password: await encryptValue(password),
+        companyId: newCompany?.id,
+        status: 'PENDING_APPROVAL',
+        role,
+      },
+    });
+
+    const userId = newUser.id;
+
+    const verification = await db.verificationCode.create({
+      data: {
+        userId,
+        code: generateUniqueCode(),
+        type: VerificationType.EMAIL_VERIFICATION,
+        expiresAt: fortyFiveMinutesFromNow(),
+      },
+    });
+
+    // send email
+    const verificationUrl = `${config.APP_ORIGIN}/auth/confirm-account?code=${verification.code}`;
+    await sendEmail({
+      to: newUser.email,
+      ...verifyEmailTemplate(verificationUrl),
+    });
+
+    await db.userPreferences.create({
+      data: {
+        userId,
+        enable2FA: false,
+        emailNotification: true,
+      },
+    });
+
+    const showNewUser = await db.user.findFirst({
+      where: {
+        id: userId,
+      },
+      select: {
+        id: true,
+        fullname: true,
+        email: true,
+        isEmailVerified: true,
+        createdAt: true,
+        updatedAt: true,
+        userPreferences: true,
+        company: true,
       },
     });
 

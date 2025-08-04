@@ -16,12 +16,21 @@ const cookies_1 = require("../../cummon/utils/cookies");
 const catch_errors_1 = require("../../cummon/utils/catch-errors");
 const async_handler_middleware_1 = require("../../middlewares/async-handler.middleware");
 const database_1 = require("../../database/database");
+const client_1 = require("@prisma/client");
 //test
 class AuthController {
     constructor(authService, mfaService) {
         this.register = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             const body = auth_validator_1.registerSchema.parse(Object.assign({}, req === null || req === void 0 ? void 0 : req.body));
             const result = yield this.authService.register(body);
+            return res.status(http_config_1.HTTPSTATUS.CREATED).json({
+                message: 'User registered successfully',
+                data: result.user,
+            });
+        }));
+        this.companyRegister = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+            const body = auth_validator_1.companyRegisterSchema.parse(Object.assign({}, req === null || req === void 0 ? void 0 : req.body));
+            const result = yield this.authService.companyRegister(Object.assign(Object.assign({}, body), { role: client_1.ROLE_USER.company }));
             return res.status(http_config_1.HTTPSTATUS.CREATED).json({
                 message: 'User registered successfully',
                 data: result.user,

@@ -89,6 +89,90 @@ class AuthService {
             };
         });
     }
+    companyRegister(registerData) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { fullname, companyName, username, email, password, role } = registerData;
+            const existingCompanyName = yield database_1.db.company.findFirst({
+                where: {
+                    name: companyName,
+                },
+            });
+            if (existingCompanyName) {
+                throw new catch_errors_1.BadRequestException('Company name already exists', "AUTH_COMPANY_NAME_ALREADY_EXISTS" /* ErrorCode.AUTH_COMPANY_NAME_ALREADY_EXISTS */);
+            }
+            const existingUser = yield database_1.db.user.findFirst({
+                where: {
+                    email,
+                },
+            });
+            if (existingUser) {
+                throw new catch_errors_1.BadRequestException('User already exists with this email', "AUTH_EMAIL_ALREADY_EXISTS" /* ErrorCode.AUTH_EMAIL_ALREADY_EXISTS */);
+            }
+            if (username) {
+                const existingUsername = yield database_1.db.user.findFirst({
+                    where: {
+                        username,
+                    },
+                });
+                if (existingUsername) {
+                    throw new catch_errors_1.BadRequestException('Username already exists', "AUTH_USERNAME_ALREADY_EXISTS" /* ErrorCode.AUTH_USERNAME_ALREADY_EXISTS */);
+                }
+            }
+            const newCompany = yield database_1.db.company.create({
+                data: {
+                    name: companyName,
+                },
+            });
+            const newUser = yield database_1.db.user.create({
+                data: {
+                    fullname,
+                    username,
+                    email,
+                    password: yield (0, bcrypt_1.encryptValue)(password),
+                    companyId: newCompany === null || newCompany === void 0 ? void 0 : newCompany.id,
+                    status: 'PENDING_APPROVAL',
+                    role,
+                },
+            });
+            const userId = newUser.id;
+            const verification = yield database_1.db.verificationCode.create({
+                data: {
+                    userId,
+                    code: (0, uuid_1.generateUniqueCode)(),
+                    type: client_1.VerificationType.EMAIL_VERIFICATION,
+                    expiresAt: (0, date_time_1.fortyFiveMinutesFromNow)(),
+                },
+            });
+            // send email
+            const verificationUrl = `${app_config_1.config.APP_ORIGIN}/auth/confirm-account?code=${verification.code}`;
+            yield (0, mailer_1.sendEmail)(Object.assign({ to: newUser.email }, (0, template_1.verifyEmailTemplate)(verificationUrl)));
+            yield database_1.db.userPreferences.create({
+                data: {
+                    userId,
+                    enable2FA: false,
+                    emailNotification: true,
+                },
+            });
+            const showNewUser = yield database_1.db.user.findFirst({
+                where: {
+                    id: userId,
+                },
+                select: {
+                    id: true,
+                    fullname: true,
+                    email: true,
+                    isEmailVerified: true,
+                    createdAt: true,
+                    updatedAt: true,
+                    userPreferences: true,
+                    company: true,
+                },
+            });
+            return {
+                user: showNewUser,
+            };
+        });
+    }
     login(loginData) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a;

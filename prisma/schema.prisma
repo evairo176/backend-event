@@ -16,12 +16,29 @@ enum ROLE_USER {
   admin
   member
   manager
+  company
 }
 
 enum VerificationType {
   EMAIL_VERIFICATION
   PASSWORD_RESET
   // Tambahkan sesuai kebutuhanmu
+}
+
+enum UserStatus {
+  NORMAL
+  PENDING_APPROVAL
+  APPROVE
+}
+
+model Company {
+  id   String  @id @default(auto()) @map("_id") @db.ObjectId
+  name String?
+
+  users User[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model User {
@@ -34,10 +51,15 @@ model User {
   profilePicture  String     @default("user.jpg")
   activationCode  String?
   isEmailVerified Boolean    @default(false)
+  status          UserStatus @default(NORMAL)
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
 
   // relation
+
+  company   Company? @relation(fields: [companyId], references: [id])
+  companyId String?  @db.ObjectId
+
   banners        Banner[] @relation("CreatedBanners")
   updatedBanners Banner[] @relation("UpdatedBanners")
 

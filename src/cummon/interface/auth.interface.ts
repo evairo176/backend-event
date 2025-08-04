@@ -1,9 +1,21 @@
+import { ROLE_USER } from '@prisma/client';
+
 export interface RegisterDto {
   fullname: string;
   username: string;
   email: string;
   password: string;
   confirmPassword: string;
+}
+
+export interface CompanyRegisterDto {
+  fullname: string;
+  companyName: string;
+  username: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  role: ROLE_USER;
 }
 
 export interface LoginDto {

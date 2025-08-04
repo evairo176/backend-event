@@ -23,6 +23,15 @@ authRoutes.post(
 );
 
 authRoutes.post(
+  '/auth/register/company',
+  authController.companyRegister,
+
+  /*
+  #swagger.tags = ['Auth']
+  */
+);
+
+authRoutes.post(
   '/auth/login',
 
   authController.login,
