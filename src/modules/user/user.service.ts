@@ -92,7 +92,7 @@ export class UserService {
     };
   }
 
-  public async updateActivate({ userId }: UpdateActivateDto) {
+  public async updateActivate({ userId, value }: UpdateActivateDto) {
     if (!userId) {
       throw new BadRequestException(
         'Invalid user id provided',
@@ -130,10 +130,17 @@ export class UserService {
       );
     }
 
-    if (user.status === 'APPROVE') {
+    if (user.status === 'APPROVE' && value) {
       throw new BadRequestException(
         'User status already approved',
         ErrorCode.USER_STATUS_APPROVED,
+      );
+    }
+
+    if (user.status === 'REJECT' && !value) {
+      throw new BadRequestException(
+        'User status already rejected',
+        ErrorCode.USER_STATUS_REJECTED,
       );
     }
 
@@ -142,7 +149,7 @@ export class UserService {
         id: userId,
       },
       data: {
-        status: 'APPROVE',
+        status: value === true ? 'APPROVE' : 'REJECT',
       },
     });
 
@@ -176,6 +183,7 @@ export class UserService {
 
     return {
       user: showUser,
+      status: showUser?.status,
     };
   }
 }

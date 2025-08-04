@@ -33,9 +33,10 @@ class UserController {
         }));
         this.updateActivate = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             const body = user_validator_1.updateActivateSchema.parse(req === null || req === void 0 ? void 0 : req.body);
-            yield this.userService.updateActivate(Object.assign({}, body));
+            const { status } = yield this.userService.updateActivate(Object.assign({}, body));
             return res.status(http_config_1.HTTPSTATUS.OK).json({
                 message: 'Update activate successfully',
+                data: status,
             });
         }));
         this.userService = userService;

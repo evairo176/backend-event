@@ -91,7 +91,7 @@ class UserService {
         });
     }
     updateActivate(_a) {
-        return __awaiter(this, arguments, void 0, function* ({ userId }) {
+        return __awaiter(this, arguments, void 0, function* ({ userId, value }) {
             if (!userId) {
                 throw new catch_errors_1.BadRequestException('Invalid user id provided', "RESOURCE_NOT_FOUND" /* ErrorCode.RESOURCE_NOT_FOUND */);
             }
@@ -117,15 +117,18 @@ class UserService {
             if (user.status === 'NORMAL') {
                 throw new catch_errors_1.BadRequestException('User is not allowed this action', "USER_NOT_ALLOWED" /* ErrorCode.USER_NOT_ALLOWED */);
             }
-            if (user.status === 'APPROVE') {
+            if (user.status === 'APPROVE' && value) {
                 throw new catch_errors_1.BadRequestException('User status already approved', "USER_STATUS_APPROVED" /* ErrorCode.USER_STATUS_APPROVED */);
+            }
+            if (user.status === 'REJECT' && !value) {
+                throw new catch_errors_1.BadRequestException('User status already rejected', "USER_STATUS_REJECTED" /* ErrorCode.USER_STATUS_REJECTED */);
             }
             const updateUser = yield database_1.db.user.update({
                 where: {
                     id: userId,
                 },
                 data: {
-                    status: 'APPROVE',
+                    status: value === true ? 'APPROVE' : 'REJECT',
                 },
             });
             if (!updateUser) {
@@ -155,6 +158,7 @@ class UserService {
             });
             return {
                 user: showUser,
+                status: showUser === null || showUser === void 0 ? void 0 : showUser.status,
             };
         });
     }

@@ -4,4 +4,5 @@ exports.updateActivateSchema = void 0;
 const zod_1 = require("zod");
 exports.updateActivateSchema = zod_1.z.object({
     userId: zod_1.z.string(),
+    value: zod_1.z.boolean(),
 });

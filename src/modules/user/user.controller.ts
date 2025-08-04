@@ -38,11 +38,12 @@ export class UserController {
   public updateActivate = asyncHandler(
     async (req: Request, res: Response): Promise<any> => {
       const body = updateActivateSchema.parse(req?.body);
-      await this.userService.updateActivate({
+      const { status } = await this.userService.updateActivate({
         ...body,
       });
       return res.status(HTTPSTATUS.OK).json({
         message: 'Update activate successfully',
+        data: status,
       });
     },
   );

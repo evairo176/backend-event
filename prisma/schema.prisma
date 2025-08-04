@@ -29,6 +29,7 @@ enum UserStatus {
   NORMAL
   PENDING_APPROVAL
   APPROVE
+  REJECT
 }
 
 model Company {

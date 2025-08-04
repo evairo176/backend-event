@@ -7,4 +7,5 @@ export interface IPaginationQuery {
 
 export interface UpdateActivateDto {
   userId: string;
+  value: boolean;
 }
