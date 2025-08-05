@@ -34,7 +34,7 @@ eventRoutes.get(
 );
 
 eventRoutes.get(
-  '/company-event',
+  '/event-company',
   eventController.companyFindAll,
   /**
    #swagger.tags = ["Events"]

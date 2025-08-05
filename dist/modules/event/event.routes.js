@@ -6,7 +6,7 @@ const jwt_strategy_1 = require("../../cummon/strategies/jwt.strategy");
 const eventRoutes = (0, express_1.Router)();
 eventRoutes.post('/event', jwt_strategy_1.authenticateJWT, event_module_1.eventController.create);
 eventRoutes.get('/event', event_module_1.eventController.findAll);
-eventRoutes.get('/company-event', event_module_1.eventController.companyFindAll);
+eventRoutes.get('/event-company', event_module_1.eventController.companyFindAll);
 eventRoutes.get('/event/:id', event_module_1.eventController.findOne);
 eventRoutes.put('/event/:id', jwt_strategy_1.authenticateJWT, event_module_1.eventController.update);
 eventRoutes.delete('/event/:id', jwt_strategy_1.authenticateJWT, event_module_1.eventController.remove);
