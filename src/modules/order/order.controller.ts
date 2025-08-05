@@ -151,6 +151,29 @@ export class OrderController {
       });
     },
   );
+
+  public findAllByCompany = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+      const query = req?.query as unknown as IPaginationQuery;
+      const userId = req?.user?.id;
+      const { orders, limit, page, total, totalPages } =
+        await this.orderService.findAllByCompany({
+          ...query,
+          createById: userId as string,
+        });
+
+      return res.status(HTTPSTATUS.OK).json({
+        message: 'Success find all orders',
+        data: orders,
+        pagination: {
+          limit,
+          page,
+          total,
+          totalPages,
+        },
+      });
+    },
+  );
   public midtransWebhook = asyncHandler(
     async (req: Request, res: Response): Promise<any> => {
       const payload = req.body;

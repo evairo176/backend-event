@@ -350,6 +350,49 @@ class OrderService {
             };
         });
     }
+    findAllByCompany(_a) {
+        return __awaiter(this, arguments, void 0, function* ({ page = 1, limit = 10, search, createById, }) {
+            const query = {
+                createById: createById,
+            };
+            const skip = (Number(page) - 1) * Number(limit);
+            const take = Number(limit);
+            if (search) {
+                query.OR = [
+                // {
+                //   name: {
+                //     contains: search,
+                //     mode: 'insensitive',
+                //   },
+                // },
+                // {
+                //   description: {
+                //     contains: search,
+                //     mode: 'insensitive',
+                //   },
+                // },
+                ];
+            }
+            const [orders, total] = yield Promise.all([
+                database_1.db.order.findMany({
+                    where: query,
+                    skip,
+                    take,
+                    orderBy: { updatedAt: 'desc' },
+                }),
+                database_1.db.order.count({
+                    where: query,
+                }),
+            ]);
+            return {
+                orders,
+                page: Number(page),
+                limit: Number(limit),
+                total,
+                totalPages: Math.ceil(total / Number(limit)),
+            };
+        });
+    }
     midtransWebhook(_a) {
         return __awaiter(this, arguments, void 0, function* ({ transactionStatus, order_id, paymentType, paymentDate, }) {
             console.log({ transactionStatus, order_id, paymentType, paymentDate });

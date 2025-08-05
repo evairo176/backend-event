@@ -413,6 +413,57 @@ export class OrderService {
     };
   }
 
+  public async findAllByCompany({
+    page = 1,
+    limit = 10,
+    search,
+    createById,
+  }: IPaginationQuery) {
+    const query: any = {
+      createById: createById,
+    };
+
+    const skip = (Number(page) - 1) * Number(limit);
+    const take = Number(limit);
+
+    if (search) {
+      query.OR = [
+        // {
+        //   name: {
+        //     contains: search,
+        //     mode: 'insensitive',
+        //   },
+        // },
+        // {
+        //   description: {
+        //     contains: search,
+        //     mode: 'insensitive',
+        //   },
+        // },
+      ];
+    }
+
+    const [orders, total] = await Promise.all([
+      db.order.findMany({
+        where: query,
+        skip,
+        take,
+        orderBy: { updatedAt: 'desc' },
+      }),
+      db.order.count({
+        where: query,
+      }),
+    ]);
+
+    return {
+      orders,
+      page: Number(page),
+      limit: Number(limit),
+      total,
+      totalPages: Math.ceil(total / Number(limit)),
+    };
+  }
+
   public async midtransWebhook({
     transactionStatus,
     order_id,
