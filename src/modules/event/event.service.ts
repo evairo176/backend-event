@@ -174,6 +174,133 @@ export default class EventService {
     };
   }
 
+  public async companyFindAll({
+    page = 1,
+    limit = 10,
+    search,
+    isPublished,
+    isFeatured,
+    isOnline,
+    category,
+    cityName,
+    userId,
+  }: IPaginationQuery) {
+    const query: any = {
+      createById: userId,
+    };
+
+    const skip = (Number(page) - 1) * Number(limit);
+    const take = Number(limit);
+
+    if (search) {
+      query.OR = [
+        {
+          name: {
+            contains: search,
+            mode: 'insensitive',
+          },
+        },
+        {
+          description: {
+            contains: search,
+            mode: 'insensitive',
+          },
+        },
+        {
+          address: {
+            contains: search,
+            mode: 'insensitive',
+          },
+        },
+        {
+          category: {
+            name: {
+              contains: search,
+              mode: 'insensitive',
+            },
+          },
+        },
+        {
+          city: {
+            name: {
+              contains: search,
+              mode: 'insensitive',
+            },
+          },
+        },
+      ];
+    }
+
+    if (isPublished) {
+      query.isPublished = isPublished === 'true';
+    }
+
+    if (isOnline) {
+      query.isOnline = isOnline === 'true';
+    }
+
+    if (isFeatured) {
+      query.isFeatured = isFeatured === 'true';
+    }
+
+    if (category) {
+      query.categoryId = category;
+    }
+
+    if (cityName) {
+      query.city = {
+        name: {
+          contains: cityName,
+          mode: 'insensitive',
+        },
+      };
+    }
+
+    const [events, total] = await Promise.all([
+      db.event.findMany({
+        where: query,
+        skip,
+        take,
+        orderBy: { updatedAt: 'desc' },
+        include: {
+          category: true,
+          city: true,
+          tickets: true,
+        },
+      }),
+      db.event.count({
+        where: query,
+      }),
+    ]);
+
+    // lalu ambil tiket termurah per event
+    const result = events.map((event) => {
+      const cheapestTicket = event.tickets.reduce(
+        (min, curr) => (curr.price < min.price ? curr : min),
+        event.tickets[0],
+      );
+
+      const totalAudience = event.tickets.reduce(
+        (sum, ticket) => sum + ticket.quantity,
+        0,
+      );
+
+      return {
+        ...event,
+        cheapestTicket,
+        totalAudience,
+      };
+    });
+
+    return {
+      events: result,
+      page: Number(page),
+      limit: Number(limit),
+      total,
+      totalPages: Math.ceil(total / Number(limit)),
+    };
+  }
+
   public async findOne(id: string) {
     const result = await db.event.findFirst({
       where: {

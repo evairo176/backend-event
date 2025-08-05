@@ -55,6 +55,30 @@ export default class EventController {
     },
   );
 
+  public companyFindAll = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+      const query = req?.query as unknown as IPaginationQuery;
+      const userId = req?.user?.id;
+
+      const { events, limit, page, total, totalPages } =
+        await this.eventService.findAll({
+          ...query,
+          userId: userId as string,
+        });
+
+      return res.status(HTTPSTATUS.OK).json({
+        message: 'Success find all event',
+        data: events,
+        pagination: {
+          limit,
+          page,
+          total,
+          totalPages,
+        },
+      });
+    },
+  );
+
   public findOne = asyncHandler(
     async (req: Request, res: Response): Promise<any> => {
       const params = req?.params;

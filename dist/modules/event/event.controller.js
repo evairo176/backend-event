@@ -38,6 +38,22 @@ class EventController {
                 },
             });
         }));
+        this.companyFindAll = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const query = req === null || req === void 0 ? void 0 : req.query;
+            const userId = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.id;
+            const { events, limit, page, total, totalPages } = yield this.eventService.findAll(Object.assign(Object.assign({}, query), { userId: userId }));
+            return res.status(http_config_1.HTTPSTATUS.OK).json({
+                message: 'Success find all event',
+                data: events,
+                pagination: {
+                    limit,
+                    page,
+                    total,
+                    totalPages,
+                },
+            });
+        }));
         this.findOne = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             const params = req === null || req === void 0 ? void 0 : req.params;
             const result = yield this.eventService.findOne(params.id);

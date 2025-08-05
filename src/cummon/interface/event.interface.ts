@@ -20,4 +20,5 @@ export interface IPaginationQuery {
   isOnline?: string;
   category?: string;
   cityName?: string;
+  userId?: string;
 }
