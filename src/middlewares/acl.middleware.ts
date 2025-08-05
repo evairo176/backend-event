@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from 'express';
-import { ROLES } from '../cummon/enums/role.enum';
 import { HttpException } from '../cummon/utils/catch-errors';
 import { HTTPSTATUS } from '../config/http.config';
 import { ErrorCode } from '../cummon/enums/error-code.enum';

@@ -34,7 +34,8 @@ orderRoutes.get('/orders-company', [jwt_strategy_1.authenticateJWT, (0, acl_midd
 // );
 orderRoutes.delete('/orders/:orderId/remove', [jwt_strategy_1.authenticateJWT, (0, acl_middleware_1.default)([client_1.ROLE_USER.admin])], order_module_1.oderController.remove);
 orderRoutes.get('/orders-history', [jwt_strategy_1.authenticateJWT, (0, acl_middleware_1.default)([client_1.ROLE_USER.member])], order_module_1.oderController.findAllByMember);
-orderRoutes.get('/orders-dashboard', [jwt_strategy_1.authenticateJWT, (0, acl_middleware_1.default)([role_enum_1.ROLES.ADMIN])], order_module_1.oderController.dashboardFindAll);
-orderRoutes.get('/orders-dashboard/chart', [jwt_strategy_1.authenticateJWT, (0, acl_middleware_1.default)([role_enum_1.ROLES.ADMIN])], order_module_1.oderController.dashboardChart);
+orderRoutes.get('/orders-dashboard', [jwt_strategy_1.authenticateJWT, (0, acl_middleware_1.default)([client_1.ROLE_USER.admin])], order_module_1.oderController.dashboardFindAll);
+orderRoutes.get('/orders-dashboard/chart', [jwt_strategy_1.authenticateJWT, (0, acl_middleware_1.default)([client_1.ROLE_USER.admin])], order_module_1.oderController.dashboardChart);
+orderRoutes.get('/orders-dashboard/chart-company', [jwt_strategy_1.authenticateJWT, (0, acl_middleware_1.default)([client_1.ROLE_USER.company])], order_module_1.oderController.dashboardChartCompany);
 orderRoutes.post('/orders/midtrans', order_module_1.oderController.midtransWebhook);
 exports.default = orderRoutes;

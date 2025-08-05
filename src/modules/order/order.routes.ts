@@ -74,14 +74,20 @@ orderRoutes.get(
 
 orderRoutes.get(
   '/orders-dashboard',
-  [authenticateJWT, aclMiddleware([ROLES.ADMIN])],
+  [authenticateJWT, aclMiddleware([ROLE_USER.admin])],
   oderController.dashboardFindAll,
 );
 
 orderRoutes.get(
   '/orders-dashboard/chart',
-  [authenticateJWT, aclMiddleware([ROLES.ADMIN])],
+  [authenticateJWT, aclMiddleware([ROLE_USER.admin])],
   oderController.dashboardChart,
+);
+
+orderRoutes.get(
+  '/orders-dashboard/chart-company',
+  [authenticateJWT, aclMiddleware([ROLE_USER.company])],
+  oderController.dashboardChartCompany,
 );
 
 orderRoutes.post('/orders/midtrans', oderController.midtransWebhook);

@@ -186,6 +186,17 @@ class OrderController {
                 data: result,
             });
         }));
+        this.dashboardChartCompany = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const companyId = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.companyId;
+            const result = yield this.orderService.dashboardOrderChartCompany({
+                companyId: companyId,
+            });
+            return res.status(http_config_1.HTTPSTATUS.OK).json({
+                message: 'Success find all orders for dashboard chart',
+                data: result,
+            });
+        }));
         this.orderService = orderService;
     }
 }

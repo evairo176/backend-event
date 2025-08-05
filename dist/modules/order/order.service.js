@@ -523,5 +523,36 @@ class OrderService {
             };
         });
     }
+    dashboardOrderChartCompany(_a) {
+        return __awaiter(this, arguments, void 0, function* ({ companyId, }) {
+            const dashboard = new dashboard_1.Dashboard();
+            const [hourly, daily, weekly, monthly, yearly, all, prevHourly, prevDaily, prevWeekly, prevMonthly, prevYearly,] = yield Promise.all([
+                yield dashboard.getOrderSummaryByTimeCompany('hourly', companyId),
+                yield dashboard.getOrderSummaryByTimeCompany('daily', companyId),
+                yield dashboard.getOrderSummaryByTimeCompany('weekly', companyId),
+                yield dashboard.getOrderSummaryByTimeCompany('monthly', companyId),
+                yield dashboard.getOrderSummaryByTimeCompany('yearly', companyId),
+                yield dashboard.getOrderSummaryByTimeCompany('all', companyId),
+                yield dashboard.getOrderSummaryByTimeCompany('prevHourly', companyId),
+                yield dashboard.getOrderSummaryByTimeCompany('prevDaily', companyId),
+                yield dashboard.getOrderSummaryByTimeCompany('prevWeekly', companyId),
+                yield dashboard.getOrderSummaryByTimeCompany('prevMonthly', companyId),
+                yield dashboard.getOrderSummaryByTimeCompany('prevYearly', companyId),
+            ]);
+            return {
+                hourly,
+                daily,
+                weekly,
+                monthly,
+                yearly,
+                all,
+                prevHourly,
+                prevDaily,
+                prevWeekly,
+                prevMonthly,
+                prevYearly,
+            };
+        });
+    }
 }
 exports.OrderService = OrderService;

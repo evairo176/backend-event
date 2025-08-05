@@ -633,4 +633,51 @@ export class OrderService {
       prevYearly,
     };
   }
+
+  public async dashboardOrderChartCompany({
+    companyId,
+  }: {
+    companyId: string;
+  }) {
+    const dashboard = new Dashboard();
+
+    const [
+      hourly,
+      daily,
+      weekly,
+      monthly,
+      yearly,
+      all,
+      prevHourly,
+      prevDaily,
+      prevWeekly,
+      prevMonthly,
+      prevYearly,
+    ] = await Promise.all([
+      await dashboard.getOrderSummaryByTimeCompany('hourly', companyId),
+      await dashboard.getOrderSummaryByTimeCompany('daily', companyId),
+      await dashboard.getOrderSummaryByTimeCompany('weekly', companyId),
+      await dashboard.getOrderSummaryByTimeCompany('monthly', companyId),
+      await dashboard.getOrderSummaryByTimeCompany('yearly', companyId),
+      await dashboard.getOrderSummaryByTimeCompany('all', companyId),
+      await dashboard.getOrderSummaryByTimeCompany('prevHourly', companyId),
+      await dashboard.getOrderSummaryByTimeCompany('prevDaily', companyId),
+      await dashboard.getOrderSummaryByTimeCompany('prevWeekly', companyId),
+      await dashboard.getOrderSummaryByTimeCompany('prevMonthly', companyId),
+      await dashboard.getOrderSummaryByTimeCompany('prevYearly', companyId),
+    ]);
+    return {
+      hourly,
+      daily,
+      weekly,
+      monthly,
+      yearly,
+      all,
+      prevHourly,
+      prevDaily,
+      prevWeekly,
+      prevMonthly,
+      prevYearly,
+    };
+  }
 }

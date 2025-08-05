@@ -254,4 +254,18 @@ export class OrderController {
       });
     },
   );
+
+  public dashboardChartCompany = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+      const companyId = req?.user?.companyId;
+      const result = await this.orderService.dashboardOrderChartCompany({
+        companyId: companyId as string,
+      });
+
+      return res.status(HTTPSTATUS.OK).json({
+        message: 'Success find all orders for dashboard chart',
+        data: result,
+      });
+    },
+  );
 }
