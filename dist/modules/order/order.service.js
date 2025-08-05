@@ -24,8 +24,25 @@ class OrderService {
     create(orderData, userData) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield database_1.db.$transaction((tx) => __awaiter(this, void 0, void 0, function* () {
+                var _a;
                 // Ambil tiket & validasi sebelum membuat order
                 let total = 0;
+                const eventId = orderData[0].eventId;
+                const checkExistingEvent = yield tx.event.findFirst({
+                    where: {
+                        id: eventId,
+                    },
+                    include: {
+                        createdBy: {
+                            include: {
+                                company: true,
+                            },
+                        },
+                    },
+                });
+                if (!checkExistingEvent) {
+                    throw new catch_errors_1.BadRequestException('Event not exists', "RESOURCE_NOT_FOUND" /* ErrorCode.RESOURCE_NOT_FOUND */);
+                }
                 for (const body of orderData) {
                     const existingTicket = yield tx.ticket.findFirst({
                         where: { id: body.ticketId },
@@ -69,6 +86,7 @@ class OrderService {
                         paymentId: payment.id,
                         createById: userData === null || userData === void 0 ? void 0 : userData.createById,
                         updatedById: userData === null || userData === void 0 ? void 0 : userData.createById,
+                        companyId: (_a = checkExistingEvent.createdBy) === null || _a === void 0 ? void 0 : _a.companyId,
                     },
                 });
                 // Simpan orderItem berdasarkan masing-masing tiket
@@ -351,9 +369,9 @@ class OrderService {
         });
     }
     findAllByCompany(_a) {
-        return __awaiter(this, arguments, void 0, function* ({ page = 1, limit = 10, search, createById, }) {
+        return __awaiter(this, arguments, void 0, function* ({ page = 1, limit = 10, search, companyId, }) {
             const query = {
-                createById: createById,
+                companyId: companyId,
             };
             const skip = (Number(page) - 1) * Number(limit);
             const take = Number(limit);
@@ -379,6 +397,15 @@ class OrderService {
                     skip,
                     take,
                     orderBy: { updatedAt: 'desc' },
+                    include: {
+                        createdBy: {
+                            select: {
+                                fullname: true,
+                                email: true,
+                                company: true,
+                            },
+                        },
+                    },
                 }),
                 database_1.db.order.count({
                     where: query,

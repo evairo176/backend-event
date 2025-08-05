@@ -155,11 +155,13 @@ export class OrderController {
   public findAllByCompany = asyncHandler(
     async (req: Request, res: Response): Promise<any> => {
       const query = req?.query as unknown as IPaginationQuery;
-      const userId = req?.user?.id;
+      const companyId = req?.user?.companyId;
+
+      // console.log({ user: req?.user });
       const { orders, limit, page, total, totalPages } =
         await this.orderService.findAllByCompany({
           ...query,
-          createById: userId as string,
+          companyId: companyId as string,
         });
 
       return res.status(HTTPSTATUS.OK).json({

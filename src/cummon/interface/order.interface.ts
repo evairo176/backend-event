@@ -19,4 +19,5 @@ export interface IPaginationQuery {
   search?: string;
   createById?: string;
   filter?: string;
+  companyId?: string;
 }

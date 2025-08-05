@@ -22,6 +22,28 @@ export class OrderService {
       // Ambil tiket & validasi sebelum membuat order
       let total = 0;
 
+      const eventId = orderData[0].eventId;
+
+      const checkExistingEvent = await tx.event.findFirst({
+        where: {
+          id: eventId,
+        },
+        include: {
+          createdBy: {
+            include: {
+              company: true,
+            },
+          },
+        },
+      });
+
+      if (!checkExistingEvent) {
+        throw new BadRequestException(
+          'Event not exists',
+          ErrorCode.RESOURCE_NOT_FOUND,
+        );
+      }
+
       for (const body of orderData) {
         const existingTicket = await tx.ticket.findFirst({
           where: { id: body.ticketId },
@@ -80,6 +102,7 @@ export class OrderService {
           paymentId: payment.id,
           createById: userData?.createById,
           updatedById: userData?.createById,
+          companyId: checkExistingEvent.createdBy?.companyId,
         },
       });
 
@@ -417,10 +440,10 @@ export class OrderService {
     page = 1,
     limit = 10,
     search,
-    createById,
+    companyId,
   }: IPaginationQuery) {
     const query: any = {
-      createById: createById,
+      companyId: companyId,
     };
 
     const skip = (Number(page) - 1) * Number(limit);
@@ -449,6 +472,15 @@ export class OrderService {
         skip,
         take,
         orderBy: { updatedAt: 'desc' },
+        include: {
+          createdBy: {
+            select: {
+              fullname: true,
+              email: true,
+              company: true,
+            },
+          },
+        },
       }),
       db.order.count({
         where: query,

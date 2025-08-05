@@ -123,8 +123,9 @@ class OrderController {
         this.findAllByCompany = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             var _a;
             const query = req === null || req === void 0 ? void 0 : req.query;
-            const userId = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.id;
-            const { orders, limit, page, total, totalPages } = yield this.orderService.findAllByCompany(Object.assign(Object.assign({}, query), { createById: userId }));
+            const companyId = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.companyId;
+            // console.log({ user: req?.user });
+            const { orders, limit, page, total, totalPages } = yield this.orderService.findAllByCompany(Object.assign(Object.assign({}, query), { companyId: companyId }));
             return res.status(http_config_1.HTTPSTATUS.OK).json({
                 message: 'Success find all orders',
                 data: orders,
