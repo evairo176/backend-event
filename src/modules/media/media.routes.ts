@@ -4,6 +4,7 @@ import aclMiddleware from '../../middlewares/acl.middleware';
 import mediaMiddleware from '../../middlewares/media.middleware';
 import { ROLES } from '../../cummon/enums/role.enum';
 import { mediaController } from './media.module';
+import { ROLE_USER } from '@prisma/client';
 
 const mediaRoutes = Router();
 
@@ -11,7 +12,7 @@ mediaRoutes.post(
   '/media/upload-single',
   [
     authenticateJWT,
-    aclMiddleware([ROLES.ADMIN, ROLES.MEMBER]),
+    aclMiddleware([ROLE_USER.admin, ROLE_USER.company, ROLE_USER.member]),
     mediaMiddleware.single('file'),
   ],
   mediaController.single,
@@ -42,7 +43,7 @@ mediaRoutes.post(
   '/media/upload-multiple',
   [
     authenticateJWT,
-    aclMiddleware([ROLES.ADMIN, ROLES.MEMBER]),
+    aclMiddleware([ROLE_USER.admin, ROLE_USER.company, ROLE_USER.member]),
     mediaMiddleware.multiple('files'),
   ],
   mediaController.multiple,
@@ -75,7 +76,10 @@ mediaRoutes.post(
 );
 mediaRoutes.delete(
   '/media/remove',
-  [authenticateJWT, aclMiddleware([ROLES.ADMIN, ROLES.MEMBER])],
+  [
+    authenticateJWT,
+    aclMiddleware([ROLE_USER.admin, ROLE_USER.company, ROLE_USER.member]),
+  ],
   mediaController.remove,
 
   /*
