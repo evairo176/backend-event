@@ -1,12 +1,14 @@
 import { Router } from 'express';
 import { eventController } from './event.module';
 import { authenticateJWT } from '../../cummon/strategies/jwt.strategy';
+import aclMiddleware from '../../middlewares/acl.middleware';
+import { ROLE_USER } from '@prisma/client';
 
 const eventRoutes = Router();
 
 eventRoutes.post(
   '/event',
-  authenticateJWT,
+  [authenticateJWT, aclMiddleware([ROLE_USER.admin, ROLE_USER.company])],
   eventController.create,
 
   /**
@@ -35,6 +37,7 @@ eventRoutes.get(
 
 eventRoutes.get(
   '/event-company',
+  [authenticateJWT, aclMiddleware([ROLE_USER.company])],
   eventController.companyFindAll,
   /**
    #swagger.tags = ["Events"]
@@ -52,7 +55,7 @@ eventRoutes.get(
 );
 eventRoutes.put(
   '/event/:id',
-  authenticateJWT,
+  [authenticateJWT, aclMiddleware([ROLE_USER.admin, ROLE_USER.company])],
   eventController.update,
   /**
    #swagger.tags = ["Events"]
