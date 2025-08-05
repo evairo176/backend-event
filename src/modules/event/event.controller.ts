@@ -61,7 +61,7 @@ export default class EventController {
       const userId = req?.user?.id;
 
       const { events, limit, page, total, totalPages } =
-        await this.eventService.findAll({
+        await this.eventService.companyFindAll({
           ...query,
           userId: userId as string,
         });
