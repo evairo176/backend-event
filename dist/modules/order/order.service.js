@@ -200,7 +200,15 @@ class OrderService {
                     orderId,
                 },
                 include: {
-                    items: true,
+                    items: {
+                        include: {
+                            event: {
+                                include: {
+                                    createdBy: true,
+                                },
+                            },
+                        },
+                    },
                 },
             });
             if (!order) {
@@ -253,6 +261,31 @@ class OrderService {
                     updatedOrder,
                     updatedTicket,
                 });
+            }
+            const owner = yield database_1.db.user.findFirst({
+                where: {
+                    companyId: order.companyId,
+                    role: 'company_owner',
+                },
+            });
+            if (owner && order.total > 0) {
+                yield database_1.db.$transaction([
+                    database_1.db.user.update({
+                        where: { id: order.companyId },
+                        data: {
+                            balance: { increment: order.total },
+                        },
+                    }),
+                    database_1.db.balanceTransaction.create({
+                        data: {
+                            userId: order.companyId,
+                            amount: order.total,
+                            type: 'IN',
+                            description: `Pemasukan dari order ${order.orderId}`,
+                            referenceId: order.id,
+                        },
+                    }),
+                ]);
             }
             return result;
         });

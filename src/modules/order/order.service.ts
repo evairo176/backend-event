@@ -229,7 +229,15 @@ export class OrderService {
         orderId,
       },
       include: {
-        items: true,
+        items: {
+          include: {
+            event: {
+              include: {
+                createdBy: true,
+              },
+            },
+          },
+        },
       },
     });
 
@@ -297,6 +305,33 @@ export class OrderService {
         updatedOrder,
         updatedTicket,
       });
+    }
+
+    const owner = await db.user.findFirst({
+      where: {
+        companyId: order.companyId,
+        role: 'company_owner',
+      },
+    });
+
+    if (owner && order.total > 0) {
+      await db.$transaction([
+        db.user.update({
+          where: { id: order.companyId as string },
+          data: {
+            balance: { increment: order.total },
+          },
+        }),
+        db.balanceTransaction.create({
+          data: {
+            userId: order.companyId as string,
+            amount: order.total,
+            type: 'IN',
+            description: `Pemasukan dari order ${order.orderId}`,
+            referenceId: order.id,
+          },
+        }),
+      ]);
     }
 
     return result;
