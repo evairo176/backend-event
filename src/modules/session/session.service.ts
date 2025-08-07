@@ -60,9 +60,6 @@ export class SessionService {
 
     const query: any = {
       userId,
-      expiredAt: {
-        gt: new Date(Date.now()),
-      },
     };
 
     const skip = (Number(page) - 1) * Number(limit);
