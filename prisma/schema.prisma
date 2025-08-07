@@ -38,6 +38,12 @@ enum BalanceTransactionType {
   OUT
 }
 
+enum BalanceTransactionCategory {
+  ORDER
+  WITHDRAW
+  REFUND
+}
+
 model Company {
   id   String  @id @default(auto()) @map("_id") @db.ObjectId
   name String?
@@ -122,14 +128,15 @@ model UserPreferences {
 }
 
 model BalanceTransaction {
-  id          String                 @id @default(auto()) @map("_id") @db.ObjectId
-  userId      String                 @db.ObjectId
-  user        User                   @relation(fields: [userId], references: [id])
+  id          String                     @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String                     @db.ObjectId
+  user        User                       @relation(fields: [userId], references: [id])
   amount      Float
   type        BalanceTransactionType
+  category    BalanceTransactionCategory @default(ORDER)
   description String?
   referenceId String? // bisa diisi dengan ID Order, Event, atau lainnya
-  createdAt   DateTime               @default(now())
+  createdAt   DateTime                   @default(now())
 }
 
 model Session {
