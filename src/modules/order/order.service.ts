@@ -199,7 +199,11 @@ export class OrderService {
             event: true,
             ticket: {
               include: {
-                vouchers: true,
+                vouchers: {
+                  where: {
+                    orderId,
+                  },
+                },
               },
             },
           },
@@ -272,6 +276,7 @@ export class OrderService {
       const vouchers = Array.from({ length: item.quantity }).map(() => ({
         code: `${prefixTicketCode}_${nanoid(21)}`,
         ticketId: item.ticketId,
+        orderId,
       }));
 
       // ✅ Execute all DB operations in a transaction

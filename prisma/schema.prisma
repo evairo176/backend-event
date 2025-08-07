@@ -225,6 +225,9 @@ model VoucherTicket {
   isUsed Boolean @default(false)
   code   String  @unique
 
+  order   Order?  @relation(fields: [orderId], references: [orderId])
+  orderId String?
+
   ticket   Ticket? @relation(fields: [ticketId], references: [id])
   ticketId String? @db.ObjectId
 
@@ -342,6 +345,8 @@ model Order {
   companyId String?  @db.ObjectId
 
   items OrderItem[]
+
+  voucher VoucherTicket[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
