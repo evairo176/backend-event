@@ -12,7 +12,7 @@ mediaRoutes.post(
   '/media/upload-single',
   [
     authenticateJWT,
-    aclMiddleware([ROLE_USER.admin, ROLE_USER.company, ROLE_USER.member]),
+    aclMiddleware([ROLE_USER.admin, ROLE_USER.company_owner, ROLE_USER.member]),
     mediaMiddleware.single('file'),
   ],
   mediaController.single,
@@ -43,7 +43,7 @@ mediaRoutes.post(
   '/media/upload-multiple',
   [
     authenticateJWT,
-    aclMiddleware([ROLE_USER.admin, ROLE_USER.company, ROLE_USER.member]),
+    aclMiddleware([ROLE_USER.admin, ROLE_USER.company_owner, ROLE_USER.member]),
     mediaMiddleware.multiple('files'),
   ],
   mediaController.multiple,
@@ -78,7 +78,7 @@ mediaRoutes.delete(
   '/media/remove',
   [
     authenticateJWT,
-    aclMiddleware([ROLE_USER.admin, ROLE_USER.company, ROLE_USER.member]),
+    aclMiddleware([ROLE_USER.admin, ROLE_USER.company_owner, ROLE_USER.member]),
   ],
   mediaController.remove,
 

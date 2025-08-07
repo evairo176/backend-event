@@ -9,7 +9,7 @@ const ticketRoutes = Router();
 ticketRoutes.post(
   '/ticket',
 
-  [authenticateJWT, aclMiddleware([ROLE_USER.admin, ROLE_USER.company])],
+  [authenticateJWT, aclMiddleware([ROLE_USER.admin, ROLE_USER.company_owner])],
   ticketController.create,
 
   /**
@@ -65,7 +65,7 @@ ticketRoutes.get(
 );
 ticketRoutes.put(
   '/ticket/:id',
-  [authenticateJWT, aclMiddleware([ROLE_USER.admin, ROLE_USER.company])],
+  [authenticateJWT, aclMiddleware([ROLE_USER.admin, ROLE_USER.company_owner])],
   ticketController.update,
 
   /**
@@ -84,7 +84,7 @@ ticketRoutes.put(
 );
 ticketRoutes.delete(
   '/ticket/:id',
-  [authenticateJWT, aclMiddleware([ROLE_USER.admin, ROLE_USER.company])],
+  [authenticateJWT, aclMiddleware([ROLE_USER.admin, ROLE_USER.company_owner])],
   ticketController.remove,
 
   /**

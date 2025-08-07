@@ -16,10 +16,10 @@ order_module_1.oderController.create);
 orderRoutes.get('/orders', [jwt_strategy_1.authenticateJWT, (0, acl_middleware_1.default)([client_1.ROLE_USER.admin])], order_module_1.oderController.findAll);
 orderRoutes.get('/orders/:orderId', [
     jwt_strategy_1.authenticateJWT,
-    (0, acl_middleware_1.default)([client_1.ROLE_USER.member, client_1.ROLE_USER.company, client_1.ROLE_USER.admin]),
+    (0, acl_middleware_1.default)([client_1.ROLE_USER.member, client_1.ROLE_USER.company_owner, client_1.ROLE_USER.admin]),
 ], order_module_1.oderController.findOne);
 orderRoutes.get('/orders/member', [jwt_strategy_1.authenticateJWT, (0, acl_middleware_1.default)([client_1.ROLE_USER.member])], order_module_1.oderController.findAllByMember);
-orderRoutes.get('/orders-company', [jwt_strategy_1.authenticateJWT, (0, acl_middleware_1.default)([client_1.ROLE_USER.company])], order_module_1.oderController.findAllByCompany);
+orderRoutes.get('/orders-company', [jwt_strategy_1.authenticateJWT, (0, acl_middleware_1.default)([client_1.ROLE_USER.company_owner])], order_module_1.oderController.findAllByCompany);
 // orderRoutes.put(
 //   '/orders/:orderId/completed',
 //   oderController.completed,
@@ -36,6 +36,6 @@ orderRoutes.delete('/orders/:orderId/remove', [jwt_strategy_1.authenticateJWT, (
 orderRoutes.get('/orders-history', [jwt_strategy_1.authenticateJWT, (0, acl_middleware_1.default)([client_1.ROLE_USER.member])], order_module_1.oderController.findAllByMember);
 orderRoutes.get('/orders-dashboard', [jwt_strategy_1.authenticateJWT, (0, acl_middleware_1.default)([client_1.ROLE_USER.admin])], order_module_1.oderController.dashboardFindAll);
 orderRoutes.get('/orders-dashboard/chart', [jwt_strategy_1.authenticateJWT, (0, acl_middleware_1.default)([client_1.ROLE_USER.admin])], order_module_1.oderController.dashboardChart);
-orderRoutes.get('/orders-dashboard/chart-company', [jwt_strategy_1.authenticateJWT, (0, acl_middleware_1.default)([client_1.ROLE_USER.company])], order_module_1.oderController.dashboardChartCompany);
+orderRoutes.get('/orders-dashboard/chart-company', [jwt_strategy_1.authenticateJWT, (0, acl_middleware_1.default)([client_1.ROLE_USER.company_owner])], order_module_1.oderController.dashboardChartCompany);
 orderRoutes.post('/orders/midtrans', order_module_1.oderController.midtransWebhook);
 exports.default = orderRoutes;

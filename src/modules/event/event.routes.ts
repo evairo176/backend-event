@@ -8,7 +8,7 @@ const eventRoutes = Router();
 
 eventRoutes.post(
   '/event',
-  [authenticateJWT, aclMiddleware([ROLE_USER.admin, ROLE_USER.company])],
+  [authenticateJWT, aclMiddleware([ROLE_USER.admin, ROLE_USER.company_owner])],
   eventController.create,
 
   /**
@@ -37,7 +37,7 @@ eventRoutes.get(
 
 eventRoutes.get(
   '/event-company',
-  [authenticateJWT, aclMiddleware([ROLE_USER.company])],
+  [authenticateJWT, aclMiddleware([ROLE_USER.company_owner])],
   eventController.companyFindAll,
   /**
    #swagger.tags = ["Events"]
@@ -55,7 +55,7 @@ eventRoutes.get(
 );
 eventRoutes.put(
   '/event/:id',
-  [authenticateJWT, aclMiddleware([ROLE_USER.admin, ROLE_USER.company])],
+  [authenticateJWT, aclMiddleware([ROLE_USER.admin, ROLE_USER.company_owner])],
   eventController.update,
   /**
    #swagger.tags = ["Events"]

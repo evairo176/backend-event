@@ -25,7 +25,7 @@ orderRoutes.get(
   '/orders/:orderId',
   [
     authenticateJWT,
-    aclMiddleware([ROLE_USER.member, ROLE_USER.company, ROLE_USER.admin]),
+    aclMiddleware([ROLE_USER.member, ROLE_USER.company_owner, ROLE_USER.admin]),
   ],
   oderController.findOne,
 );
@@ -38,7 +38,7 @@ orderRoutes.get(
 
 orderRoutes.get(
   '/orders-company',
-  [authenticateJWT, aclMiddleware([ROLE_USER.company])],
+  [authenticateJWT, aclMiddleware([ROLE_USER.company_owner])],
   oderController.findAllByCompany,
 );
 
@@ -86,7 +86,7 @@ orderRoutes.get(
 
 orderRoutes.get(
   '/orders-dashboard/chart-company',
-  [authenticateJWT, aclMiddleware([ROLE_USER.company])],
+  [authenticateJWT, aclMiddleware([ROLE_USER.company_owner])],
   oderController.dashboardChartCompany,
 );
 
