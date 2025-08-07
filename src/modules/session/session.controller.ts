@@ -51,6 +51,7 @@ export class SessionController {
         return {
           ...session,
           isCurrent: session.id === sessionId ? true : false,
+          isActive: session.expiredAt > new Date(),
         };
       });
 

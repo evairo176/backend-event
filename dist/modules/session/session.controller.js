@@ -36,7 +36,7 @@ class SessionController {
             const query = req === null || req === void 0 ? void 0 : req.query;
             const { sessions, limit, page, total, totalPages } = yield this.sessionService.getAllSession(Object.assign(Object.assign({}, query), { userId: userId }));
             const modifySession = sessions === null || sessions === void 0 ? void 0 : sessions.map((session) => {
-                return Object.assign(Object.assign({}, session), { isCurrent: session.id === sessionId ? true : false });
+                return Object.assign(Object.assign({}, session), { isCurrent: session.id === sessionId ? true : false, isActive: session.expiredAt > new Date() });
             });
             return res.status(http_config_1.HTTPSTATUS.OK).json({
                 message: 'Retrieved all session successfully',
