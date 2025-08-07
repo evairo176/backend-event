@@ -39,6 +39,33 @@ class UserController {
                 data: status,
             });
         }));
+        this.addUser = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const body = user_validator_1.addUserSchema.parse(req === null || req === void 0 ? void 0 : req.body);
+            const companyId = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.companyId;
+            const result = yield this.userService.addUser(Object.assign(Object.assign({}, body), { companyId: companyId }));
+            return res.status(http_config_1.HTTPSTATUS.OK).json({
+                message: 'Success add user',
+                data: result,
+            });
+        }));
+        this.companyFindAll = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
+            var _a, _b;
+            const query = req === null || req === void 0 ? void 0 : req.query;
+            const userId = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.id;
+            const companyId = (_b = req === null || req === void 0 ? void 0 : req.user) === null || _b === void 0 ? void 0 : _b.companyId;
+            const { users, limit, page, total, totalPages } = yield this.userService.companyFindAll(Object.assign(Object.assign({}, query), { companyId: companyId, userId: userId }));
+            return res.status(http_config_1.HTTPSTATUS.OK).json({
+                message: 'Success find all user',
+                data: users,
+                pagination: {
+                    limit,
+                    page,
+                    total,
+                    totalPages,
+                },
+            });
+        }));
         this.userService = userService;
     }
 }

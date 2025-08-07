@@ -17,6 +17,7 @@ enum ROLE_USER {
   member
   manager
   company
+  company_scanner
   company_owner
 }
 
