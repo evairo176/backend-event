@@ -142,6 +142,7 @@ export class AuthController {
           createdAt: true,
           updatedAt: true,
           userPreferences: true,
+          balance: true,
         },
       });
       return res.status(HTTPSTATUS.OK).json({

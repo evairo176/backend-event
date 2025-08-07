@@ -98,6 +98,7 @@ class AuthController {
                     createdAt: true,
                     updatedAt: true,
                     userPreferences: true,
+                    balance: true,
                 },
             });
             return res.status(http_config_1.HTTPSTATUS.OK).json({

@@ -320,16 +320,16 @@ export class OrderService {
     });
 
     if (owner && order.total > 0) {
-      await db.$transaction([
+      const [user, balanceTransaction] = await db.$transaction([
         db.user.update({
-          where: { id: order.companyId as string },
+          where: { id: owner.id },
           data: {
-            balance: { increment: order.total },
+            balance: owner.balance + order.total,
           },
         }),
         db.balanceTransaction.create({
           data: {
-            userId: order.companyId as string,
+            userId: owner.id,
             amount: order.total,
             type: 'IN',
             description: `Pemasukan dari order ${order.orderId}`,

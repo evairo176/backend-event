@@ -274,16 +274,16 @@ class OrderService {
                 },
             });
             if (owner && order.total > 0) {
-                yield database_1.db.$transaction([
+                const [user, balanceTransaction] = yield database_1.db.$transaction([
                     database_1.db.user.update({
-                        where: { id: order.companyId },
+                        where: { id: owner.id },
                         data: {
-                            balance: { increment: order.total },
+                            balance: owner.balance + order.total,
                         },
                     }),
                     database_1.db.balanceTransaction.create({
                         data: {
-                            userId: order.companyId,
+                            userId: owner.id,
                             amount: order.total,
                             type: 'IN',
                             description: `Pemasukan dari order ${order.orderId}`,
