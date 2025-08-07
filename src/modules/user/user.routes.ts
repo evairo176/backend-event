@@ -39,7 +39,7 @@ userRoutes.get(
 
 userRoutes.put(
   '/user/activate',
-  [authenticateJWT, aclMiddleware([ROLE_USER.admin])],
+  [authenticateJWT, aclMiddleware([ROLE_USER.admin, ROLE_USER.company_owner])],
   userController.updateActivate,
   /**
  #swagger.tags = ['User']
