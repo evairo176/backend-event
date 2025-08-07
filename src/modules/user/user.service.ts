@@ -345,8 +345,7 @@ export class UserService {
           createdAt: true,
           updatedAt: true,
           userPreferences: true,
-          companyId: true,
-          company: true,
+          role: true,
         },
       }),
       db.user.count({
