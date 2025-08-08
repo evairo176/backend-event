@@ -88,19 +88,25 @@ export class VoucherService {
     });
 
     if (!voucher) {
-      throw new BadRequestException(
-        'Voucher not exists',
-        ErrorCode.RESOURCE_NOT_FOUND,
-      );
+      return {
+        success: false,
+        message: 'Voucher tidak ditemukan',
+        data: null,
+      };
     }
 
     if (voucher.isUsed) {
-      throw new BadRequestException(
-        'Voucher sudah digunakan',
-        ErrorCode.VERIFICATION_ERROR,
-      );
+      return {
+        success: false,
+        message: 'Voucher sudah digunakan',
+        data: null,
+      };
     }
 
-    return voucher;
+    return {
+      success: true,
+      message: 'Voucher valid',
+      data: voucher,
+    };
   }
 }

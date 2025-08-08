@@ -59,12 +59,24 @@ class VoucherService {
                 },
             });
             if (!voucher) {
-                throw new catch_errors_1.BadRequestException('Voucher not exists', "RESOURCE_NOT_FOUND" /* ErrorCode.RESOURCE_NOT_FOUND */);
+                return {
+                    success: false,
+                    message: 'Voucher tidak ditemukan',
+                    data: null,
+                };
             }
             if (voucher.isUsed) {
-                throw new catch_errors_1.BadRequestException('Voucher sudah digunakan', "VERIFICATION_ERROR" /* ErrorCode.VERIFICATION_ERROR */);
+                return {
+                    success: false,
+                    message: 'Voucher sudah digunakan',
+                    data: null,
+                };
             }
-            return voucher;
+            return {
+                success: true,
+                message: 'Voucher valid',
+                data: voucher,
+            };
         });
     }
 }

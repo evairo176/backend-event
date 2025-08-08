@@ -27,10 +27,7 @@ class VoucherController {
         this.findOneByCode = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             const params = req === null || req === void 0 ? void 0 : req.params;
             const result = yield this.voucherService.findOneByCode(params === null || params === void 0 ? void 0 : params.code);
-            return res.status(http_config_1.HTTPSTATUS.OK).json({
-                message: `Success find one voucher`,
-                data: result,
-            });
+            return res.status(http_config_1.HTTPSTATUS.OK).json(Object.assign({}, result));
         }));
         this.voucherService = voucherService;
     }

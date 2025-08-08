@@ -36,8 +36,7 @@ export class VoucherController {
       const result = await this.voucherService.findOneByCode(params?.code);
 
       return res.status(HTTPSTATUS.OK).json({
-        message: `Success find one voucher`,
-        data: result,
+        ...result,
       });
     },
   );

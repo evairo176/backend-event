@@ -21,11 +21,12 @@ voucherRoutes.post(
 
 voucherRoutes.get(
   '/voucher/:code',
-  voucherController.findOneByCode,
   [
     authenticateJWT,
     aclMiddleware([ROLE_USER.company_scanner, ROLE_USER.admin]),
   ],
+  voucherController.findOneByCode,
+
   /**
    #swagger.tags = ["Voucher"]
    */
