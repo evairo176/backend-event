@@ -81,6 +81,7 @@ class UserService {
                         userPreferences: true,
                         companyId: true,
                         company: true,
+                        role: true,
                     },
                 }),
                 database_1.db.user.count({
