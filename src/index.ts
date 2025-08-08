@@ -24,6 +24,7 @@ import ticketRoutes from './modules/ticket/ticket.routes';
 import bannerRoutes from './modules/banner/banner.routes';
 import orderRoutes from './modules/order/order.routes';
 import userRoutes from './modules/user/user.routes';
+import voucherRoutes from './modules/voucher/voucher.routes';
 
 const app = express();
 const BASE_PATH = config.BASE_PATH;
@@ -66,6 +67,7 @@ app.use(`${BASE_PATH}`, ticketRoutes);
 app.use(`${BASE_PATH}`, bannerRoutes);
 app.use(`${BASE_PATH}`, orderRoutes);
 app.use(`${BASE_PATH}`, userRoutes);
+app.use(`${BASE_PATH}`, voucherRoutes);
 
 // Setup Swagger
 setupSwagger(app);

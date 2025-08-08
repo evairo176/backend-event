@@ -98,6 +98,7 @@ model User {
   sessions          Session[]
   verificationCodes VerificationCode[]
   userHistoryUpdate UserHistoryUpdate[]
+  ticketScanHistory TicketScanHistory[]
 }
 
 model UserHistoryUpdate {
@@ -232,8 +233,31 @@ model VoucherTicket {
   ticket   Ticket? @relation(fields: [ticketId], references: [id])
   ticketId String? @db.ObjectId
 
+  ticketScanHistory TicketScanHistory[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model TicketScanHistory {
+  id        String        @id @default(auto()) @map("_id") @db.ObjectId
+  voucher   VoucherTicket @relation(fields: [voucherId], references: [id])
+  voucherId String        @db.ObjectId
+
+  scannedBy   User?   @relation(fields: [scannedById], references: [id])
+  scannedById String? @db.ObjectId
+
+  location String? // Opsional: lokasi scan
+  device   String? // Opsional: info device/alat scanner
+  status   ScanStatus @default(SUCCESS) // SUCCESS / FAILED
+  note     String? // Catatan jika gagal (misalnya "Tiket sudah digunakan")
+
+  createdAt DateTime @default(now())
+}
+
+enum ScanStatus {
+  SUCCESS
+  FAILED
 }
 
 model Ticket {

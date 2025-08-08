@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const jwt_strategy_1 = require("../../cummon/strategies/jwt.strategy");
 const acl_middleware_1 = __importDefault(require("../../middlewares/acl.middleware"));
-const ticket_module_1 = require("./ticket,module");
+const ticket_module_1 = require("./ticket.module");
 const client_1 = require("@prisma/client");
 const ticketRoutes = (0, express_1.Router)();
 ticketRoutes.post('/ticket', [jwt_strategy_1.authenticateJWT, (0, acl_middleware_1.default)([client_1.ROLE_USER.admin, client_1.ROLE_USER.company_owner])], ticket_module_1.ticketController.create);

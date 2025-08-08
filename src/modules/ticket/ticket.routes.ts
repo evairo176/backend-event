@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { authenticateJWT } from '../../cummon/strategies/jwt.strategy';
 import aclMiddleware from '../../middlewares/acl.middleware';
-import { ticketController } from './ticket,module';
+import { ticketController } from './ticket.module';
 import { ROLE_USER } from '@prisma/client';
 
 const ticketRoutes = Router();
