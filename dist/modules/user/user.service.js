@@ -203,7 +203,7 @@ class UserService {
                     fullname,
                     username,
                     email,
-                    password: yield (0, bcrypt_1.encryptValue)(`${username}*12345`),
+                    password: yield (0, bcrypt_1.encryptValue)(`${username.toUpperCase()}*12345`),
                     companyId: existingCompany.id,
                     status: 'APPROVE',
                     role: 'company_scanner',

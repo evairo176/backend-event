@@ -242,7 +242,7 @@ export class UserService {
         fullname,
         username,
         email,
-        password: await encryptValue(`${username}*12345`),
+        password: await encryptValue(`${username.toUpperCase()}*12345`),
         companyId: existingCompany.id,
         status: 'APPROVE',
         role: 'company_scanner',
