@@ -17,10 +17,12 @@ export class VoucherController {
         ...req?.body,
       });
       const userId = req?.user?.id;
+      const companyId = req?.user?.companyId;
 
       const { message } = await this.voucherService.scanVoucher({
         ...body,
         scannedById: userId as string,
+        companyId: companyId as string,
       });
 
       return res.status(HTTPSTATUS.OK).json({

@@ -10,12 +10,23 @@ export class VoucherService {
     scannedById,
     device,
     location,
+    companyId,
   }: IScanVoucher) {
     return db.$transaction(async (tx) => {
       // Cari voucher
       const voucher = await tx.voucherTicket.findUnique({
         where: { code: code },
-        include: { ticket: true },
+        include: {
+          ticket: {
+            include: {
+              event: {
+                include: {
+                  createdBy: true,
+                },
+              },
+            },
+          },
+        },
       });
 
       if (!voucher) {
@@ -31,6 +42,22 @@ export class VoucherService {
         throw new BadRequestException(
           'Voucher not exists',
           ErrorCode.RESOURCE_NOT_FOUND,
+        );
+      }
+
+      if (voucher?.ticket?.event?.createdBy?.companyId !== companyId) {
+        await logScanTx(
+          tx,
+          voucher.id,
+          scannedById,
+          'FAILED',
+          'Voucher ini tidak termasuk di dalam event anda',
+          location,
+          device,
+        );
+        throw new BadRequestException(
+          'Voucher ini tidak termasuk di dalam event anda',
+          ErrorCode.VERIFICATION_ERROR,
         );
       }
 

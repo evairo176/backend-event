@@ -15,17 +15,31 @@ const log_scan_voucher_1 = require("../../cummon/utils/log-scan-voucher");
 const database_1 = require("../../database/database");
 class VoucherService {
     scanVoucher(_a) {
-        return __awaiter(this, arguments, void 0, function* ({ code, scannedById, device, location, }) {
+        return __awaiter(this, arguments, void 0, function* ({ code, scannedById, device, location, companyId, }) {
             return database_1.db.$transaction((tx) => __awaiter(this, void 0, void 0, function* () {
-                var _a;
+                var _a, _b, _c, _d;
                 // Cari voucher
                 const voucher = yield tx.voucherTicket.findUnique({
                     where: { code: code },
-                    include: { ticket: true },
+                    include: {
+                        ticket: {
+                            include: {
+                                event: {
+                                    include: {
+                                        createdBy: true,
+                                    },
+                                },
+                            },
+                        },
+                    },
                 });
                 if (!voucher) {
                     yield (0, log_scan_voucher_1.logScanTx)(tx, null, scannedById, 'FAILED', 'Voucher tidak ditemukan', location, device);
                     throw new catch_errors_1.BadRequestException('Voucher not exists', "RESOURCE_NOT_FOUND" /* ErrorCode.RESOURCE_NOT_FOUND */);
+                }
+                if (((_c = (_b = (_a = voucher === null || voucher === void 0 ? void 0 : voucher.ticket) === null || _a === void 0 ? void 0 : _a.event) === null || _b === void 0 ? void 0 : _b.createdBy) === null || _c === void 0 ? void 0 : _c.companyId) !== companyId) {
+                    yield (0, log_scan_voucher_1.logScanTx)(tx, voucher.id, scannedById, 'FAILED', 'Voucher ini tidak termasuk di dalam event anda', location, device);
+                    throw new catch_errors_1.BadRequestException('Voucher ini tidak termasuk di dalam event anda', "VERIFICATION_ERROR" /* ErrorCode.VERIFICATION_ERROR */);
                 }
                 if (voucher.isUsed) {
                     yield (0, log_scan_voucher_1.logScanTx)(tx, voucher.id, scannedById, 'FAILED', 'Voucher sudah digunakan', location, device);
@@ -39,7 +53,7 @@ class VoucherService {
                 // Simpan riwayat scan sukses
                 yield (0, log_scan_voucher_1.logScanTx)(tx, voucher.id, scannedById, 'SUCCESS', 'Voucher valid', location, device);
                 return {
-                    message: `Voucher valid untuk tiket: ${(_a = voucher.ticket) === null || _a === void 0 ? void 0 : _a.name}`,
+                    message: `Voucher valid untuk tiket: ${(_d = voucher.ticket) === null || _d === void 0 ? void 0 : _d.name}`,
                 };
             }));
         });

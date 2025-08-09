@@ -30,7 +30,7 @@ class AuthController {
         }));
         this.companyRegister = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
             const body = auth_validator_1.companyRegisterSchema.parse(Object.assign({}, req === null || req === void 0 ? void 0 : req.body));
-            const result = yield this.authService.companyRegister(Object.assign(Object.assign({}, body), { role: client_1.ROLE_USER.company }));
+            const result = yield this.authService.companyRegister(Object.assign(Object.assign({}, body), { role: client_1.ROLE_USER.company_owner }));
             return res.status(http_config_1.HTTPSTATUS.CREATED).json({
                 message: 'User registered successfully',
                 data: result.user,
@@ -42,6 +42,14 @@ class AuthController {
             const body = auth_validator_1.loginSchema.parse(Object.assign(Object.assign({}, req === null || req === void 0 ? void 0 : req.body), { userAgent }));
             const code = (_a = req === null || req === void 0 ? void 0 : req.body) === null || _a === void 0 ? void 0 : _a.code;
             const existingUser = yield this.authService.getProfile(body === null || body === void 0 ? void 0 : body.identifier);
+            if (existingUser.user.role === 'company_owner' &&
+                existingUser.user.status !== 'APPROVE') {
+                return res.status(http_config_1.HTTPSTATUS.OK).json({
+                    message: 'Menunggu approve dari admin',
+                    mfaRequired: false,
+                    user: null,
+                });
+            }
             if (existingUser.mfaRequired && !code) {
                 return res.status(http_config_1.HTTPSTATUS.OK).json({
                     message: 'Verify MFA authentication',

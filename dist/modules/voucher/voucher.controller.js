@@ -16,10 +16,11 @@ const voucher_validator_1 = require("../../cummon/validators/voucher.validator")
 class VoucherController {
     constructor(voucherService) {
         this.scanVoucher = (0, async_handler_middleware_1.asyncHandler)((req, res) => __awaiter(this, void 0, void 0, function* () {
-            var _a;
+            var _a, _b;
             const body = voucher_validator_1.scanVoucherSchema.parse(Object.assign({}, req === null || req === void 0 ? void 0 : req.body));
             const userId = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.id;
-            const { message } = yield this.voucherService.scanVoucher(Object.assign(Object.assign({}, body), { scannedById: userId }));
+            const companyId = (_b = req === null || req === void 0 ? void 0 : req.user) === null || _b === void 0 ? void 0 : _b.companyId;
+            const { message } = yield this.voucherService.scanVoucher(Object.assign(Object.assign({}, body), { scannedById: userId, companyId: companyId }));
             return res.status(http_config_1.HTTPSTATUS.OK).json({
                 message: message,
             });

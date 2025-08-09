@@ -733,6 +733,8 @@ export class AuthService {
         updatedAt: true,
         userPreferences: true,
         password: true, // Include password for validation
+        role: true,
+        status: true,
       },
     });
 
