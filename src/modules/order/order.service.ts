@@ -203,6 +203,13 @@ export class OrderService {
                   where: {
                     orderId,
                   },
+                  include: {
+                    ticketScanHistory: {
+                      where: { status: 'SUCCESS' },
+                      take: 1,
+                      orderBy: { createdAt: 'desc' },
+                    },
+                  },
                 },
               },
             },
@@ -218,6 +225,7 @@ export class OrderService {
         ErrorCode.RESOURCE_NOT_FOUND,
       );
     }
+
     return {
       order,
     };

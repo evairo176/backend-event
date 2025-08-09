@@ -181,6 +181,13 @@ class OrderService {
                                         where: {
                                             orderId,
                                         },
+                                        include: {
+                                            ticketScanHistory: {
+                                                where: { status: 'SUCCESS' },
+                                                take: 1,
+                                                orderBy: { createdAt: 'desc' },
+                                            },
+                                        },
                                     },
                                 },
                             },
