@@ -596,6 +596,9 @@ class AuthService {
             if (!user) {
                 throw new catch_errors_1.BadRequestException('Invalid username or email provided', "AUTH_USER_NOT_FOUND" /* ErrorCode.AUTH_USER_NOT_FOUND */);
             }
+            if (user.role === 'company_owner' && user.status !== 'APPROVE') {
+                throw new catch_errors_1.BadRequestException('Your current status is Pending approval', "PENDING_APPROVAL" /* ErrorCode.PENDING_APPROVAL */);
+            }
             const mfaRequired = (_a = user === null || user === void 0 ? void 0 : user.userPreferences) === null || _a === void 0 ? void 0 : _a.enable2FA;
             return {
                 user: user,

@@ -76,17 +76,6 @@ export class AuthController {
       const code = req?.body?.code;
       const existingUser = await this.authService.getProfile(body?.identifier);
 
-      if (
-        existingUser.user.role === 'company_owner' &&
-        existingUser.user.status !== 'APPROVE'
-      ) {
-        return res.status(HTTPSTATUS.OK).json({
-          message: 'Menunggu approve dari admin',
-          mfaRequired: false,
-          user: null,
-        });
-      }
-
       if (existingUser.mfaRequired && !code) {
         return res.status(HTTPSTATUS.OK).json({
           message: 'Verify MFA authentication',

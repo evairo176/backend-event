@@ -745,6 +745,13 @@ export class AuthService {
       );
     }
 
+    if (user.role === 'company_owner' && user.status !== 'APPROVE') {
+      throw new BadRequestException(
+        'Your current status is Pending approval',
+        ErrorCode.PENDING_APPROVAL,
+      );
+    }
+
     const mfaRequired = user?.userPreferences?.enable2FA;
 
     return {

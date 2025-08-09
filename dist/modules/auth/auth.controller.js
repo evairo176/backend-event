@@ -42,14 +42,6 @@ class AuthController {
             const body = auth_validator_1.loginSchema.parse(Object.assign(Object.assign({}, req === null || req === void 0 ? void 0 : req.body), { userAgent }));
             const code = (_a = req === null || req === void 0 ? void 0 : req.body) === null || _a === void 0 ? void 0 : _a.code;
             const existingUser = yield this.authService.getProfile(body === null || body === void 0 ? void 0 : body.identifier);
-            if (existingUser.user.role === 'company_owner' &&
-                existingUser.user.status !== 'APPROVE') {
-                return res.status(http_config_1.HTTPSTATUS.OK).json({
-                    message: 'Menunggu approve dari admin',
-                    mfaRequired: false,
-                    user: null,
-                });
-            }
             if (existingUser.mfaRequired && !code) {
                 return res.status(http_config_1.HTTPSTATUS.OK).json({
                     message: 'Verify MFA authentication',
