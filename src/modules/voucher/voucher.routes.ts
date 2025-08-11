@@ -33,7 +33,7 @@ voucherRoutes.get(
 );
 
 voucherRoutes.get(
-  '/voucher-scan-history',
+  '/voucher-history-scan',
   [authenticateJWT, aclMiddleware([ROLE_USER.company_scanner])],
   voucherController.findAllByUserId,
   /*

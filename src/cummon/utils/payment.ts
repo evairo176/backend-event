@@ -29,7 +29,7 @@ export class PaymentMidtrans {
         credit_card: { secure: true },
         callbacks: {
           finish: `${config.MIDTRANS.FINISH_REDIRECT_URL}`,
-          error: `${config.MIDTRANS.FINISH_REDIRECT_URL}?errorCJ=true`,
+          error: `${config.MIDTRANS.FINISH_REDIRECT_URL}`,
         },
         // ⬇️ Set masa bayar 1 jam
         expiry: {

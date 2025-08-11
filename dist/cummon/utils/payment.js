@@ -23,7 +23,7 @@ class PaymentMidtrans {
             try {
                 const body = Object.assign(Object.assign({}, payload), { credit_card: { secure: true }, callbacks: {
                         finish: `${app_config_1.config.MIDTRANS.FINISH_REDIRECT_URL}`,
-                        error: `${app_config_1.config.MIDTRANS.FINISH_REDIRECT_URL}?errorCJ=true`,
+                        error: `${app_config_1.config.MIDTRANS.FINISH_REDIRECT_URL}`,
                     }, 
                     // ⬇️ Set masa bayar 1 jam
                     expiry: {
