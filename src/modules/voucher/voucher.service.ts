@@ -172,14 +172,39 @@ export class VoucherService {
     const skip = (Number(page) - 1) * Number(limit);
     const take = Number(limit);
 
-    if (search) {
+    if (search?.trim()) {
+      const s = search.trim();
       query.OR = [
-        // {
-        //   name: {
-        //     contains: search,
-        //     mode: 'insensitive',
-        //   },
-        // },
+        // note pada history
+        { note: { contains: s, mode: 'insensitive' } },
+        // nama ticket
+        {
+          voucher: {
+            is: {
+              ticket: {
+                is: {
+                  name: { contains: s, mode: 'insensitive' },
+                },
+              },
+            },
+          },
+        },
+        // nama event
+        {
+          voucher: {
+            is: {
+              ticket: {
+                is: {
+                  event: {
+                    is: {
+                      name: { contains: s, mode: 'insensitive' },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
       ];
     }
 
