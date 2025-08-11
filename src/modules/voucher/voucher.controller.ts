@@ -35,8 +35,12 @@ export class VoucherController {
   public findOneByCode = asyncHandler(
     async (req: Request, res: Response): Promise<any> => {
       const params = req?.params;
+      const userId = req?.user?.id;
 
-      const result = await this.voucherService.findOneByCode(params?.code);
+      const result = await this.voucherService.findOneByCode(
+        params?.code,
+        userId as string,
+      );
 
       return res.status(HTTPSTATUS.OK).json({
         ...result,

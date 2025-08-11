@@ -59,7 +59,7 @@ class VoucherService {
             }));
         });
     }
-    findOneByCode(code) {
+    findOneByCode(code, scannedById) {
         return __awaiter(this, void 0, void 0, function* () {
             const voucher = yield database_1.db.voucherTicket.findFirst({
                 where: {
@@ -74,6 +74,7 @@ class VoucherService {
                 },
             });
             if (!voucher) {
+                yield (0, log_scan_voucher_1.logScanTx)(database_1.db, null, scannedById, 'FAILED', 'Voucher tidak ditemukan', '', '');
                 return {
                     success: false,
                     message: 'Voucher tidak ditemukan',
@@ -81,6 +82,7 @@ class VoucherService {
                 };
             }
             if (voucher.isUsed) {
+                yield (0, log_scan_voucher_1.logScanTx)(database_1.db, voucher.id, scannedById, 'FAILED', 'Voucher sudah digunakan', '', '');
                 return {
                     success: false,
                     message: 'Voucher sudah digunakan',

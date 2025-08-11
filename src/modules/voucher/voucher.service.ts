@@ -104,7 +104,7 @@ export class VoucherService {
     });
   }
 
-  public async findOneByCode(code: string) {
+  public async findOneByCode(code: string, scannedById: string) {
     const voucher = await db.voucherTicket.findFirst({
       where: {
         code,
@@ -119,6 +119,15 @@ export class VoucherService {
     });
 
     if (!voucher) {
+      await logScanTx(
+        db,
+        null,
+        scannedById,
+        'FAILED',
+        'Voucher tidak ditemukan',
+        '',
+        '',
+      );
       return {
         success: false,
         message: 'Voucher tidak ditemukan',
@@ -127,6 +136,15 @@ export class VoucherService {
     }
 
     if (voucher.isUsed) {
+      await logScanTx(
+        db,
+        voucher.id,
+        scannedById,
+        'FAILED',
+        'Voucher sudah digunakan',
+        '',
+        '',
+      );
       return {
         success: false,
         message: 'Voucher sudah digunakan',
