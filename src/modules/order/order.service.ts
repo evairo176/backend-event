@@ -18,127 +18,127 @@ import { Dashboard, TimeFilter } from '../../cummon/utils/dashboard';
 
 export class OrderService {
   public async create(orderData: orderItemDto[], userData: CreateOrderDto) {
-    return await db.$transaction(async (tx) => {
-      // Ambil tiket & validasi sebelum membuat order
-      let total = 0;
-
-      const eventId = orderData[0].eventId;
-
-      const checkExistingEvent = await tx.event.findFirst({
-        where: {
-          id: eventId,
-        },
-        include: {
-          createdBy: {
-            include: {
-              company: true,
-            },
-          },
-        },
-      });
-
-      if (!checkExistingEvent) {
-        throw new BadRequestException(
-          'Event not exists',
-          ErrorCode.RESOURCE_NOT_FOUND,
-        );
-      }
-
-      for (const body of orderData) {
-        const existingTicket = await tx.ticket.findFirst({
-          where: { id: body.ticketId },
+    // (opsional) naikin isolation level kalau DB mendukung
+    return await db.$transaction(
+      async (tx) => {
+        // 1) Validasi event awal (tetap)
+        const eventId = orderData[0].eventId;
+        const checkExistingEvent = await tx.event.findFirst({
+          where: { id: eventId },
+          include: { createdBy: { include: { company: true } } },
         });
+        if (!checkExistingEvent) {
+          throw new BadRequestException(
+            'Event not exists',
+            ErrorCode.RESOURCE_NOT_FOUND,
+          );
+        }
 
-        if (!existingTicket) {
+        // 2) Agregasi qty per ticketId (kalau ada duplikat item, dijumlah)
+        const qtyByTicket: Record<string, number> = {};
+        for (const it of orderData) {
+          qtyByTicket[it.ticketId] =
+            (qtyByTicket[it.ticketId] ?? 0) + Number(it.quantity || 0);
+        }
+        const ticketIds = Object.keys(qtyByTicket);
+
+        // 3) Ambil tiketnya sekali (untuk harga & validasi)
+        const tickets = await tx.ticket.findMany({
+          where: { id: { in: ticketIds } },
+          include: { event: true },
+        });
+        if (tickets.length !== ticketIds.length) {
           throw new BadRequestException(
             'Ticket not exists',
             ErrorCode.RESOURCE_NOT_FOUND,
           );
         }
 
-        const existingEvent = await tx.event.findFirst({
-          where: { id: body.eventId },
-        });
+        // (opsional) pastikan semua ticket memang milik event terkait
+        // if (!tickets.every(t => t.eventId === eventId)) {
+        //   throw new BadRequestException('Semua tiket harus dari event yang sama');
+        // }
 
-        if (!existingEvent) {
-          throw new NotFoundException(
-            'Event not exists',
-            ErrorCode.RESOURCE_NOT_FOUND,
-          );
+        // 4) Hitung total dari harga tiket x qty
+        let total = 0;
+        for (const t of tickets) {
+          total += Number(t.price) * qtyByTicket[t.id];
         }
 
-        if (existingTicket.quantity < body.quantity) {
-          throw new BadRequestException('Ticket quantity is not enough');
+        // 5) ATOMIC: kurangi stok tiap tiket
+        //    Pakai updateMany + guard quantity >= need agar aman dari race condition.
+        for (const t of tickets) {
+          const need = qtyByTicket[t.id];
+          const res = await tx.ticket.updateMany({
+            where: { id: t.id, quantity: { gte: need } },
+            data: { quantity: { decrement: need } },
+          });
+          if (res.count === 0) {
+            // kalau gagal, transaksi otomatis rollback -> stok tidak berubah
+            throw new BadRequestException(
+              `Ticket "${t.name}" stok tidak cukup`,
+            );
+          }
         }
 
-        total += +existingTicket.price * +body.quantity;
-      }
+        // 6) Buat orderId
+        const orderId = await generateOrderId();
 
-      // Buat orderId
-      const orderId = await generateOrderId();
-
-      // Midtrans request (masih tetap di luar loop dan di dalam transaksi)
-      const paymentMidtrans = new PaymentMidtrans();
-      const generatePayment = await paymentMidtrans.createLink({
-        transaction_details: {
-          gross_amount: total,
-          order_id: orderId,
-        },
-      });
-
-      // Simpan payment
-      const payment = await tx.payment.create({
-        data: {
-          token: generatePayment.token,
-          redirect_url: generatePayment.redirect_url,
-        },
-      });
-
-      // Simpan order
-      const createdOrder = await tx.order.create({
-        data: {
-          orderId,
-          total,
-          paymentId: payment.id,
-          createById: userData?.createById,
-          updatedById: userData?.createById,
-          companyId: checkExistingEvent.createdBy?.companyId,
-        },
-      });
-
-      // Simpan orderItem berdasarkan masing-masing tiket
-      for (const body of orderData) {
-        const existingTicket = await tx.ticket.findFirst({
-          where: { id: body.ticketId },
+        // 7) (Disarankan) panggil Midtrans SETELAH stok di-reserve,
+        //    supaya tidak buat link pembayaran kalau stok habis.
+        const paymentMidtrans = new PaymentMidtrans();
+        const generatePayment = await paymentMidtrans.createLink({
+          transaction_details: { gross_amount: total, order_id: orderId },
         });
 
-        await tx.orderItem.create({
+        // 8) Simpan payment
+        const payment = await tx.payment.create({
           data: {
-            orderId: createdOrder.id,
-            eventId: body.eventId,
-            ticketId: body.ticketId,
-            quantity: body.quantity,
-            price: existingTicket!.price,
+            token: generatePayment.token,
+            redirect_url: generatePayment.redirect_url,
           },
         });
-      }
 
-      // Ambil order beserta relasinya
-      const result = await tx.order.findFirst({
-        where: { id: createdOrder.id },
-        include: {
-          items: {
-            include: {
-              event: true,
-              ticket: true,
-            },
+        // 9) Simpan order
+        const createdOrder = await tx.order.create({
+          data: {
+            orderId,
+            total,
+            paymentId: payment.id,
+            createById: userData?.createById,
+            updatedById: userData?.createById,
+            companyId: checkExistingEvent.createdBy?.companyId,
           },
-          payment: true,
-        },
-      });
+        });
 
-      return result;
-    });
+        // 10) Simpan order items
+        for (const body of orderData) {
+          const ticket = tickets.find((t) => t.id === body.ticketId)!;
+          await tx.orderItem.create({
+            data: {
+              orderId: createdOrder.id,
+              eventId: body.eventId,
+              ticketId: body.ticketId,
+              quantity: body.quantity,
+              price: ticket.price,
+            },
+          });
+        }
+
+        // 11) Return hasil lengkap
+        const result = await tx.order.findFirst({
+          where: { id: createdOrder.id },
+          include: {
+            items: { include: { event: true, ticket: true } },
+            payment: true,
+          },
+        });
+
+        return result!;
+      } /*, {
+    isolationLevel: Prisma.TransactionIsolationLevel.Serializable // opsional
+  }*/,
+    );
   }
 
   public async findAll({ page = 1, limit = 10, search }: IPaginationQuery) {
@@ -230,7 +230,38 @@ export class OrderService {
       order,
     };
   }
+  public async pending(orderId: string) {
+    const order = await db.order.findFirst({
+      where: {
+        orderId,
+      },
+    });
 
+    if (!order) {
+      throw new NotFoundException(
+        'Order not exists',
+        ErrorCode.RESOURCE_NOT_FOUND,
+      );
+    }
+
+    if (order.status === 'COMPLETED') {
+      throw new BadRequestException('You have been completed this order');
+    }
+
+    if (order.status === 'PENDING') {
+      throw new BadRequestException('This order is already payment pending');
+    }
+
+    const result = await db.order.update({
+      where: {
+        id: order.id,
+      },
+      data: {
+        status: 'PENDING',
+      },
+    });
+    return result;
+  }
   public async completed(
     orderId: string,
     paymentType: string,
@@ -288,35 +319,24 @@ export class OrderService {
       }));
 
       // ✅ Execute all DB operations in a transaction
-      const [createdVouchers, updatedOrder, updatedTicket] =
-        await db.$transaction([
-          db.voucherTicket.createMany({
-            data: vouchers,
-          }),
-          db.order.update({
-            where: {
-              id: order.id,
-            },
-            data: {
-              status: 'COMPLETED',
-              paymentType,
-              paymentDate,
-            },
-          }),
-          db.ticket.update({
-            where: {
-              id: ticket.id,
-            },
-            data: {
-              quantity: ticket.quantity - item.quantity,
-            },
-          }),
-        ]);
-
+      const [createdVouchers, updatedOrder] = await db.$transaction([
+        db.voucherTicket.createMany({
+          data: vouchers,
+        }),
+        db.order.update({
+          where: {
+            id: order.id,
+          },
+          data: {
+            status: 'COMPLETED',
+            paymentType,
+            paymentDate,
+          },
+        }),
+      ]);
       result.push({
         createdVouchers,
         updatedOrder,
-        updatedTicket,
       });
     }
 
@@ -328,7 +348,7 @@ export class OrderService {
     });
 
     if (owner && order.total > 0) {
-      const [user, balanceTransaction] = await db.$transaction([
+      await db.$transaction([
         db.user.update({
           where: { id: owner.id },
           data: {
@@ -349,71 +369,62 @@ export class OrderService {
 
     return result;
   }
-  public async pending(orderId: string) {
-    const order = await db.order.findFirst({
-      where: {
-        orderId,
-      },
+
+  public async cancelled(orderId: string, userId?: string) {
+    return db.$transaction(async (tx) => {
+      const order = await tx.order.findFirst({
+        where: { orderId },
+        include: { items: true },
+      });
+      if (!order)
+        throw new NotFoundException(
+          'Order not exists',
+          ErrorCode.RESOURCE_NOT_FOUND,
+        );
+      if (order.status === 'COMPLETED')
+        throw new BadRequestException('You have been completed this order');
+      if (order.status === 'CANCELLED')
+        throw new BadRequestException('This order is already cancelled');
+
+      // Guard: pastikan hanya status tertentu yang bisa di-cancel (anti race)
+      const updated = await tx.order.updateMany({
+        where: {
+          id: order.id,
+          status: { in: ['PENDING', 'CANCELLED', 'COMPLETED'] },
+        },
+        data: {
+          status: 'CANCELLED',
+          updatedById: userId,
+          cancelledAt: new Date() as any,
+        },
+      });
+      if (updated.count === 0) {
+        throw new BadRequestException(
+          'Order cannot be cancelled from current status',
+        );
+      }
+
+      // Hitung qty per tiket
+      const incByTicket: Record<string, number> = {};
+      for (const it of order.items) {
+        incByTicket[it.ticketId] =
+          (incByTicket[it.ticketId] ?? 0) + Number(it.quantity);
+      }
+
+      // Kembalikan stok
+      for (const [ticketId, inc] of Object.entries(incByTicket)) {
+        await tx.ticket.update({
+          where: { id: ticketId },
+          data: { quantity: { increment: inc } },
+        });
+      }
+
+      // Return order terbaru
+      return tx.order.findFirst({
+        where: { id: order.id },
+        include: { items: true },
+      });
     });
-
-    if (!order) {
-      throw new NotFoundException(
-        'Order not exists',
-        ErrorCode.RESOURCE_NOT_FOUND,
-      );
-    }
-
-    if (order.status === 'COMPLETED') {
-      throw new BadRequestException('You have been completed this order');
-    }
-
-    if (order.status === 'PENDING') {
-      throw new BadRequestException('This order is already payment pending');
-    }
-
-    const result = await db.order.update({
-      where: {
-        id: order.id,
-      },
-      data: {
-        status: 'PENDING',
-      },
-    });
-    return result;
-  }
-  public async cancelled(orderId: string) {
-    const order = await db.order.findFirst({
-      where: {
-        orderId,
-      },
-    });
-
-    if (!order) {
-      throw new NotFoundException(
-        'Order not exists',
-        ErrorCode.RESOURCE_NOT_FOUND,
-      );
-    }
-
-    if (order.status === 'COMPLETED') {
-      throw new BadRequestException('You have been completed this order');
-    }
-
-    if (order.status === 'CANCELLED') {
-      throw new BadRequestException('This order is already cancelled');
-    }
-
-    const result = await db.order.update({
-      where: {
-        id: order.id,
-      },
-      data: {
-        status: 'CANCELLED',
-      },
-    });
-
-    console.log('Order cancelled:', result);
-    return result;
   }
 
   public async remove(orderId: string) {

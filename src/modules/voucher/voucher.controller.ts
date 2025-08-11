@@ -3,6 +3,7 @@ import { asyncHandler } from '../../middlewares/async-handler.middleware';
 import { VoucherService } from './voucher.service';
 import { HTTPSTATUS } from '../../config/http.config';
 import { scanVoucherSchema } from '../../cummon/validators/voucher.validator';
+import { IPaginationQuery } from '../../cummon/interface/voucher.interface';
 
 export class VoucherController {
   private voucherService: VoucherService;
@@ -39,6 +40,31 @@ export class VoucherController {
 
       return res.status(HTTPSTATUS.OK).json({
         ...result,
+      });
+    },
+  );
+
+  public findAllByUserId = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+      const query = req?.query as unknown as IPaginationQuery;
+
+      const userId = req?.user?.id;
+
+      const { scanHistories, limit, page, total, totalPages } =
+        await this.voucherService.findAllByUserId({
+          ...query,
+          userId: userId as string,
+        });
+
+      return res.status(HTTPSTATUS.OK).json({
+        message: 'find all scan history successfully',
+        data: scanHistories,
+        pagination: {
+          limit,
+          page,
+          total,
+          totalPages,
+        },
       });
     },
   );

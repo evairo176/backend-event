@@ -32,4 +32,15 @@ voucherRoutes.get(
    */
 );
 
+voucherRoutes.get(
+  '/voucher-scan-history',
+  [authenticateJWT, aclMiddleware([ROLE_USER.company_scanner])],
+  voucherController.findAllByUserId,
+  /*
+  #swagger.tags = ['Voucher']
+  #swagger.security = [{
+    "bearerAuth": {}
+  }]
+  */
+);
 export default voucherRoutes;

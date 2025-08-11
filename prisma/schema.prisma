@@ -365,6 +365,7 @@ model Order {
   paymentId   String   @db.ObjectId
   paymentType String?
   paymentDate String?
+  cancelledAt String?
 
   company   Company? @relation(fields: [companyId], references: [id])
   companyId String?  @db.ObjectId

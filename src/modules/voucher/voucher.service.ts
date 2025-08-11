@@ -1,7 +1,11 @@
 import { ErrorCode } from '../../cummon/enums/error-code.enum';
-import { IScanVoucher } from '../../cummon/interface/voucher.interface';
+import {
+  IPaginationQuery,
+  IScanVoucher,
+} from '../../cummon/interface/voucher.interface';
 import { BadRequestException } from '../../cummon/utils/catch-errors';
 import { logScanTx } from '../../cummon/utils/log-scan-voucher';
+import { maskCode } from '../../cummon/utils/mask-code';
 import { db } from '../../database/database';
 
 export class VoucherService {
@@ -134,6 +138,70 @@ export class VoucherService {
       success: true,
       message: 'Voucher valid',
       data: voucher,
+    };
+  }
+
+  public async findAllByUserId({
+    page = 1,
+    limit = 10,
+    search,
+    userId,
+  }: IPaginationQuery) {
+    const query: any = {
+      scannedById: userId,
+    };
+
+    const skip = (Number(page) - 1) * Number(limit);
+    const take = Number(limit);
+
+    if (search) {
+      query.OR = [
+        // {
+        //   name: {
+        //     contains: search,
+        //     mode: 'insensitive',
+        //   },
+        // },
+      ];
+    }
+
+    const [scanHistories, total] = await Promise.all([
+      db.ticketScanHistory.findMany({
+        where: query,
+        skip,
+        take,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          voucher: {
+            include: {
+              ticket: {
+                include: {
+                  event: true,
+                },
+              },
+            },
+          },
+        },
+      }),
+      db.ticketScanHistory.count({
+        where: query,
+      }),
+    ]);
+
+    // bikin field baru `codeMasked` (biar code asli tetap ada)
+    const result = scanHistories.map((r) => ({
+      ...r,
+      voucher: r.voucher
+        ? { ...r.voucher, code: maskCode(r.voucher.code) }
+        : null,
+    }));
+
+    return {
+      scanHistories: result,
+      page: Number(page),
+      limit: Number(limit),
+      total,
+      totalPages: Math.ceil(total / Number(limit)),
     };
   }
 }

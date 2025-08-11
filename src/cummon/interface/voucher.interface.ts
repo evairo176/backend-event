@@ -6,3 +6,10 @@ export interface IScanVoucher extends z.infer<typeof scanVoucherSchema> {
   scannedById: string;
   companyId: string;
 }
+
+export interface IPaginationQuery {
+  page: number;
+  limit: number;
+  search?: string;
+  userId?: string;
+}
