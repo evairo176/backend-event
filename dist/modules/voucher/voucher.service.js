@@ -35,15 +35,15 @@ class VoucherService {
                     },
                 });
                 if (!voucher) {
-                    yield (0, log_scan_voucher_1.logScanTx)(tx, null, scannedById, 'FAILED', 'Voucher tidak ditemukan', location, device);
+                    yield (0, log_scan_voucher_1.logScanTx)(database_1.db, null, scannedById, 'FAILED', 'Voucher tidak ditemukan', location, device);
                     throw new catch_errors_1.BadRequestException('Voucher not exists', "RESOURCE_NOT_FOUND" /* ErrorCode.RESOURCE_NOT_FOUND */);
                 }
                 if (((_c = (_b = (_a = voucher === null || voucher === void 0 ? void 0 : voucher.ticket) === null || _a === void 0 ? void 0 : _a.event) === null || _b === void 0 ? void 0 : _b.createdBy) === null || _c === void 0 ? void 0 : _c.companyId) !== companyId) {
-                    yield (0, log_scan_voucher_1.logScanTx)(tx, voucher.id, scannedById, 'FAILED', 'Voucher ini tidak termasuk di dalam event anda', location, device);
+                    yield (0, log_scan_voucher_1.logScanTx)(database_1.db, voucher.id, scannedById, 'FAILED', 'Voucher ini tidak termasuk di dalam event anda', location, device);
                     throw new catch_errors_1.BadRequestException('Voucher ini tidak termasuk di dalam event anda', "VERIFICATION_ERROR" /* ErrorCode.VERIFICATION_ERROR */);
                 }
                 if (voucher.isUsed) {
-                    yield (0, log_scan_voucher_1.logScanTx)(tx, voucher.id, scannedById, 'FAILED', 'Voucher sudah digunakan', location, device);
+                    yield (0, log_scan_voucher_1.logScanTx)(database_1.db, voucher.id, scannedById, 'FAILED', 'Voucher sudah digunakan', location, device);
                     throw new catch_errors_1.BadRequestException('Voucher sudah digunakan', "VERIFICATION_ERROR" /* ErrorCode.VERIFICATION_ERROR */);
                 }
                 // Tandai voucher sebagai digunakan
@@ -52,7 +52,7 @@ class VoucherService {
                     data: { isUsed: true },
                 });
                 // Simpan riwayat scan sukses
-                yield (0, log_scan_voucher_1.logScanTx)(tx, voucher.id, scannedById, 'SUCCESS', 'Voucher valid', location, device);
+                yield (0, log_scan_voucher_1.logScanTx)(database_1.db, voucher.id, scannedById, 'SUCCESS', 'Voucher valid', location, device);
                 return {
                     message: `Voucher valid untuk tiket: ${(_d = voucher.ticket) === null || _d === void 0 ? void 0 : _d.name}`,
                 };

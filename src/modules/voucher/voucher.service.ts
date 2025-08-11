@@ -35,7 +35,7 @@ export class VoucherService {
 
       if (!voucher) {
         await logScanTx(
-          tx,
+          db,
           null,
           scannedById,
           'FAILED',
@@ -51,7 +51,7 @@ export class VoucherService {
 
       if (voucher?.ticket?.event?.createdBy?.companyId !== companyId) {
         await logScanTx(
-          tx,
+          db,
           voucher.id,
           scannedById,
           'FAILED',
@@ -67,7 +67,7 @@ export class VoucherService {
 
       if (voucher.isUsed) {
         await logScanTx(
-          tx,
+          db,
           voucher.id,
           scannedById,
           'FAILED',
@@ -89,7 +89,7 @@ export class VoucherService {
 
       // Simpan riwayat scan sukses
       await logScanTx(
-        tx,
+        db,
         voucher.id,
         scannedById,
         'SUCCESS',

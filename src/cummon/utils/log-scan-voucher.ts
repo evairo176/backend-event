@@ -1,5 +1,3 @@
-import { PrismaClient } from '@prisma/client';
-
 // Helper untuk insert log dalam transaction
 export async function logScanTx(
   tx: any,
