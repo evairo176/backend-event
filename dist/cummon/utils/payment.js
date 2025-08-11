@@ -21,12 +21,17 @@ class PaymentMidtrans {
         return __awaiter(this, void 0, void 0, function* () {
             var _a;
             try {
-                const result = yield axios_1.default.post(`${app_config_1.config.MIDTRANS.TRANSACTION_URL}`, Object.assign(Object.assign({}, payload), { credit_card: {
-                        secure: true,
-                    }, callbacks: {
+                const body = Object.assign(Object.assign({}, payload), { credit_card: { secure: true }, callbacks: {
                         finish: `${app_config_1.config.MIDTRANS.FINISH_REDIRECT_URL}`,
                         error: `${app_config_1.config.MIDTRANS.FINISH_REDIRECT_URL}?errorCJ=true`,
-                    }, is_custom_expiry: true }), {
+                    }, 
+                    // ⬇️ Set masa bayar 1 jam
+                    expiry: {
+                        unit: 'hours', // "minute" | "hour" | "day"
+                        duration: 1, // 1 jam
+                        // start_time opsional; kalau tidak diisi -> pakai waktu charge
+                    } });
+                const result = yield axios_1.default.post(`${app_config_1.config.MIDTRANS.TRANSACTION_URL}`, body, {
                     headers: {
                         'Content-Type': 'application/json',
                         Accept: 'application/json',
@@ -36,7 +41,7 @@ class PaymentMidtrans {
                 if (result.status !== 201) {
                     throw new catch_errors_1.BadRequestException('Payment failed');
                 }
-                return result === null || result === void 0 ? void 0 : result.data;
+                return result.data;
             }
             catch (error) {
                 console.log(((_a = error === null || error === void 0 ? void 0 : error.response) === null || _a === void 0 ? void 0 : _a.data) || error);

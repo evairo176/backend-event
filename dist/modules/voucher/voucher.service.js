@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.VoucherService = void 0;
 const catch_errors_1 = require("../../cummon/utils/catch-errors");
 const log_scan_voucher_1 = require("../../cummon/utils/log-scan-voucher");
+const mask_code_1 = require("../../cummon/utils/mask-code");
 const database_1 = require("../../database/database");
 class VoucherService {
     scanVoucher(_a) {
@@ -90,6 +91,57 @@ class VoucherService {
                 success: true,
                 message: 'Voucher valid',
                 data: voucher,
+            };
+        });
+    }
+    findAllByUserId(_a) {
+        return __awaiter(this, arguments, void 0, function* ({ page = 1, limit = 10, search, userId, }) {
+            const query = {
+                scannedById: userId,
+            };
+            const skip = (Number(page) - 1) * Number(limit);
+            const take = Number(limit);
+            if (search) {
+                query.OR = [
+                // {
+                //   name: {
+                //     contains: search,
+                //     mode: 'insensitive',
+                //   },
+                // },
+                ];
+            }
+            const [scanHistories, total] = yield Promise.all([
+                database_1.db.ticketScanHistory.findMany({
+                    where: query,
+                    skip,
+                    take,
+                    orderBy: { createdAt: 'desc' },
+                    include: {
+                        voucher: {
+                            include: {
+                                ticket: {
+                                    include: {
+                                        event: true,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                }),
+                database_1.db.ticketScanHistory.count({
+                    where: query,
+                }),
+            ]);
+            // bikin field baru `codeMasked` (biar code asli tetap ada)
+            const result = scanHistories.map((r) => (Object.assign(Object.assign({}, r), { voucher: r.voucher
+                    ? Object.assign(Object.assign({}, r.voucher), { code: (0, mask_code_1.maskCode)(r.voucher.code) }) : null })));
+            return {
+                scanHistories: result,
+                page: Number(page),
+                limit: Number(limit),
+                total,
+                totalPages: Math.ceil(total / Number(limit)),
             };
         });
     }

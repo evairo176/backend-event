@@ -14,4 +14,5 @@ voucherRoutes.get('/voucher/:code', [
     jwt_strategy_1.authenticateJWT,
     (0, acl_middleware_1.default)([client_1.ROLE_USER.company_scanner, client_1.ROLE_USER.admin]),
 ], voucher_module_1.voucherController.findOneByCode);
+voucherRoutes.get('/voucher-scan-history', [jwt_strategy_1.authenticateJWT, (0, acl_middleware_1.default)([client_1.ROLE_USER.company_scanner])], voucher_module_1.voucherController.findAllByUserId);
 exports.default = voucherRoutes;

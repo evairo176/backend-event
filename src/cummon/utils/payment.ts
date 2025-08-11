@@ -33,14 +33,9 @@ export class PaymentMidtrans {
         },
         // ⬇️ Set masa bayar 1 jam
         expiry: {
-          unit: 'hour', // "minute" | "hour" | "day"
+          unit: 'hours', // "minute" | "hour" | "day"
           duration: 1, // 1 jam
           // start_time opsional; kalau tidak diisi -> pakai waktu charge
-        },
-        // (opsional) samakan masa hidup halaman Snap jadi 1 jam juga
-        page_expiry: {
-          unit: 'hour',
-          duration: 1,
         },
       };
 
